@@ -320,6 +320,22 @@ public final class StudyEngine {
         openDeck(deckId)
     }
 
+    /// Học lại bộ hiện tại từ đầu — một lượt mới (bộ 🔀 thì rút 20 thẻ mới).
+    public func restartCurrentDeck() {
+        guard let id = currentDeckId else { return }
+        if id == randomDeckId {
+            reshuffleRandomDeck()
+        } else {
+            openDeck(id)
+        }
+    }
+
+    /// Mở lại bộ 🔀 sẽ rút một bộ 20 thẻ mới.
+    public func reshuffleRandomDeck() {
+        buildRandomDeck()
+        openDeck(randomDeckId)
+    }
+
     public func switchVocabGroup(_ groupId: String) {
         if groupId == currentVocabGroup { return }
         currentVocabGroup = groupId

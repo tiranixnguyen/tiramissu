@@ -424,6 +424,47 @@ struct StudyEngineTests {
             #expect(a.currentDeck?.isVirtual == true)
         }
     }
+    @Suite("mỗi lần vào bộ là một lượt mới")
+    struct FreshRun {
+        @Test func quayLaiBoVuaHocDoThiBatDauLaiTuDau() {
+            let e = buildEngine()
+            answerCurrentCorrectly(e)
+            e.nextCard()
+            #expect(e.attemptedCount == 1)
+
+            e.toggleMark()
+            e.switchDeck(markedDeckId)
+            e.switchDeck("d1")
+
+            #expect(e.attemptedCount == 0)
+            #expect(e.masteredCount == 0)
+            #expect(e.remainingInRound == e.totalCount)
+        }
+
+        @Test func hocLaiTuDauXoaTienTrinhLuotNay() {
+            let e = buildEngine([RawWord(front: "học sinh", back: "학생")])
+            for _ in 0..<StudyEngine.masteryStreak {
+                answerCurrentCorrectly(e)
+                e.nextCard()
+            }
+            #expect(e.isCompleted)
+
+            e.restartCurrentDeck()
+            #expect(!e.isCompleted)
+            #expect(e.attemptedCount == 0)
+        }
+
+        @Test func hocLaiBoNgauNhienRutBoMoi() {
+            let words = (0..<40).map { RawWord(front: "v\($0)", back: "k\($0)") }
+            let e = engineFor(contentOf([contentDeck("d1", words)]))
+            e.switchDeck(randomDeckId)
+            let first = e.currentDeck?.words
+            e.restartCurrentDeck()
+            #expect(e.currentDeckId == randomDeckId)
+            #expect(e.totalCount == 20)
+            #expect(e.currentDeck?.words != first)
+        }
+    }
 }
 
 /// Dựng engine từ nội dung (có cờ), đã `bootstrap` với seed cố định.

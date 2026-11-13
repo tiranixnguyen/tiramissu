@@ -152,7 +152,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Xong khi: nhóm "đánh dấu và deck ảo" (11) + "mỗi thẻ độc lập" (2) pass.
   - Phụ thuộc: T2.09
 
-- [ ] **T2.11 · `StudyEngine` — đổi bộ/nhóm, học lại**
+- [x] **T2.11 · `StudyEngine` — đổi bộ/nhóm, học lại**
   - Làm: `switchDeck`, `switchGroup`, `restartCurrentDeck`, `reshuffleRandomDeck`, trả thẻ chưa trả lời
     về hàng đợi khi rời bộ.
   - Xong khi: nhóm "mỗi lần vào bộ là một lượt mới" (2) pass.
