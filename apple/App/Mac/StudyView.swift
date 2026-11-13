@@ -8,7 +8,6 @@ import SwiftUI
 /// Cài đặt hệ thống › Bàn phím › Nguồn nhập, rồi chuyển bằng phím Caps Lock hoặc ⌃Space.
 struct StudyView: View {
     @Environment(AppModel.self) private var model
-    @Environment(Navigation.self) private var nav
     @Environment(ThemeStore.self) private var themes
     @Environment(\.theme) private var theme
 
@@ -27,8 +26,25 @@ struct StudyView: View {
             // Thanh trên nằm TRONG toolbar hệ thống → hệ điều hành tự lo đèn giao thông,
             // nút sidebar và hoạt ảnh ẩn/hiện sidebar (không tự tính lề).
             .toolbar {
-                ToolbarItem(placement: .principal) { header.frame(minWidth: 320, maxWidth: .infinity) }
-                    .sharedBackgroundVisibility(.hidden)
+                // Trái: theme + sáng/tối (kính mặc định của toolbar).
+                ToolbarItemGroup(placement: .navigation) {
+                    Button { themes.cycleTheme() } label: {
+                        HStack(spacing: 6) {
+                            Circle().fill(theme?.accent ?? .accentColor).frame(width: 10, height: 10)
+                            Text(themes.current?.name ?? "")
+                        }
+                    }
+                    .help("Đổi theme")
+                    Button { themes.cycleAppearance() } label: {
+                        Image(systemName: themes.appearance.symbol)
+                    }
+                    .help("Giao diện: \(themes.appearance.label) (⌥⌘D)")
+                }
+                // Phải: tên bộ + tiến độ + thống kê.
+                ToolbarItem(placement: .principal) {
+                    header.frame(minWidth: 280, maxWidth: .infinity, alignment: .trailing)
+                }
+                .sharedBackgroundVisibility(.hidden)
             }
         .onChange(of: state.cardSerial) {
             input = ""
@@ -62,7 +78,7 @@ struct StudyView: View {
         return group.map { "\(name) · \($0)" } ?? name
     }
 
-    /// Thanh trên cùng như prototype: kính bo 16, cao 52 — tên bộ + tiến độ, thống kê, Lệnh, theme, sáng/tối.
+    /// Thanh trên cùng như prototype: kính bo 16 — tên bộ + tiến độ + thống kê (theme/sáng-tối nằm riêng bên trái toolbar).
     private var header: some View {
         ViewThatFits(in: .horizontal) {
             headerRow(showStats: true)
@@ -96,34 +112,7 @@ struct StudyView: View {
                     .foregroundStyle(theme?.ink2 ?? .secondary)
                     .fixedSize()
             }
-            headerButton { nav.showPalette.toggle() } label: {
-                HStack(spacing: 8) { Text("Lệnh"); Kbd("⌘K") }
-            }
-            headerButton { themes.cycleTheme() } label: {
-                HStack(spacing: 8) {
-                    Circle().fill(theme?.accent ?? .accentColor).frame(width: 12, height: 12)
-                    Text(themes.current?.name ?? "")
-                }
-            }
-            headerButton(square: true) { themes.cycleAppearance() } label: {
-                Image(systemName: themes.appearance.symbol).font(.system(size: 14))
-            }
         }
-    }
-
-    private func headerButton<L: View>(
-        square: Bool = false, action: @escaping () -> Void, @ViewBuilder label: () -> L
-    ) -> some View {
-        Button(action: action) {
-            label()
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundStyle(theme?.ink ?? .primary)
-                .padding(.horizontal, square ? 0 : 12)
-                .frame(width: square ? 34 : nil, height: 34)
-                .overlay { RoundedRectangle(cornerRadius: 10).strokeBorder(theme?.line ?? .secondary) }
-                .contentShape(.rect(cornerRadius: 10))
-        }
-        .buttonStyle(.plain)
     }
 
     private var deckTitleMain: String {

@@ -120,15 +120,6 @@ struct MainWindow: View {
     // MARK: Toolbar
 
     @ToolbarContentBuilder private var toolbar: some ToolbarContent {
-        ToolbarItem(placement: .primaryAction) {
-            if nav.screen != .study { Button {
-                nav.showPalette.toggle()
-            } label: {
-                Label("Tìm lệnh", systemImage: "command")
-            }
-            .help("⌘K — bảng lệnh (chưa dựng)") }
-        }
-        ToolbarSpacer(.fixed)
         ToolbarItemGroup(placement: .primaryAction) {
             if nav.screen != .study {
                 Button {
