@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+
+# Xcode / Swift
+apple/*.xcodeproj/
+apple/*.xcworkspace/
+xcuserdata/
+DerivedData/
+.build/
+.swiftpm/
+*.xcresult
+
+# Node / backend
+node_modules/
+backend/dist/
+backend/prisma/generated/
+.env
+backups/
+
+# Editor
+.vscode/
+.idea/

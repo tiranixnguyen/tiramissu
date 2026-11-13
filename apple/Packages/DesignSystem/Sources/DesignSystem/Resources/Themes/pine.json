@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "pine",
+  "name": "Rừng thông",
+  "description": "Xanh lá trầm, tập trung",
+  "useSystemAccent": false,
+  "typography": {
+    "cardKoreanFont": "serif",
+    "uiFont": "system",
+    "cardScale": 1
+  },
+  "light": {
+    "bg": "#F1F4EF",
+    "surface": "#FFFFFF",
+    "ink": "#17201A",
+    "ink2": "#475449",
+    "accent": "#1F6B4A",
+    "line": "#D6DED6",
+    "onAccent": "#FFFFFF",
+    "ok": "#1C7146",
+    "bad": "#B23A2E",
+    "flag": "#9A5B00"
+  },
+  "dark": {
+    "bg": "#0F1712",
+    "surface": "#17221B",
+    "ink": "#E5EEE7",
+    "ink2": "#9DB0A3",
+    "accent": "#5CCB95",
+    "line": "#2A3A2F",
+    "onAccent": "#06140C",
+    "ok": "#5CC48E",
+    "bad": "#F08174",
+    "flag": "#F2B54B"
+  }
+}

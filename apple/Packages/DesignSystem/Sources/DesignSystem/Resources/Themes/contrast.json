@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "contrast",
+  "name": "Tương phản cao",
+  "description": "Đen trắng, dễ đọc nhất",
+  "useSystemAccent": false,
+  "typography": {
+    "cardKoreanFont": "serif",
+    "uiFont": "system",
+    "cardScale": 1
+  },
+  "light": {
+    "bg": "#FFFFFF",
+    "surface": "#FFFFFF",
+    "ink": "#000000",
+    "ink2": "#222222",
+    "accent": "#0033CC",
+    "line": "#000000",
+    "onAccent": "#FFFFFF",
+    "ok": "#1C7146",
+    "bad": "#B23A2E",
+    "flag": "#9A5B00"
+  },
+  "dark": {
+    "bg": "#000000",
+    "surface": "#0A0A0A",
+    "ink": "#FFFFFF",
+    "ink2": "#E6E6E6",
+    "accent": "#FFD400",
+    "line": "#FFFFFF",
+    "onAccent": "#000000",
+    "ok": "#5CC48E",
+    "bad": "#F08174",
+    "flag": "#F2B54B"
+  }
+}

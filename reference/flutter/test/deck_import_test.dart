@@ -1,0 +1,121 @@
+import "dart:convert";
+
+import "package:flashcard_app/features/study_reading/domain/deck_import.dart";
+import "package:flutter_test/flutter_test.dart";
+
+void main() {
+  test("đọc object {name, words} và bỏ khoảng trắng thừa", () {
+    final r = parseDeckImport('''
+{"name": " Sức khoẻ ", "words": [
+  {"back": " 치아 ", "front": "răng", "hint": "  "},
+  {"back": "건강", "front": "sức khoẻ", "hint": "kiện khang"}
+]}''');
+    expect(r.ok, isTrue);
+    expect(r.name, "Sức khoẻ");
+    expect(r.words, [
+      {"front": "răng", "back": "치아", "typeAnswer": true},
+      {
+        "front": "sức khoẻ",
+        "back": "건강",
+        "typeAnswer": true,
+        "hint": "kiện khang",
+      },
+    ]);
+  });
+
+  test("note (Markdown) giữ nguyên thụt lề/xuống dòng; rỗng thì bỏ", () {
+    const md = "    code\n\n- **ý 1**\n  - ý lồng\n";
+    final r = parseDeckImport(
+      jsonEncode([
+        {"back": "가다", "front": "đi", "note": md},
+        {"back": "오다", "front": "đến", "note": " \n "},
+      ]),
+    );
+    expect(r.ok, isTrue);
+    expect(r.words[0]["note"], md);
+    expect(r.words[1].containsKey("note"), isFalse);
+  });
+
+  test("chấp nhận mảng trần và khối ```json của AI", () {
+    final r = parseDeckImport('''
+Đây là kết quả:
+```json
+[{"back": "학교", "front": "trường học"}]
+```
+''');
+    expect(r.ok, isTrue);
+    expect(r.name, isNull);
+    expect(r.words.single["back"], "학교");
+  });
+
+  test("thẻ ngữ cảnh (followUp/followUps) đã bỏ -> báo lỗi, không cho gửi", () {
+    final r = parseDeckImport('''
+[{"back": "가다", "front": "đi", "followUp": {"front": "đi học"}},
+ {"back": "오다", "front": "đến", "followUps": []},
+ {"back": "학교", "front": "trường học"}]''');
+    expect(r.ok, isFalse);
+    expect(r.errors, hasLength(2));
+    expect(r.errors.first, startsWith("Từ thứ 1: không còn hỗ trợ"));
+    expect(r.words.single["back"], "학교");
+  });
+
+  test("từ thiếu front/back -> báo lỗi đúng vị trí, không cho gửi", () {
+    final r = parseDeckImport(
+      '[{"back": "학교"}, {"back": "학생", "front": "học sinh"}]',
+    );
+    expect(r.ok, isFalse);
+    expect(r.errors, ["Từ thứ 1: thiếu \"front\" hoặc \"back\"."]);
+    expect(r.words, hasLength(1));
+  });
+
+  test("định dạng cũ kr/vi không còn được nhận", () {
+    expect(parseDeckImport('[{"kr": "학교", "vi": "trường học"}]').ok, isFalse);
+  });
+
+  test("JSON hỏng và dữ liệu sai kiểu", () {
+    expect(
+      parseDeckImport("{không phải json").errors.single,
+      startsWith("JSON"),
+    );
+    expect(parseDeckImport('{"words": 3}').ok, isFalse);
+    expect(parseDeckImport("").ok, isFalse);
+    expect(parseDeckImport("").errors, isEmpty); // ô trống không phải lỗi
+  });
+
+  test("báo từ đã có ở bộ khác (chỉ cảnh báo)", () {
+    final r = parseDeckImport(
+      '[{"back": "학교", "front": "trường"}, {"back": "새", "front": "chim"}]',
+    );
+    expect(r.duplicatesOf({"학교", "학생"}), ["학교"]);
+    expect(r.ok, isTrue);
+  });
+
+  test("giới hạn 500 từ mỗi lần, khớp server", () {
+    final many = List.generate(501, (i) => '{"back": "k$i", "front": "v"}');
+    expect(parseDeckImport("[${many.join(",")}]").ok, isFalse);
+  });
+
+  group("Nhập đáp án", () {
+    test("không ghi typeAnswer: luôn là thẻ gõ đáp án, kể cả câu dài", () {
+      final r = parseDeckImport('''
+[{"back": "간 이식 수술", "front": "ghép gan"},
+ {"back": "1일 2회, 1회 1정 복용", "front": "liều dùng"}]''');
+      expect(r.words.map((c) => c["typeAnswer"]), [true, true]);
+      expect(r.typeAnswerCount, 2);
+    });
+
+    test("ghi rõ typeAnswer thì giữ nguyên", () {
+      final r = parseDeckImport('''
+[{"back": "가다", "front": "đi", "typeAnswer": false},
+ {"back": "학교에 가서 공부를 하다", "front": "đi học", "typeAnswer": true}]''');
+      expect(r.words.map((c) => c["typeAnswer"]), [false, true]);
+    });
+
+    test("defaultTypeAnswer đếm từ theo khoảng trắng", () {
+      expect(defaultTypeAnswer("가다"), isTrue);
+      expect(defaultTypeAnswer("  학교에   가다  "), isTrue);
+      expect(defaultTypeAnswer("1일 2회 복용"), isTrue);
+      expect(defaultTypeAnswer("1일 2회, 1회 1정 복용"), isFalse);
+    });
+  });
+}

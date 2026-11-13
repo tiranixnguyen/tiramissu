@@ -1,0 +1,199 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client"
+  output   = "./generated/prisma"
+}
+
+/// Chưa có đăng nhập: toàn bộ backend phục vụ đúng một user cố định (xem
+/// src/modules/common/defaultUser.ts). Giữ userId trên mọi bảng để sau này
+/// thêm auth thật không phải đổi schema.
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  groups    Group[]
+  decks     Deck[]
+  audios    Audio[]
+  sessions  StudySession[]
+  syncState SyncState?
+}
+
+/// Nhóm bộ từ (Sep1, Sep2, …) — tạo / đổi tên trên Mac/web.
+model Group {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  position  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  decks Deck[]
+
+  @@index([userId, position])
+}
+
+/// Loại bộ từ (kỹ năng). Lưu khoá ASCII; nhãn tiếng Hàn (듣기, 말하기, 읽기,
+/// 쓰기, 문법) do client hiển thị.
+enum DeckType {
+  listening
+  speaking
+  reading
+  writing
+  grammar
+}
+
+/// Tài liệu (giáo trình) bộ từ lấy ra. Lưu khoá ASCII; nhãn (SNU 3A, …,
+/// THTH 4) do client hiển thị.
+enum DeckSource {
+  snu3a
+  snu3b
+  snu4a
+  snu4b
+  thth3
+  thth4
+}
+
+/// Bộ từ. 28 bộ gốc giữ id cũ ("ds1" … "ds30") để khớp với bản đóng gói sẵn
+/// trong app (frontend/assets/content.json) — xem scripts/importContent.ts.
+model Deck {
+  id          String    @id @default(cuid())
+  userId      String
+  groupId     String
+  name        String
+  position    Int
+  /// Không bắt buộc — bộ chưa phân loại để `null`. Chỉ Mac/web đặt/đổi.
+  type        DeckType?
+  /// Tài liệu — không bắt buộc, như `type`.
+  source      DeckSource?
+  /// Mô tả ngắn (không bắt buộc, chữ thuần). Link `http(s)://` trong đó app
+  /// hiển thị thành link bấm được.
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // NoAction thay vì Restrict mặc định: vẫn cấm xoá nhóm còn chứa bộ, nhưng
+  // kiểm tra ở cuối câu lệnh -> xoá user (cascade cả nhóm lẫn bộ) chạy được.
+  group    Group          @relation(fields: [groupId], references: [id], onDelete: NoAction)
+  cards    Card[]
+  sessions StudySession[]
+
+  @@index([groupId, position])
+}
+
+/// Một thẻ. Thẻ của bộ gốc có id cố định "<deckId>-<vị trí>" (vd "ds2-7"),
+/// khớp với bản đóng gói trong app.
+model Card {
+  id               String    @id @default(cuid())
+  deckId           String
+  position         Int
+  /// Mặt trước — câu hỏi hiện ra (thường là nghĩa tiếng Việt).
+  front            String
+  /// Mặt sau — đáp án (thường là từ tiếng Hàn).
+  back             String
+  hint             String?
+  /// Giải thích cho đáp án (không bắt buộc), hiện sau khi lộ đáp án. Markdown
+  /// dán thẳng từ AI — giữ nguyên xuống dòng/thụt lề, chỉ bỏ dòng trống ở hai
+  /// đầu (xem cleanNote trong wordInput.ts).
+  note             String?
+  altAnswers       String[]  @default([])
+  /// `true` = gõ đáp án (chấm theo `back`/`altAnswers`); `false` = thẻ tự
+  /// chấm: lật thẻ rồi tự bấm "Nhớ"/"Chưa nhớ". Nhập bộ mà không ghi rõ thì
+  /// `back` ngắn (≤ 3 từ) là gõ đáp án — xem wordInput.ts.
+  typeAnswer       Boolean   @default(false)
+  /// ⭐ khó nhớ / 漢 Hán Hàn / 📖 đoạn văn ngắn — điện thoại vẫn được bật/tắt
+  /// (kể cả offline).
+  /// Nhiều máy cùng đổi thì lần đổi muộn nhất thắng, so theo thời điểm bấm do
+  /// client gửi lên (không phải lúc tới server). Mỗi cờ một mốc riêng: dùng
+  /// chung một mốc thì đổi ⭐ có thể bị từ chối chỉ vì 漢 vừa đổi muộn hơn.
+  marked           Boolean   @default(false)
+  markedChangedAt  DateTime?
+  hanja            Boolean   @default(false)
+  hanjaChangedAt   DateTime?
+  passage          Boolean   @default(false)
+  passageChangedAt DateTime?
+  /// File nghe (MP3) gắn vào từng trường — nút ▶︎ hiện cạnh trường đó. Chỉ
+  /// Mac/web phát; điện thoại bỏ qua. Xoá Audio thì thẻ chỉ mất file nghe.
+  frontAudioId     String?
+  backAudioId      String?
+  hintAudioId      String?
+  noteAudioId      String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  deck       Deck   @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  frontAudio Audio? @relation("FrontAudio", fields: [frontAudioId], references: [id], onDelete: SetNull)
+  backAudio  Audio? @relation("BackAudio", fields: [backAudioId], references: [id], onDelete: SetNull)
+  hintAudio  Audio? @relation("HintAudio", fields: [hintAudioId], references: [id], onDelete: SetNull)
+  noteAudio  Audio? @relation("NoteAudio", fields: [noteAudioId], references: [id], onDelete: SetNull)
+
+  @@index([deckId, position])
+}
+
+/// File nghe ngắn (MP3), lưu thẳng trong Postgres để `pg_dump` sao lưu luôn.
+/// Không bao giờ sửa: tải lên cùng nội dung thì trả lại bản cũ (trùng
+/// `sha256`), nên client cache theo id mãi mãi được. Không còn thẻ nào trỏ tới
+/// thì dọn bằng `npm run prune-audio`.
+model Audio {
+  id        String   @id @default(cuid())
+  userId    String
+  sha256    String
+  mime      String
+  size      Int
+  bytes     Bytes
+  createdAt DateTime @default(now())
+
+  user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  frontCards Card[] @relation("FrontAudio")
+  backCards  Card[] @relation("BackAudio")
+  hintCards  Card[] @relation("HintAudio")
+  noteCards  Card[] @relation("NoteAudio")
+
+  @@unique([userId, sha256])
+}
+
+/// Một lần học một bộ, trên bất kỳ máy nào. Chỉ thêm, không bao giờ sửa: id do
+/// client sinh (uuid) nên gửi lại nhiều lần (mạng chập chờn) vẫn chỉ ra một
+/// bản ghi, và hai máy học cùng lúc không bao giờ ghi đè nhau.
+model StudySession {
+  id            String   @id
+  userId        String
+  deckId        String
+  /// "ios" | "android" | "macos" | "web" | … — chỉ để hiển thị lịch sử.
+  device        String
+  startedAt     DateTime
+  endedAt       DateTime
+  attempted     Int
+  correct       Int
+  masteredCount Int
+  totalCards    Int
+  /// Học hết bộ (mọi thẻ đều thuộc) hay bỏ dở giữa chừng.
+  completed     Boolean
+  createdAt     DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deck Deck @relation(fields: [deckId], references: [id], onDelete: Cascade)
+
+  @@index([userId, deckId, endedAt])
+}
+
+/// CŨ — snapshot đồng bộ kiểu v1 (overlay/marked/hanja/progress theo vị trí).
+/// Chỉ còn giữ để scripts/importContent.ts đọc chỉnh sửa + dấu ⭐/漢 thật của
+/// người dùng khi chuyển sang mô hình Group/Deck/Card. Không route nào dùng
+/// nữa; xoá bảng này sau khi đã import xong trên mọi môi trường.
+model SyncState {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  payload   Json
+  version   Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

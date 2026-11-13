@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "dusk",
+  "name": "Hoàng hôn",
+  "description": "Cam đất ấm áp",
+  "useSystemAccent": false,
+  "typography": {
+    "cardKoreanFont": "serif",
+    "uiFont": "system",
+    "cardScale": 1
+  },
+  "light": {
+    "bg": "#FAF3EE",
+    "surface": "#FFFFFF",
+    "ink": "#2A1A14",
+    "ink2": "#6A4E43",
+    "accent": "#B8402A",
+    "line": "#EADBD2",
+    "onAccent": "#FFFFFF",
+    "ok": "#1C7146",
+    "bad": "#B23A2E",
+    "flag": "#9A5B00"
+  },
+  "dark": {
+    "bg": "#1A1210",
+    "surface": "#251A17",
+    "ink": "#F5E9E4",
+    "ink2": "#C2A79D",
+    "accent": "#FF8A66",
+    "line": "#3D2C27",
+    "onAccent": "#2A0E05",
+    "ok": "#5CC48E",
+    "bad": "#F08174",
+    "flag": "#F2B54B"
+  }
+}

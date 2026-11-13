@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "paper",
+  "name": "Giấy",
+  "description": "Mặc định · trắng ngà, mực xanh",
+  "useSystemAccent": false,
+  "typography": {
+    "cardKoreanFont": "serif",
+    "uiFont": "system",
+    "cardScale": 1
+  },
+  "light": {
+    "bg": "#F5F4F0",
+    "surface": "#FFFFFF",
+    "ink": "#191C24",
+    "ink2": "#4C5260",
+    "accent": "#2B54C9",
+    "line": "#DDDBD3",
+    "onAccent": "#FFFFFF",
+    "ok": "#1C7146",
+    "bad": "#B23A2E",
+    "flag": "#9A5B00"
+  },
+  "dark": {
+    "bg": "#121418",
+    "surface": "#1B1E24",
+    "ink": "#ECEEF2",
+    "ink2": "#A9AFBC",
+    "accent": "#7C9BFF",
+    "line": "#343946",
+    "onAccent": "#0B1020",
+    "ok": "#5CC48E",
+    "bad": "#F08174",
+    "flag": "#F2B54B"
+  }
+}

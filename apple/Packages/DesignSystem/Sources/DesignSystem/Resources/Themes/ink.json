@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "ink",
+  "name": "Mực đêm",
+  "description": "Tím chàm, dịu mắt buổi tối",
+  "useSystemAccent": false,
+  "typography": {
+    "cardKoreanFont": "serif",
+    "uiFont": "system",
+    "cardScale": 1
+  },
+  "light": {
+    "bg": "#EEF0F6",
+    "surface": "#FFFFFF",
+    "ink": "#141826",
+    "ink2": "#4A5068",
+    "accent": "#5B4BD6",
+    "line": "#D7DAE6",
+    "onAccent": "#FFFFFF",
+    "ok": "#1C7146",
+    "bad": "#B23A2E",
+    "flag": "#9A5B00"
+  },
+  "dark": {
+    "bg": "#0E1020",
+    "surface": "#171A2E",
+    "ink": "#E8E9F5",
+    "ink2": "#A3A7C4",
+    "accent": "#A99BFF",
+    "line": "#2B2F4A",
+    "onAccent": "#120E2A",
+    "ok": "#5CC48E",
+    "bad": "#F08174",
+    "flag": "#F2B54B"
+  }
+}

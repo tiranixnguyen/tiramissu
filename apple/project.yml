@@ -1,0 +1,59 @@
+# XcodeGen — sinh Tiramissu.xcodeproj:  cd apple && xcodegen
+# Không commit .xcodeproj (đã .gitignore); sửa cấu hình ở đây.
+name: Tiramissu
+options:
+  bundleIdPrefix: com.tiranix.tiramissu
+  deploymentTarget:
+    macOS: "26.0"
+    iOS: "26.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    DEVELOPMENT_LANGUAGE: vi
+    # Apple ID miễn phí: chọn Team trong Xcode (Signing & Capabilities) lần đầu.
+    CODE_SIGN_STYLE: Automatic
+packages:
+  HanCore:
+    path: Packages/HanCore
+  DesignSystem:
+    path: Packages/DesignSystem
+targets:
+  Tiramissu-macOS:
+    type: application
+    platform: macOS
+    sources:
+      - App/Mac
+      - path: App/Shared
+        excludes: ["README.md"]
+    dependencies:
+      - package: HanCore
+      - package: DesignSystem
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tiranix.tiramissu.mac
+        PRODUCT_NAME: Tiramissu
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.education
+        ENABLE_APP_SANDBOX: YES
+        ENABLE_OUTGOING_NETWORK_CONNECTIONS: YES
+        ENABLE_USER_SELECTED_FILES: readwrite
+  Tiramissu-iOS:
+    type: application
+    platform: iOS
+    sources:
+      - App/iOS
+      - path: App/Shared
+        excludes: ["README.md"]
+    dependencies:
+      - package: HanCore
+      - package: DesignSystem
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tiranix.tiramissu.ios
+        PRODUCT_NAME: Tiramissu
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        TARGETED_DEVICE_FAMILY: "1"

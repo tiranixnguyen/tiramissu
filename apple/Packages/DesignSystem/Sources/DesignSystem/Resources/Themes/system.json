@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "system",
+  "name": "Hệ thống",
+  "description": "Theo màu nhấn macOS (accent bị thay bằng màu nhấn hệ thống lúc chạy)",
+  "useSystemAccent": true,
+  "typography": {
+    "cardKoreanFont": "serif",
+    "uiFont": "system",
+    "cardScale": 1
+  },
+  "light": {
+    "bg": "#F2F2F4",
+    "surface": "#FFFFFF",
+    "ink": "#1D1D1F",
+    "ink2": "#55555B",
+    "accent": "#0064D2",
+    "line": "#DADADF",
+    "onAccent": "#FFFFFF",
+    "ok": "#1C7146",
+    "bad": "#B23A2E",
+    "flag": "#9A5B00"
+  },
+  "dark": {
+    "bg": "#161618",
+    "surface": "#1F1F22",
+    "ink": "#F2F2F4",
+    "ink2": "#AAAAB0",
+    "accent": "#409CFF",
+    "line": "#38383C",
+    "onAccent": "#03182E",
+    "ok": "#5CC48E",
+    "bad": "#F08174",
+    "flag": "#F2B54B"
+  }
+}
