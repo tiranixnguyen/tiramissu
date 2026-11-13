@@ -37,4 +37,110 @@ struct StudyEngineTests {
             #expect(c.vocabGroups.map(\.id) == ["g1", "g2"])
         }
     }
+
+    @Suite("chấm bài")
+    struct Grading {
+        @Test func chapNhanDapAnPhuVaBoQuaKhoangTrangThua() {
+            let e = buildEngine([RawWord(front: "cảm ơn", back: "감사합니다", altAnswers: ["고맙습니다"])])
+            #expect(e.checkAnswer("  고맙습니다  "))
+            #expect(e.correctCount == 1)
+            #expect(e.attemptedCount == 1)
+        }
+
+        @Test func dapAnRongKhongTinhLaMotLanTraLoi() {
+            let e = buildEngine()
+            #expect(!e.checkAnswer("   "))
+            #expect(e.attemptedCount == 0)
+            #expect(!e.answered)
+        }
+
+        @Test func theDaTraLoiThiKhongChamLai() {
+            let e = buildEngine()
+            e.checkAnswer("sai bét")
+            let attempts = e.attemptedCount
+            e.checkAnswer(e.currentWord!.back)
+            #expect(e.attemptedCount == attempts)
+        }
+    }
+
+    @Suite("lịch Leitner")
+    struct Leitner {
+        @Test func dungBaLanLienTiepThiThanhThuoc() {
+            let e = buildEngine([RawWord(front: "học sinh", back: "학생")])
+            for _ in 0..<StudyEngine.masteryStreak {
+                answerCurrentCorrectly(e)
+                e.nextCard()
+            }
+            #expect(e.masteredCount == 1)
+            #expect(e.isCompleted)
+        }
+
+        @Test func traLoiSaiDatLaiStreakVaBoxVe0() {
+            let e = buildEngine([RawWord(front: "học sinh", back: "학생"), RawWord(front: "trường học", back: "학교")])
+            answerCurrentCorrectly(e)
+            #expect(e.currentProgress?.streak == 1)
+            #expect(e.currentProgress?.box == 1)
+
+            e.nextCard()
+            let target = e.currentWord!.back
+            e.checkAnswer("đáp án sai")
+            #expect(e.outcome == .wrong)
+            while e.currentWord!.back != target { e.nextCard() }
+            #expect(e.currentProgress?.streak == 0)
+            #expect(e.currentProgress?.box == 0)
+        }
+
+        @Test func theSaiQuayLaiSauDungHaiThe() {
+            // 5 thẻ → sau khi lấy 1 ra còn 4 trong hàng đợi; sai → chèn ở vị trí 2.
+            let words = (0..<5).map { RawWord(front: "v\($0)", back: "k\($0)") }
+            let e = buildEngine(words)
+            let first = e.currentIndex!
+            e.checkAnswer("sai")
+            for _ in 0..<2 {
+                e.nextCard()
+                #expect(e.currentIndex != first)
+            }
+            e.nextCard()
+            #expect(e.currentIndex == first)
+        }
+
+        @Test func theSaiDuocChenLaiVaoHangDoi() {
+            let e = buildEngine()
+            let before = e.remainingInRound
+            e.checkAnswer("đáp án sai")
+            #expect(e.remainingInRound == before + 1)
+        }
+
+        @Test func moiLuotHoiMoiTangCardSerialKeCaHoiLaiCungThe() {
+            let e = buildEngine([RawWord(front: "học sinh", back: "학생")])
+            let first = e.cardSerial
+            e.checkAnswer("sai")
+            e.nextCard()
+            #expect(e.currentWord?.back == "학생")
+            #expect(e.cardSerial > first)
+        }
+
+        @Test func snapshotPhanAnhTrangThai() {
+            let e = buildEngine()
+            e.checkAnswer("sai")
+            let s = e.snapshot()
+            #expect(s.outcome == .wrong)
+            #expect(s.canOverride)
+            #expect(s.attemptedCount == 1)
+            #expect(s.cardSerial == e.cardSerial)
+        }
+    }
+}
+
+/// Dựng engine một nhóm, một bộ `d1`, đã `bootstrap` với seed cố định.
+func buildEngine(_ words: [RawWord] = threeWords, seed: UInt64 = 1) -> StudyEngine {
+    let c = contentOf([contentDeck("d1", words)]).buildStudyCatalog()
+    let e = StudyEngine(decks: c.decks, vocabGroups: c.vocabGroups, random: SeededGenerator(seed: seed))
+    e.bootstrap()
+    return e
+}
+
+/// Trả lời đúng thẻ đang hiển thị, dù nó là thẻ nào.
+func answerCurrentCorrectly(_ e: StudyEngine) {
+    #expect(e.checkAnswer(e.currentWord!.back))
 }

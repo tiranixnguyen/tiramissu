@@ -127,7 +127,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Xong khi: test nhóm "dựng dữ liệu (buildStudyCatalog)" (2 test) pass.
   - Phụ thuộc: T2.02, T2.03
 
-- [ ] **T2.07 · `StudyEngine` — hàng đợi, chấm bài, Leitner**
+- [x] **T2.07 · `StudyEngine` — hàng đợi, chấm bài, Leitner**
   - File: `HC/Sources/HanCore/Study/{StudyEngine,CardProgress,StudySessionState}.swift`, `StudyEngineTests.swift`
   - Đọc trước: `docs/study-algorithm.md` (Mô hình, Hàng đợi), `REF/domain/study_engine.dart` dòng 1–330
   - Làm: `final class StudyEngine` (không `ObservableObject`), hằng `masteryStreak = 3`, `wrongOffset = 2`,
