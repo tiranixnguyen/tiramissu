@@ -114,7 +114,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
     từ chối `followUp(s)`; `note` giữ nguyên thụt lề.
   - Xong khi: 12 test port 1-1 pass (+ test JSON có bảng Markdown phía sau khối json — prompt "Chữa bài").
 
-- [ ] **T2.05 · Prompt nhúng trong app**
+- [x] **T2.05 · Prompt nhúng trong app**
   - File: `HC/Sources/HanCore/Import/Prompts.swift` + test
   - Làm: `enum PromptKind { vocab, grammar, fix, listen }`, `enum AITool { gemini, notebookLM }`,
     `Prompts.text(kind:tool:)` trả **nguyên văn** khối trong `docs/prompts/<kind>.md`.
