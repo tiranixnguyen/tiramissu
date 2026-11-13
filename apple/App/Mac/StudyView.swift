@@ -80,7 +80,7 @@ struct StudyView: View {
             } else if let word = state.currentWord {
                 HStack(alignment: .top, spacing: 0) {
                     card(word)
-                    if !compact { sidebarColumn.padding(.top, 16).padding(.bottom, 16) }
+                    if !compact { sidebarColumn.padding(.top, 8).padding(.bottom, 12) }
                 }
             } else {
                 ContentUnavailableView("Bộ này chưa có thẻ", systemImage: "tray")
@@ -145,7 +145,7 @@ struct StudyView: View {
     // MARK: Thẻ
 
     private func card(_ word: StudyWord) -> some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 12) {
             CardSurface {
                 VStack(spacing: 0) {
                     HStack {
@@ -156,8 +156,8 @@ struct StudyView: View {
                         flagChip("star.fill", on: state.currentIsMarked, help: "Từ khó nhớ (⇧⌘8)", key: "8") { model.toggleMark() }
                         flagChip(nil, on: state.currentIsHanja, help: "Hán Hàn (⇧⌘H)", key: "h") { model.toggleHanja() }
                     }
-                    Spacer(minLength: 16)
-                    VStack(spacing: 14) {
+                    Spacer(minLength: 8)
+                    VStack(spacing: 10) {
                         Text(word.front)
                             .font(cardFont(size: 56))
                             .foregroundStyle(theme?.ink ?? .primary)
@@ -206,10 +206,10 @@ struct StudyView: View {
             }
             .frame(maxHeight: .infinity)
             GlassActionBar(actions(for: word))
-                .padding(.bottom, 16)
+                .padding(.bottom, 12)
         }
-        .padding(.horizontal, 24)
-        .padding(.top, 16)
+        .padding(.horizontal, 8)
+        .padding(.top, 8)
     }
 
     private var showBack: Bool { state.answered || state.flipped }
@@ -235,7 +235,7 @@ struct StudyView: View {
     // MARK: Cột phải
 
     private var sidebarColumn: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 10) {
             panel {
                 Text("Lượt học này").font(.system(size: 13, weight: .semibold))
                 HStack(spacing: 20) {
@@ -261,8 +261,8 @@ struct StudyView: View {
             }
             .frame(maxHeight: .infinity, alignment: .top)
         }
-        .frame(width: 232)
-        .padding(.trailing, 12)
+        .frame(width: 224)
+        .padding(.trailing, 4)
     }
 
     private func stat(_ n: Int, _ label: String) -> some View {
@@ -274,7 +274,7 @@ struct StudyView: View {
 
     private func panel<C: View>(@ViewBuilder _ body: () -> C) -> some View {
         VStack(alignment: .leading, spacing: 8) { body() }
-            .padding(16)
+            .padding(12)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: 18).fill(theme?.surface ?? Color.clear)

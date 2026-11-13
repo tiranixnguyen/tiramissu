@@ -10,7 +10,7 @@
 
         public var body: some View {
             content
-                .padding(32)
+                .padding(22)
                 .frame(maxWidth: .infinity)
                 .background(theme?.surface ?? .clear, in: .rect(cornerRadius: 22))
                 .overlay { RoundedRectangle(cornerRadius: 22).strokeBorder(theme?.line ?? .clear) }
