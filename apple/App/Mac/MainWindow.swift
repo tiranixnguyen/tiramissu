@@ -130,8 +130,6 @@ struct MainWindow: View {
         }
         ToolbarSpacer(.fixed)
         ToolbarItemGroup(placement: .primaryAction) {
-            SettingsLink { Label("Cài đặt", systemImage: "gearshape") }
-                .help("Cài đặt (⌘,)")
             if nav.screen != .study {
                 Button {
                     themes.cycleTheme()
@@ -159,6 +157,9 @@ private struct SyncFooter: View {
             Image(systemName: symbol)
             Text(text).font(.caption)
             Spacer()
+            SettingsLink { Image(systemName: "gearshape") }
+                .buttonStyle(.plain)
+                .help("Cài đặt (⌘,)")
         }
         .foregroundStyle(.secondary)
         .padding(.horizontal, 16).padding(.vertical, 10)
