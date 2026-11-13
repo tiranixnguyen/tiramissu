@@ -120,7 +120,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
     `Prompts.text(kind:tool:)` trả **nguyên văn** khối trong `docs/prompts/<kind>.md`.
   - Xong khi: test: 8 tổ hợp không rỗng, bản Gemini có placeholder `<DÁN`, bản NotebookLM có `source`.
 
-- [ ] **T2.06 · Dựng catalog + fixture**
+- [x] **T2.06 · Dựng catalog + fixture**
   - File: `HC/Sources/HanCore/Study/StudyCatalog.swift`, `HC/Tests/HanCoreTests/Support/Fixtures.swift`,
     `StudyEngineTests.swift` (bắt đầu)
   - Đọc trước: `REF/models/content.dart` (`buildStudyCatalog`), `REF/test/fixtures.dart`
