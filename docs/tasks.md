@@ -239,7 +239,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Trạng thái: code xong, 2 target build sạch (macOS + iOS Simulator); còn bước 👤 chạy thử (chưa tick).
   - Xong khi: 👤 mở app offline lần đầu thấy dữ liệu mẫu; tắt mở lại vẫn còn.
   - Phụ thuộc: T2.16, T2.30
-- [ ] **T2.32 · Khung cửa sổ: sidebar + toolbar**
+- [x] **T2.32 · Khung cửa sổ: sidebar + toolbar**
   - Làm: `NavigationSplitView` (sidebar kính hệ thống: 5 màn + bộ ảo ⭐/漢/📖/🔀/🎧), toolbar: tiêu đề màn,
     nút ⌘K, nút theme (xoay vòng), nút sáng/tối; `⌘1…5`; trạng thái đồng bộ ở chân sidebar.
   - Trạng thái: code xong, build sạch; còn bước 👤 soát bố cục (chưa tick). ⌘K mới là nút giữ chỗ (bảng lệnh làm sau); 🎧 Clip nghe tắt tới GĐ3.
