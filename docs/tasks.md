@@ -163,7 +163,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Xong khi: nhóm "nội dung thay đổi giữa lượt" (7) pass → **toàn bộ** test engine port xong.
   - Phụ thuộc: T2.11
 
-- [ ] **T2.13 · Ghi lần học (`SessionRecorder`)**
+- [x] **T2.13 · Ghi lần học (`SessionRecorder`)**
   - File: `HC/Sources/HanCore/Study/SessionRecorder.swift` + test
   - Đọc trước: `docs/study-algorithm.md` › Gợi ý ôn lại (đoạn về `StudySessionRecord`), `REF/models/study_session_record.dart`
   - Làm: bắt đầu ở câu trả lời đầu tiên; kết thúc khi thuộc hết (completed) hoặc đổi bộ/nhóm/học lại
