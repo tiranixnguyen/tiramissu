@@ -1,7 +1,9 @@
 import express, { type NextFunction, type Request, type Response } from "express";
 import cors from "cors";
 import { audioRouter } from "./modules/audio/audioRoutes";
+import { clipRouter } from "./modules/clips/clipRoutes";
 import { contentRouter } from "./modules/content/contentRoutes";
+import { requireToken } from "./modules/common/auth";
 import { sessionRouter } from "./modules/sessions/sessionRoutes";
 
 /**
@@ -15,8 +17,11 @@ export function createApp() {
   app.use(express.json({ limit: "2mb" }));
 
   app.get("/health", (_req, res) => res.json({ status: "ok" }));
+  // /health ở trên không cần token (Render dùng làm health check).
+  app.use(requireToken);
   app.use(contentRouter);
   app.use(audioRouter);
+  app.use(clipRouter);
   app.use(sessionRouter);
 
   // Lỗi ném ra trước khi vào `handle()` (body-parser: body quá lớn, JSON

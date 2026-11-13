@@ -15,3 +15,17 @@ dotenv.config();
 // nạp file test, nên đặt ở đây là đúng chỗ (không thể đặt trong file .test.ts
 // vì TypeScript bắt buộc `import` đứng trước mọi statement khác).
 process.env.DEFAULT_USER_EMAIL = "sync-integration-test@vocab-app.local";
+
+// Bật xác thực trong test và tự gắn token vào mọi fetch tới server test.
+// Test xác thực muốn gửi request "trần" thì đặt header `X-Test-No-Auth`.
+process.env.API_TOKEN = "test-token";
+const realFetch = globalThis.fetch;
+globalThis.fetch = (input, init) => {
+  const headers = new Headers(init?.headers ?? (input instanceof Request ? input.headers : {}));
+  if (headers.has("x-test-no-auth")) {
+    headers.delete("x-test-no-auth");
+  } else if (!headers.has("authorization")) {
+    headers.set("Authorization", `Bearer ${process.env.API_TOKEN}`);
+  }
+  return realFetch(input, { ...init, headers });
+};

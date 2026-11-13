@@ -1,6 +1,6 @@
 /**
  * Xoá file nghe không còn thẻ nào trỏ tới (gỡ khỏi thẻ, xoá thẻ, thay file
- * khác đều để lại file cũ trong bảng Audio). Không route nào tự xoá: file đã
+ * khác đều để lại file cũ trong bảng Audio). File còn clip trỏ tới thì giữ. Không route nào tự xoá: file đã
  * tải lên nhưng chưa kịp gắn vào thẻ (đang mở dialog sửa) vẫn phải còn.
  *
  * Chạy (từ thư mục backend/):  npm run prune-audio -- --dry-run   (chỉ liệt kê)
@@ -8,6 +8,7 @@
  * Chỉ xoá file tạo trước đó hơn 1 ngày. Nên `pg_dump` trước khi xoá thật.
  */
 import { prisma } from "../config/db";
+import { orphanAudioWhere } from "../modules/audio/audioService";
 import { ensureDefaultUser } from "../modules/common/defaultUser";
 
 const MIN_AGE_MS = 24 * 60 * 60 * 1000;
@@ -16,14 +17,7 @@ async function main() {
   const dryRun = process.argv.includes("--dry-run");
   const { id: userId } = await ensureDefaultUser(prisma);
   const orphans = await prisma.audio.findMany({
-    where: {
-      userId,
-      createdAt: { lt: new Date(Date.now() - MIN_AGE_MS) },
-      frontCards: { none: {} },
-      backCards: { none: {} },
-      hintCards: { none: {} },
-      noteCards: { none: {} },
-    },
+    where: orphanAudioWhere(userId, new Date(Date.now() - MIN_AGE_MS)),
     select: { id: true, size: true, createdAt: true },
   });
   const kb = Math.round(orphans.reduce((n, a) => n + a.size, 0) / 1024);

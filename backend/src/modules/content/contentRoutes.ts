@@ -8,7 +8,7 @@ import {
   type AudioField,
   createDeck,
   createGroup,
-  DECK_SOURCES,
+  MAX_SOURCE,
   DECK_TYPES,
   deleteCard,
   getContent,
@@ -31,7 +31,7 @@ export const contentRouter = Router();
 
 const MAX_NAME = 120;
 const TYPE_ERROR = `Loại bộ không hợp lệ (${DECK_TYPES.join(", ")} hoặc null).`;
-const SOURCE_ERROR = `Tài liệu không hợp lệ (${DECK_SOURCES.join(", ")} hoặc null).`;
+const SOURCE_ERROR = `Tài liệu phải là chữ, tối đa ${MAX_SOURCE} ký tự (hoặc null).`;
 const DESCRIPTION_ERROR = `Mô tả bộ phải là chữ, tối đa ${MAX_DESCRIPTION} ký tự.`;
 
 function nameOf(body: unknown): string | null {

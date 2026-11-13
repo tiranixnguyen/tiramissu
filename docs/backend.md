@@ -24,6 +24,12 @@
   `/cards/flags`. `wordInput.ts` kiểm tra + dọn JSON nhập bộ.
 - `src/modules/audio/` — `POST /audio`, `GET /audio/:id` (file nghe, xem
   "File nghe" bên dưới).
+- `src/modules/clips/` — `/clips` (GET/POST/PATCH/DELETE): đoạn cắt từ file nghe M4A.
+  `start < end`, ≤ 60 s, `transcript` bắt buộc ≤ 500 ký tự, audio/bộ phải của user.
+  `audioId` FK `Restrict` (không xoá được audio còn clip); xoá bộ → `deckId = null`.
+  `GET /content` trả thêm `clips`; `prune-audio` giữ audio còn clip.
+- `src/modules/common/auth.ts` — `Authorization: Bearer <API_TOKEN>` cho mọi route
+  trừ `/health`; production thiếu `API_TOKEN` thì server không khởi động.
 - `src/modules/sessions/` — `/sessions` (chỉ thêm, id do client sinh).
 - `src/scripts/` — `importContent` (một lần, DB mới), `exportContent` (DB →
   `reference/content.sample.json`, chỉ đọc), `pruneAudio` (dọn file nghe mồ
@@ -48,9 +54,10 @@ khởi đầu / bản sao:
   `reading`/`writing`/`grammar` — client hiển thị 듣기/말하기/읽기/쓰기/문법.
   Lưu khoá ASCII để đổi nhãn không cần migration; app gặp giá trị lạ thì coi
   như chưa phân loại.
-- `Deck.source` (enum `DeckSource`, không bắt buộc) — "Tài liệu": `snu3a`/
-  `snu3b`/`snu4a`/`snu4b`/`thth3`/`thth4` — client hiển thị SNU 3A … THTH 4.
-  Cùng quy ước với `type` (khoá ASCII, giá trị lạ = chưa chọn).
+- `Deck.source` (`String?`, không bắt buộc) — "Tài liệu": chuỗi tự do ≤ 40 ký tự
+  (vd `SNU 4A`), bỏ khoảng trắng hai đầu, rỗng → `null`, quá dài / không phải
+  chữ → 400 (`parseDeckSource`). Trước đây là enum `DeckSource`; migration
+  `deck_source_free_text` đổi `snu3a` → `SNU 3A` … `thth4` → `THTH 4`.
 - `Deck.description` (không bắt buộc): chữ thuần ≤ 500 ký tự, bỏ khoảng trắng
   hai đầu + đổi CRLF, rỗng → `null` (`parseDescription`). App tự biến link
   `http(s)://` thành link bấm được (chỉ Mac/web).
@@ -79,8 +86,9 @@ khởi đầu / bản sao:
   chục nghìn clip thì nên chuyển sang lưu file trên đĩa (chỉ đổi
   `audioService.ts`, API giữ nguyên).
 - `POST /audio`: thân request là **bytes thô** `Content-Type: audio/mpeg`
-  (không multipart → không cần `multer`). Chỉ nhận MP3 (đoán theo byte đầu:
-  thẻ `ID3` hoặc khung MPEG), tối đa `AUDIO_MAX_BYTES` (mặc định 2 MB). Trùng
+  (không multipart → không cần `multer`). Nhận MP3 (đoán theo byte đầu:
+  thẻ `ID3` hoặc khung MPEG) và M4A (`ftyp` ở byte 4, lưu `mime = audio/mp4`; `GET` trả
+  đúng `Content-Type` theo `mime`); file khác → 415, tối đa `AUDIO_MAX_BYTES` (mặc định 2 MB). Trùng
   sha256 (theo user) thì trả lại id cũ.
 - `GET /audio/:id`: nội dung của id không bao giờ đổi → `Cache-Control:
   immutable` + `ETag`. **Phải hỗ trợ `Range`/206** — AVPlayer (just_audio trên
@@ -101,3 +109,65 @@ Smoke test ghi bằng tay trên server dev từng **ghi đè mất dữ liệu t
 `DEFAULT_USER_EMAIL` (server dev dùng đúng email thật). Muốn tự curl
 POST/PATCH/DELETE: `pg_dump` trước (xem `backups/`) hoặc chạy server với
 `DEFAULT_USER_EMAIL` khác. GET thì thoải mái. `npx vitest run` luôn an toàn.
+
+## Deploy
+
+Chạy miễn phí: Postgres trên **Neon**, API trên **Render** (Docker). Render free ngủ sau
+~15 phút không có request → request đầu mất ~30–60 s; app phải chịu được (đã offline-first).
+
+### 1. Neon (Postgres)
+
+1. Tạo project tại neon.tech (region gần nhất, Postgres 16).
+2. Lấy **connection string** (dạng `postgresql://user:pass@ep-xxx.neon.tech/neondb?sslmode=require`).
+   Dùng bản *pooled* hoặc *direct* đều được; `prisma migrate deploy` chạy ổn với direct — nếu
+   migrate treo, đổi sang direct.
+
+### 2. Sinh token
+
+```bash
+openssl rand -hex 32
+```
+
+Lưu vào trình quản lý mật khẩu — đây là `API_TOKEN` (server) và token nhập trong Cài đặt app.
+
+### 3. Render (web service)
+
+1. Đẩy repo lên GitHub → Render › New › **Blueprint** → chọn repo (đọc `render.yaml` ở gốc).
+2. Điền hai biến `sync: false`: `DATABASE_URL` (Neon) và `API_TOKEN`.
+3. Deploy. Khi khởi động container chạy `npx prisma migrate deploy` rồi `node dist/src/index.js`
+   (nghe `PORT` do Render đặt). Health check: `GET /health`.
+4. Thử:
+
+```bash
+curl https://<app>.onrender.com/health
+curl -H "Authorization: Bearer <API_TOKEN>" https://<app>.onrender.com/content
+```
+
+`NODE_ENV=production` mà thiếu `API_TOKEN` → server từ chối khởi động (cố ý).
+
+### 4. Chuyển dữ liệu local → Neon
+
+Dump từ Postgres local (tên DB `tiramissu_dev` hoặc DB cũ của `flashcard-app`):
+
+```bash
+pg_dump --format=custom --no-owner --no-acl \
+  "postgresql://postgres:postgres@localhost:5432/tiramissu_dev" -f tiramissu.dump
+```
+
+Restore lên Neon (DB trống — **chưa** để server chạy migrate trước, hoặc thêm `--clean --if-exists`):
+
+```bash
+pg_restore --no-owner --no-acl --clean --if-exists \
+  -d "<chuỗi kết nối Neon>" tiramissu.dump
+```
+
+Nếu dump từ DB `flashcard-app` cũ (schema chưa có `Clip`, `Deck.source` còn là enum), cứ restore
+rồi để Render chạy `migrate deploy` lần đầu — nó áp các migration còn thiếu. Kiểm tra bằng
+`curl` ở bước 3 thấy đủ nhóm/bộ.
+
+### Chạy local bằng Docker (thử image)
+
+```bash
+docker build -t tiramissu-api backend
+docker run --rm -p 3000:3000 -e DATABASE_URL=... -e API_TOKEN=... tiramissu-api
+```
