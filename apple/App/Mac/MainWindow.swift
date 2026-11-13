@@ -29,6 +29,8 @@ enum MacScreen: String, CaseIterable, Identifiable {
 final class Navigation {
     var screen: MacScreen = .today
     var showPalette = false
+    /// Sidebar đang ẩn — màn cần chừa chỗ cho nút đèn giao thông + nút sidebar.
+    var sidebarHidden = false
 }
 
 /// Bộ ảo hiện ở sidebar, trên cùng nhóm bộ thật.
@@ -43,10 +45,11 @@ struct MainWindow: View {
     @Environment(Navigation.self) private var nav
     @Environment(ThemeStore.self) private var themes
     @Environment(\.theme) private var theme
+    @State private var columns: NavigationSplitViewVisibility = .automatic
 
     var body: some View {
         @Bindable var nav = nav
-        NavigationSplitView {
+        NavigationSplitView(columnVisibility: $columns) {
             sidebar(selection: $nav.screen)
                 .navigationSplitViewColumnWidth(min: 200, ideal: 230)
         } detail: {
@@ -56,6 +59,7 @@ struct MainWindow: View {
                 .navigationTitle(nav.screen.rawValue)
         }
         .toolbar { toolbar }
+        .onChange(of: columns) { nav.sidebarHidden = (columns == .detailOnly) }
     }
 
     // MARK: Sidebar

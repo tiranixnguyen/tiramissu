@@ -22,7 +22,9 @@ struct StudyView: View {
             header
             content
         }
-        .padding(.horizontal, 12).padding(.top, 10)
+        .padding(.trailing, 12).padding(.top, 10)
+        .padding(.leading, nav.sidebarHidden ? 150 : 12)  // chừa chỗ đèn giao thông + nút sidebar
+        .animation(.default, value: nav.sidebarHidden)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea(.container, edges: .top)  // thanh trên chiếm chỗ vùng toolbar trống
         .navigationTitle("")
