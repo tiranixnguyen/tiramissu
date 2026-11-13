@@ -200,7 +200,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
 
 ### G2 · DesignSystem
 
-- [ ] **T2.20 · `Color(hex:)` + `ThemeStore`**
+- [x] **T2.20 · `Color(hex:)` + `ThemeStore`**
   - File: `DS/Sources/DesignSystem/Theme/{Color+Hex,ThemeStore,ResolvedTheme}.swift` (bọc `#if canImport(SwiftUI)`),
     test độ tương phản trong `DS/Tests/DesignSystemTests/ContrastTests.swift` (Foundation thuần)
   - Làm: `ThemeStore` `@Observable`: `themeID`, `appearance` (.system/.light/.dark), lưu UserDefaults,
