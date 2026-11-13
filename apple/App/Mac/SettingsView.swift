@@ -42,6 +42,11 @@ private struct ServerTab: View {
                         .keyboardShortcut(.defaultAction)
                     if testing { ProgressView().controlSize(.small) }
                 }
+                Button("Nạp dữ liệu mẫu (để thử)") {
+                    message = model.loadBundledSample()
+                        ? ("Đã nạp dữ liệu mẫu. Để trống URL server để không bị đồng bộ ghi đè.", true)
+                        : ("Không tìm thấy dữ liệu mẫu trong app.", false)
+                }
                 if let message {
                     Label(message.text, systemImage: message.ok ? "checkmark.circle" : "exclamationmark.triangle")
                         .foregroundStyle(message.ok ? Color.green : Color.red)

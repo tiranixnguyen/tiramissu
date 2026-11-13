@@ -64,6 +64,17 @@ final class AppModel {
         return try? HanJSON.makeDecoder().decode(ContentSnapshot.self, from: data)
     }
 
+    /// Thay nội dung hiện có bằng bản mẫu đóng gói (để thử khi server còn trống). Đồng bộ lần sau sẽ ghi đè.
+    @discardableResult
+    func loadBundledSample() -> Bool {
+        guard let sample = Self.bundledSample() else { return false }
+        content = sample
+        rebuildEngine()
+        let snapshot = sample
+        Task { await persistence.saveContent(snapshot) }
+        return true
+    }
+
     private func rebuildEngine() {
         let catalog = content.buildStudyCatalog()
         engine = StudyEngine(
