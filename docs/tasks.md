@@ -187,7 +187,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
     mất mạng → `.offline`, header Authorization đúng.
   - Phụ thuộc: T2.02
 
-- [ ] **T2.16 · `SyncEngine` + hàng đợi offline**
+- [x] **T2.16 · `SyncEngine` + hàng đợi offline**
   - File: `HC/Sources/HanCore/Sync/{SyncEngine,PendingQueue,LocalStore}.swift` + test
   - Đọc trước: `docs/study-algorithm.md` › Đồng bộ với backend
   - Làm: `protocol LocalStore` (app cài bằng SwiftData; test dùng bản trong bộ nhớ). `syncNow()`: gửi
