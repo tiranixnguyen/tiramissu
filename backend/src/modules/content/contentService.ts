@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import type { PrismaClient } from "../../../prisma/generated/prisma/client";
-import { DeckSource, DeckType } from "../../../prisma/generated/prisma/enums";
+import { clipSelect, type ClipDto } from "../clips/clipService";
+import { DeckType } from "../../../prisma/generated/prisma/enums";
 import { missingAudioIds } from "../audio/audioService";
 import { HttpError } from "../common/httpError";
 import { cleanAlts, cleanNote, cleanWordInputs, type WordInput } from "./wordInput";
@@ -36,13 +37,18 @@ export function parseDeckType(value: unknown): DeckType | null | undefined {
   return DECK_TYPES.find((t) => t === value);
 }
 
-/** Tài liệu hợp lệ (client hiển thị SNU 3A, SNU 3B, SNU 4A, SNU 4B, THTH 3, THTH 4). */
-export const DECK_SOURCES = Object.values(DeckSource);
+export const MAX_SOURCE = 40;
 
-/** `undefined` = không hợp lệ; `null` = bỏ tài liệu. */
-export function parseDeckSource(value: unknown): DeckSource | null | undefined {
+/**
+ * Tài liệu: chuỗi tự do ≤ 40 ký tự, bỏ khoảng trắng hai đầu, rỗng → `null`.
+ * `undefined` = không hợp lệ (không phải chữ / quá dài).
+ */
+export function parseDeckSource(value: unknown): string | null | undefined {
   if (value === null) return null;
-  return DECK_SOURCES.find((s) => s === value);
+  if (typeof value !== "string") return undefined;
+  const trimmed = value.trim();
+  if (trimmed.length > MAX_SOURCE) return undefined;
+  return trimmed === "" ? null : trimmed;
 }
 
 export const MAX_DESCRIPTION = 500;
@@ -65,7 +71,7 @@ export interface DeckDto {
   name: string;
   position: number;
   type: DeckType | null;
-  source: DeckSource | null;
+  source: string | null;
   description: string | null;
   cards: CardDto[];
 }
@@ -79,6 +85,7 @@ export interface GroupDto {
 export interface ContentDto {
   groups: GroupDto[];
   decks: DeckDto[];
+  clips: ClipDto[];
 }
 
 const cardSelect = {
@@ -109,7 +116,7 @@ function toDeckDto(d: {
   name: string;
   position: number;
   type: DeckType | null;
-  source: DeckSource | null;
+  source: string | null;
   description: string | null;
   cards: CardDto[];
 }): DeckDto {
@@ -127,7 +134,7 @@ function toDeckDto(d: {
 
 /** Toàn bộ nội dung (nhóm + bộ + thẻ) của user — app tải một lần rồi cache. */
 export async function getContent(prisma: PrismaClient, userId: string): Promise<ContentDto> {
-  const [groups, decks] = await Promise.all([
+  const [groups, decks, clips] = await Promise.all([
     prisma.group.findMany({
       where: { userId },
       select: { id: true, name: true, position: true },
@@ -138,8 +145,9 @@ export async function getContent(prisma: PrismaClient, userId: string): Promise<
       include: deckInclude,
       orderBy: [{ groupId: "asc" }, { position: "asc" }],
     }),
+    prisma.clip.findMany({ where: { userId }, select: clipSelect, orderBy: { createdAt: "asc" } }),
   ]);
-  return { groups, decks: decks.map(toDeckDto) };
+  return { groups, decks: decks.map(toDeckDto), clips };
 }
 
 export async function createGroup(
@@ -203,7 +211,7 @@ export async function createDeck(
     groupId: string;
     name: string;
     type?: DeckType | null;
-    source?: DeckSource | null;
+    source?: string | null;
     description?: string | null;
     words: WordInput[];
   },
@@ -242,7 +250,7 @@ export async function updateDeck(
   patch: {
     name?: string;
     type?: DeckType | null;
-    source?: DeckSource | null;
+    source?: string | null;
     description?: string | null;
   },
 ): Promise<DeckDto> {

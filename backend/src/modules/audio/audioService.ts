@@ -6,6 +6,7 @@ import { HttpError } from "../common/httpError";
 export const AUDIO_MAX_BYTES = Number(process.env.AUDIO_MAX_BYTES) || 2 * 1024 * 1024;
 
 export const AUDIO_MIME = "audio/mpeg";
+export const M4A_MIME = "audio/mp4";
 
 /**
  * MP3 bắt đầu bằng thẻ ID3 ("ID3", như file ElevenLabs xuất ra) hoặc thẳng
@@ -16,6 +17,20 @@ export function looksLikeMp3(bytes: Uint8Array): boolean {
   if (bytes.length < 4) return false;
   if (bytes[0] === 0x49 && bytes[1] === 0x44 && bytes[2] === 0x33) return true;
   return bytes[0] === 0xff && (bytes[1]! & 0xe0) === 0xe0;
+}
+
+/**
+ * M4A (MP4 audio) có hộp `ftyp` ở byte 4..7 ("....ftyp"). Cũng chỉ kiểm tra
+ * đầu file — đủ để chặn nhầm file, không phải kiểm tra toàn vẹn.
+ */
+export function looksLikeM4a(bytes: Uint8Array): boolean {
+  return (
+    bytes.length >= 12 &&
+    bytes[4] === 0x66 && // f
+    bytes[5] === 0x74 && // t
+    bytes[6] === 0x79 && // y
+    bytes[7] === 0x70 //    p
+  );
 }
 
 /**
@@ -31,7 +46,9 @@ export async function saveAudio(
   if (bytes.length > AUDIO_MAX_BYTES) {
     throw new HttpError(413, `File nghe tối đa ${Math.floor(AUDIO_MAX_BYTES / 1024)} KB.`);
   }
-  if (!looksLikeMp3(bytes)) throw new HttpError(415, "Chỉ nhận file MP3.");
+  // Nhận MP3 và M4A; mime lưu theo nội dung thật, không tin Content-Type.
+  const mime = looksLikeMp3(bytes) ? AUDIO_MIME : looksLikeM4a(bytes) ? M4A_MIME : null;
+  if (!mime) throw new HttpError(415, "Chỉ nhận file MP3 hoặc M4A.");
 
   const sha256 = createHash("sha256").update(bytes).digest("hex");
   return prisma.audio.upsert({
@@ -39,7 +56,7 @@ export async function saveAudio(
     update: {},
     // Prisma cần Uint8Array trên ArrayBuffer thường; Buffer của Node có thể
     // nằm trên vùng nhớ chung -> chép ra (≤ vài MB).
-    create: { userId, sha256, mime: AUDIO_MIME, size: bytes.length, bytes: new Uint8Array(bytes) },
+    create: { userId, sha256, mime, size: bytes.length, bytes: new Uint8Array(bytes) },
     select: { id: true, size: true },
   });
 }
@@ -93,4 +110,17 @@ export function parseRange(
   }
   if (start >= size || start > end) return "unsatisfiable";
   return { start, end };
+}
+
+/** Điều kiện "file nghe mồ côi": không thẻ và không clip nào trỏ tới, tạo trước [before]. */
+export function orphanAudioWhere(userId: string, before: Date) {
+  return {
+    userId,
+    createdAt: { lt: before },
+    frontCards: { none: {} },
+    backCards: { none: {} },
+    hintCards: { none: {} },
+    noteCards: { none: {} },
+    clips: { none: {} },
+  };
 }

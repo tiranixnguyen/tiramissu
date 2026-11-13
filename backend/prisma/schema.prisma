@@ -19,6 +19,7 @@ model User {
   groups    Group[]
   decks     Deck[]
   audios    Audio[]
+  clips     Clip[]
   sessions  StudySession[]
   syncState SyncState?
 }
@@ -48,17 +49,6 @@ enum DeckType {
   grammar
 }
 
-/// Tài liệu (giáo trình) bộ từ lấy ra. Lưu khoá ASCII; nhãn (SNU 3A, …,
-/// THTH 4) do client hiển thị.
-enum DeckSource {
-  snu3a
-  snu3b
-  snu4a
-  snu4b
-  thth3
-  thth4
-}
-
 /// Bộ từ. 28 bộ gốc giữ id cũ ("ds1" … "ds30") để khớp với bản đóng gói sẵn
 /// trong app (frontend/assets/content.json) — xem scripts/importContent.ts.
 model Deck {
@@ -70,7 +60,7 @@ model Deck {
   /// Không bắt buộc — bộ chưa phân loại để `null`. Chỉ Mac/web đặt/đổi.
   type        DeckType?
   /// Tài liệu — không bắt buộc, như `type`.
-  source      DeckSource?
+  source      String?
   /// Mô tả ngắn (không bắt buộc, chữ thuần). Link `http(s)://` trong đó app
   /// hiển thị thành link bấm được.
   description String?
@@ -83,6 +73,7 @@ model Deck {
   group    Group          @relation(fields: [groupId], references: [id], onDelete: NoAction)
   cards    Card[]
   sessions StudySession[]
+  clips    Clip[]
 
   @@index([groupId, position])
 }
@@ -154,8 +145,33 @@ model Audio {
   backCards  Card[] @relation("BackAudio")
   hintCards  Card[] @relation("HintAudio")
   noteCards  Card[] @relation("NoteAudio")
+  clips      Clip[]
 
   @@unique([userId, sha256])
+}
+
+/// Đoạn cắt từ một file nghe (chép chính tả / luyện nghe). `audioId` là file
+/// M4A đã cắt sẵn; Restrict để không xoá được audio còn clip trỏ tới.
+model Clip {
+  id          String   @id @default(cuid())
+  userId      String
+  audioId     String
+  /// Tên file gốc, chỉ để hiển thị.
+  sourceName  String
+  startMs     Int
+  endMs       Int
+  transcript  String
+  translation String?
+  note        String?
+  deckId      String?
+  marked      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  audio Audio @relation(fields: [audioId], references: [id], onDelete: Restrict)
+  deck  Deck? @relation(fields: [deckId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
 }
 
 /// Một lần học một bộ, trên bất kỳ máy nào. Chỉ thêm, không bao giờ sửa: id do

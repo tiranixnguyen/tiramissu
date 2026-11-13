@@ -4,8 +4,8 @@ import { handle } from "../common/handle";
 import { AUDIO_MAX_BYTES, getAudio, parseRange, saveAudio } from "./audioService";
 
 /**
- * File nghe gắn vào thẻ. Tải lên bằng thân request là bytes MP3 thô
- * (`Content-Type: audio/mpeg`) — không cần multipart. Chỉ Mac/web tải lên và
+ * File nghe gắn vào thẻ. Tải lên bằng thân request là bytes MP3/M4A thô
+ * (`Content-Type: audio/mpeg` hoặc `audio/mp4`) — không cần multipart. Chỉ Mac/web tải lên và
  * phát; điện thoại không gọi các route này.
  */
 export const audioRouter = Router();
@@ -16,7 +16,9 @@ audioRouter.post(
   express.raw({ type: "audio/*", limit: AUDIO_MAX_BYTES }),
   handle(async (req, res, userId) => {
     if (!Buffer.isBuffer(req.body)) {
-      res.status(415).json({ error: "Gửi file MP3 với Content-Type: audio/mpeg." });
+      res
+        .status(415)
+        .json({ error: "Gửi file MP3/M4A với Content-Type: audio/mpeg hoặc audio/mp4." });
       return;
     }
     res.status(201).json(await saveAudio(prisma, userId, req.body));

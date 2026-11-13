@@ -1,0 +1,18 @@
+# Blueprint cho Render — xem docs/backend.md › Deploy.
+services:
+  - type: web
+    name: tiramissu-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Chuỗi kết nối Neon (có ?sslmode=require) — dán tay trên dashboard.
+      - key: DATABASE_URL
+        sync: false
+      # Sinh bằng `openssl rand -hex 32`; app Mac/iPhone gửi qua Bearer.
+      - key: API_TOKEN
+        sync: false

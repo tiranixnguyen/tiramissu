@@ -110,20 +110,25 @@ describe("bộ từ và thẻ", () => {
       groupId: g.id,
       name: "Đọc",
       type: "reading",
-      source: "snu3a",
+      source: "SNU 3A",
       words,
     });
     expect(r.status).toBe(201);
-    expect(r.json).toMatchObject({ type: "reading", source: "snu3a" });
+    expect(r.json).toMatchObject({ type: "reading", source: "SNU 3A" });
 
-    const changed = await api("PATCH", `/decks/${r.json.id}`, { source: "thth4" });
-    expect(changed.json).toMatchObject({ type: "reading", source: "thth4", name: "Đọc" });
+    const changed = await api("PATCH", `/decks/${r.json.id}`, { source: "Bài báo tự chọn" });
+    expect(changed.json).toMatchObject({ type: "reading", source: "Bài báo tự chọn", name: "Đọc" });
     const cleared = await api("PATCH", `/decks/${r.json.id}`, { source: null });
     expect(cleared.json).toMatchObject({ type: "reading", source: null });
 
-    const bad = await api("POST", "/decks", { groupId: g.id, name: "x", source: "SNU 3A", words });
+    const blank = await api("PATCH", `/decks/${r.json.id}`, { source: "   " });
+    expect(blank.json).toMatchObject({ source: null });
+
+    const long = "x".repeat(41);
+    const bad = await api("POST", "/decks", { groupId: g.id, name: "x", source: long, words });
     expect(bad.status).toBe(400);
-    expect((await api("PATCH", `/decks/${r.json.id}`, { source: "snu5a" })).status).toBe(400);
+    expect((await api("PATCH", `/decks/${r.json.id}`, { source: long })).status).toBe(400);
+    expect((await api("PATCH", `/decks/${r.json.id}`, { source: 5 })).status).toBe(400);
   });
 
   it("loại bộ sai -> 400; bộ không tồn tại -> 404", async () => {
@@ -189,9 +194,7 @@ describe("bộ từ và thẻ", () => {
     expect(both.json).toMatchObject({ name: "Bài 3", description: null });
     expect((await api("PATCH", `/decks/${r.json.id}`, { name: "   " })).status).toBe(400);
     expect((await api("PATCH", `/decks/${r.json.id}`, { name: null })).status).toBe(400);
-    expect((await api("PATCH", `/decks/${r.json.id}`, { name: "a".repeat(121) })).status).toBe(
-      400,
-    );
+    expect((await api("PATCH", `/decks/${r.json.id}`, { name: "a".repeat(121) })).status).toBe(400);
   });
 
   it("mô tả bộ sai kiểu hoặc quá 500 ký tự -> 400", async () => {

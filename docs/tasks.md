@@ -22,14 +22,14 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
 
 ## G1 · Backend lên cloud + quy trình Drive
 
-- [ ] **T1.01 · Chạy baseline backend trong monorepo**
+- [x] **T1.01 · Chạy baseline backend trong monorepo**
   - File: `docker-compose.yml`, `BE/.env.example`
   - Làm: `docker compose up -d` → `cd backend && cp .env.example .env && npm ci && npx prisma generate && npx prisma migrate dev`.
     Sửa mọi chỗ gãy do đổi đường dẫn (DB `tiramissu_dev`, `exportContent` ghi `reference/content.sample.json`).
   - Xong khi: `npx tsc --noEmit && npm run lint && npx vitest run` đều sạch.
   - Ghi chú: cần Docker. Môi trường không có Docker → chỉ chạy `tsc` + lint, ghi rõ vitest chưa chạy.
 
-- [ ] **T1.02 · Xác thực bằng token**
+- [x] **T1.02 · Xác thực bằng token**
   - File: `BE/src/modules/common/auth.ts` (mới), `BE/src/app.ts`, `BE/.env.example`, `BE/vitest.setup.ts`,
     `BE/src/testing/testServer.ts`, `BE/src/modules/common/auth.integration.test.ts` (mới)
   - Làm: middleware đọc `Authorization: Bearer <token>`, so với `process.env.API_TOKEN` bằng
@@ -40,21 +40,21 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
     vitest cũ pass; `.env.example` có `API_TOKEN` kèm chú thích.
   - Phụ thuộc: T1.01
 
-- [ ] **T1.03 · `Deck.source` thành chuỗi tự do**
+- [x] **T1.03 · `Deck.source` thành chuỗi tự do**
   - File: `BE/prisma/schema.prisma`, migration mới, `BE/src/modules/content/*` (+ test), `docs/backend.md`
   - Làm: đổi cột `source` từ enum `DeckSource` sang `String?` (giữ dữ liệu: `snu4a` → `"SNU 4A"`… theo
     nhãn cũ, viết trong SQL migration), validate ≤ 40 ký tự, rỗng → `null`. Xoá enum.
   - Xong khi: vitest pass, test mới cho source tự do + quá dài → 400; `docs/backend.md` cập nhật.
   - Phụ thuộc: T1.01
 
-- [ ] **T1.04 · File nghe M4A**
+- [x] **T1.04 · File nghe M4A**
   - File: `BE/src/modules/audio/audioService.ts`, `audioRoutes.ts`, test tương ứng, `docs/backend.md`
   - Làm: bảng `Audio` đã có cột `mime` → nhận thêm `audio/mp4` khi bytes có `ftyp` ở offset 4 (`looksLikeM4a`); trả đúng
     `Content-Type` theo `mime` khi GET. Vẫn từ chối file khác (415).
   - Xong khi: test thuần `looksLikeM4a` + test tích hợp upload/GET M4A (có Range 206) pass.
   - Phụ thuộc: T1.01
 
-- [ ] **T1.05 · Model `Clip` + `/clips`**
+- [x] **T1.05 · Model `Clip` + `/clips`**
   - File: `schema.prisma` + migration, `BE/src/modules/clips/{clipService,clipRoutes}.ts` + `clips.integration.test.ts`,
     `BE/src/modules/content/contentService.ts` (`getContent` trả `clips`), `BE/src/app.ts`, `docs/architecture.md` §4
   - Làm: bảng `Clip` theo `docs/architecture.md` §3 (`audioId` FK → `Audio` onDelete Restrict, `deckId` FK
@@ -64,7 +64,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Xong khi: test CRUD + validate + `/content` có `clips` + prune không xoá audio của clip; vitest sạch.
   - Phụ thuộc: T1.04
 
-- [ ] **T1.06 · Dockerfile + cấu hình deploy**
+- [x] **T1.06 · Dockerfile + cấu hình deploy**
   - File: `BE/Dockerfile`, `BE/.dockerignore`, `render.yaml` (gốc repo), `docs/backend.md` mục "Deploy"
   - Làm: Dockerfile nhiều tầng (Node 22, `npm ci`, `prisma generate`, `tsc`, chạy
     `npx prisma migrate deploy && node dist/src/index.js`), lắng nghe `PORT`. `render.yaml` cho web service

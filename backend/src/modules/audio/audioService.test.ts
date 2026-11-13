@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { looksLikeMp3, parseRange } from "./audioService";
+import { looksLikeM4a, looksLikeMp3, parseRange } from "./audioService";
 
 describe("looksLikeMp3", () => {
   it.each([
@@ -10,6 +10,18 @@ describe("looksLikeMp3", () => {
     ["quá ngắn", [0x49, 0x44], false],
   ])("%s -> %s", (_, bytes, expected) => {
     expect(looksLikeMp3(Uint8Array.from(bytes))).toBe(expected);
+  });
+});
+
+describe("looksLikeM4a", () => {
+  const ftyp = [0, 0, 0, 0x20, 0x66, 0x74, 0x79, 0x70, 0x4d, 0x34, 0x41, 0x20];
+  it.each([
+    ["ftyp M4A", ftyp, true],
+    ["MP3 ID3", [0x49, 0x44, 0x33, 0x04, 0, 0, 0, 0, 0, 0, 0, 0], false],
+    ["PNG", [0x89, 0x50, 0x4e, 0x47, 0, 0, 0, 0, 0, 0, 0, 0], false],
+    ["quá ngắn", ftyp.slice(0, 8), false],
+  ])("%s -> %s", (_, bytes, expected) => {
+    expect(looksLikeM4a(Uint8Array.from(bytes))).toBe(expected);
   });
 });
 

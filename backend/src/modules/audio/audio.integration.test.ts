@@ -43,12 +43,43 @@ describe("tải lên file nghe", () => {
   it("từ chối: không phải MP3, sai Content-Type, rỗng, quá lớn — luôn trả JSON", async () => {
     expect(await upload(Buffer.from("\x89PNG...."))).toMatchObject({
       status: 415,
-      json: { error: "Chỉ nhận file MP3." },
+      json: { error: "Chỉ nhận file MP3 hoặc M4A." },
     });
     expect((await upload(mp3("x"), "application/octet-stream")).status).toBe(415);
     expect((await upload(Buffer.alloc(0))).status).toBe(400);
     const big = await upload(Buffer.concat([mp3(""), Buffer.alloc(AUDIO_MAX_BYTES)]));
     expect(big).toMatchObject({ status: 413, json: { error: "Dữ liệu gửi lên quá lớn." } });
+  });
+});
+
+/** M4A giả: hộp ftyp ở byte 4 + đuôi riêng. */
+const m4a = (tail: string) =>
+  Buffer.concat([Buffer.from([0, 0, 0, 0x20]), Buffer.from("ftypM4A "), Buffer.from(tail)]);
+
+describe("file M4A", () => {
+  it("nhận audio/mp4, trả đúng Content-Type và hỗ trợ Range 206", async () => {
+    const bytes = m4a("0123456789");
+    const up = await upload(bytes, "audio/mp4");
+    expect(up).toMatchObject({ status: 201, json: { size: bytes.length } });
+
+    const full = await fetch(`${server.baseUrl}/audio/${up.json.id}`);
+    expect(full.status).toBe(200);
+    expect(full.headers.get("content-type")).toBe("audio/mp4");
+    expect(Buffer.from(await full.arrayBuffer()).equals(bytes)).toBe(true);
+
+    const part = await fetch(`${server.baseUrl}/audio/${up.json.id}`, {
+      headers: { Range: "bytes=4-7" },
+    });
+    expect(part.status).toBe(206);
+    expect(part.headers.get("content-type")).toBe("audio/mp4");
+    expect(part.headers.get("content-range")).toBe(`bytes 4-7/${bytes.length}`);
+    expect(Buffer.from(await part.arrayBuffer()).toString()).toBe("ftyp");
+  });
+
+  it("MP3 vẫn trả audio/mpeg", async () => {
+    const up = await upload(mp3("abc"));
+    const res = await fetch(`${server.baseUrl}/audio/${up.json.id}`);
+    expect(res.headers.get("content-type")).toBe("audio/mpeg");
   });
 });
 
