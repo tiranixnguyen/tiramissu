@@ -23,7 +23,7 @@
 
         var label: String {
             switch self {
-            case .idle: "Gõ đáp án"
+            case .idle: "Câu trả lời"
             case .correct: "Đúng"
             case .wrong: "Chưa đúng"
             case .revealed: "Đáp án"
@@ -56,7 +56,7 @@
         public var body: some View {
             VStack(alignment: .leading, spacing: 8) {
                 Text(state.label).font(.caption.weight(.semibold)).foregroundStyle(tint)
-                TextField("", text: $text)
+                TextField("", text: $text, prompt: Text("Gõ tiếng Hàn rồi Enter…"))
                     .textFieldStyle(.plain)
                     .font(.title2)
                     .foregroundStyle(theme?.ink ?? .primary)

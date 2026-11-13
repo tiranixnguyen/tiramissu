@@ -42,12 +42,19 @@ struct StudyView: View {
 
     // MARK: Thanh tiến độ
 
+    private var deckTitle: String {
+        let name = model.visibleDecks.first { $0.id == state.currentDeckId }?.name ?? "Bộ ảo"
+        let group = state.vocabGroups.first { $0.id == state.currentVocabGroup }?.name
+        return group.map { "\(name) · \($0)" } ?? name
+    }
+
     private var progressBar: some View {
-        HStack(spacing: 10) {
-            ProgressView(value: state.progress)
-                .tint(theme?.accent)
-                .frame(width: 220)
-            Text("\(state.masteredCount)/\(state.totalCount) đã thuộc")
+        HStack(spacing: 16) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(deckTitle).font(.callout.weight(.semibold)).foregroundStyle(theme?.ink ?? .primary)
+                ProgressView(value: state.progress).tint(theme?.accent).frame(width: 260)
+            }
+            Text("\(state.masteredCount)/\(state.totalCount) thuộc · đúng \(state.correctCount)/\(state.attemptedCount)")
                 .font(.caption).monospacedDigit()
                 .foregroundStyle(theme?.ink2 ?? .secondary)
         }
@@ -57,46 +64,51 @@ struct StudyView: View {
 
     private func card(_ word: StudyWord) -> some View {
         VStack(spacing: 20) {
-            Spacer(minLength: 0)
             CardSurface {
-                VStack(spacing: 14) {
-                    Text(word.front)
-                        .font(cardFont(size: 40))
-                        .foregroundStyle(theme?.ink ?? .primary)
-                        .multilineTextAlignment(.center)
-                        .textSelection(.enabled)
-                    if let hint = word.hint, !hint.isEmpty {
-                        Text(hint).font(.callout).foregroundStyle(theme?.ink2 ?? .secondary)
-                    }
-                    if state.answered {
-                        Divider().overlay(theme?.line ?? .secondary)
-                        Text(word.back)
-                            .font(cardFont(size: 34))
-                            .foregroundStyle(theme?.accent ?? .accentColor)
+                VStack(spacing: 0) {
+                    Text(word.typeAnswer ? "VIỆT → HÀN · GÕ ĐÁP ÁN" : "HÀN → VIỆT · TỰ CHẤM")
+                        .font(.caption.weight(.semibold)).tracking(1)
+                        .foregroundStyle(theme?.ink2 ?? .secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Spacer(minLength: 16)
+                    VStack(spacing: 14) {
+                        Text(word.front)
+                            .font(cardFont(size: 56))
+                            .foregroundStyle(theme?.ink ?? .primary)
+                            .multilineTextAlignment(.center)
                             .textSelection(.enabled)
-                        if let note = word.note, !note.isEmpty {
-                            Text(.init(note)).font(.callout)
-                                .foregroundStyle(theme?.ink2 ?? .secondary)
-                                .multilineTextAlignment(.center)
+                        if let hint = word.hint, !hint.isEmpty {
+                            Text(hint).font(.callout).foregroundStyle(theme?.ink2 ?? .secondary)
+                        }
+                        if state.answered {
+                            Text(word.back)
+                                .font(cardFont(size: 40))
+                                .foregroundStyle(theme?.accent ?? .accentColor)
+                                .textSelection(.enabled)
+                            if let note = word.note, !note.isEmpty {
+                                Text(.init(note)).font(.callout)
+                                    .foregroundStyle(theme?.ink2 ?? .secondary)
+                                    .multilineTextAlignment(.center)
+                            }
                         }
                     }
+                    Spacer(minLength: 16)
+                    if word.typeAnswer {
+                        AnswerField(text: $input, state: answerState, onSubmit: submit)
+                            .focused($fieldFocused)
+                    } else {
+                        Text("Thẻ tự chấm — dùng Đã thuộc ⌘↵ (chấm tay làm ở T2.35)")
+                            .font(.callout).foregroundStyle(theme?.ink2 ?? .secondary)
+                    }
                 }
-                .frame(maxWidth: .infinity)
+                .frame(maxHeight: .infinity)
             }
-
-            if word.typeAnswer {
-                AnswerField(text: $input, state: answerState, onSubmit: submit)
-                    .focused($fieldFocused)
-            } else {
-                Text("Thẻ tự chấm — dùng Đã thuộc ⌘↵ (chấm tay làm ở T2.35)")
-                    .font(.callout).foregroundStyle(theme?.ink2 ?? .secondary)
-            }
-            Spacer(minLength: 0)
+            .frame(maxHeight: .infinity)
             GlassActionBar(actions(for: word))
-                .padding(.bottom, 20)
+                .padding(.bottom, 16)
         }
-        .frame(maxWidth: 640)
-        .padding(.horizontal, 32)
+        .padding(.horizontal, 24)
+        .padding(.top, 16)
     }
 
     private var completed: some View {
@@ -138,7 +150,6 @@ struct StudyView: View {
             return list
         }
         return [
-            GlassAction(id: "check", title: "Chấm", shortcut: "↵", isPrimary: true, isEnabled: word.typeAnswer, action: submit),
             GlassAction(
                 id: "reveal", title: "Xem đáp án", shortcut: "⌘/", key: .init("/", modifiers: .command),
                 isEnabled: word.typeAnswer
@@ -146,6 +157,7 @@ struct StudyView: View {
             GlassAction(
                 id: "known", title: "Đã thuộc", shortcut: "⌘↵", key: .init(.return, modifiers: .command)
             ) { model.markKnown() },
+            GlassAction(id: "check", title: "Chấm bài", shortcut: "↵", isPrimary: true, isEnabled: word.typeAnswer, action: submit),
         ]
     }
 
