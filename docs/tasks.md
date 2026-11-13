@@ -90,7 +90,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
 - [ ] **T2.01 · 👤 Chạy `swift test` lần đầu** ở `HC/` và `DS/` trên Mac (Xcode 26) — khung phải pass
   (`AnswerMatcherTests`, `ThemeTests`). Báo lỗi nếu `platforms: .v26` chưa nhận.
 
-- [ ] **T2.02 · Mô hình dữ liệu + giải mã `/content`**
+- [x] **T2.02 · Mô hình dữ liệu + giải mã `/content`**
   - File: `HC/Sources/HanCore/Models/{Content,StudyWord,DeckType,StudySessionRecord,FlagChange}.swift`,
     `HC/Tests/HanCoreTests/ContentDecodingTests.swift`, test resource: chép `reference/content.sample.json`
     vào `HC/Tests/HanCoreTests/Resources/` (khai báo `resources` trong `Package.swift`)
