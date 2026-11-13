@@ -107,7 +107,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
     `Calendar` tiêm được.
   - Xong khi: cùng seed → cùng dãy; test pass.
 
-- [ ] **T2.04 · `DeckImport`**
+- [x] **T2.04 · `DeckImport`**
   - File: `HC/Sources/HanCore/Import/DeckImport.swift`, `HC/Tests/HanCoreTests/DeckImportTests.swift`
   - Đọc trước: `REF/domain/deck_import.dart`, `REF/test/deck_import_test.dart` (12 test)
   - Làm: port `parseDeckImport`, `defaultTypeAnswer`, `duplicatesOf`; bóc khối ```json; giới hạn 500;
