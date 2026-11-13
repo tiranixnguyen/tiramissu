@@ -122,6 +122,8 @@ struct MainWindow: View {
         }
         ToolbarSpacer(.fixed)
         ToolbarItemGroup(placement: .primaryAction) {
+            SettingsLink { Label("Cài đặt", systemImage: "gearshape") }
+                .help("Cài đặt (⌘,)")
             Button {
                 themes.cycleTheme()
             } label: {
