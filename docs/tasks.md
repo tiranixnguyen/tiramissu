@@ -254,6 +254,8 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Làm: theo artboard "Mac · Học": thanh tiến độ trên toolbar, `CardSurface` mặt trước lớn, `AnswerField`,
     `GlassActionBar` đổi nút theo trạng thái (Chấm ↵ / Xem đáp án ⌘/ / Đã thuộc ⌘↵ / Đã trả lời đúng? ⌘Z /
     Thẻ tiếp ↵), ô nhập tự focus, bàn phím Hàn không tự đổi (macOS) — ghi chú dùng Input Source.
+  - Trạng thái: code xong (`apple/App/Mac/StudyView.swift`), build macOS sạch; còn bước 👤 thử tay (chưa tick).
+    Thẻ tự chấm mới có "Đã thuộc"; lật/chấm tay làm ở T2.35.
   - Xong khi: 👤 học trọn một bộ chỉ bằng bàn phím; lần học xuất hiện ở server.
   - Phụ thuộc: T2.32
 - [ ] **T2.35 · Màn Học — tự chấm, cờ, cột "Lượt học", TTS**

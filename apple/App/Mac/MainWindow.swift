@@ -101,6 +101,14 @@ struct MainWindow: View {
     // MARK: Detail
 
     @ViewBuilder private var detail: some View {
+        if nav.screen == .study {
+            StudyView()
+        } else {
+            placeholder
+        }
+    }
+
+    private var placeholder: some View {
         ContentUnavailableView(
             nav.screen.rawValue, systemImage: nav.screen.symbol,
             description: Text(
