@@ -43,7 +43,7 @@ struct StudyView: View {
 
     private var base: some View {
         content
-            .padding(.horizontal, 12)
+            .padding(.horizontal, 6)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
@@ -262,7 +262,7 @@ struct StudyView: View {
             .frame(maxHeight: .infinity, alignment: .top)
         }
         .frame(width: 224)
-        .padding(.trailing, 4)
+        .padding(.trailing, 2)
     }
 
     private func stat(_ n: Int, _ label: String) -> some View {
