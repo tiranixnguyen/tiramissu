@@ -24,6 +24,7 @@ struct StudyView: View {
         }
         .padding(.horizontal, 12).padding(.top, 10)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .ignoresSafeArea(.container, edges: .top)  // thanh trên chiếm chỗ vùng toolbar trống
         .navigationTitle("")
         .toolbar(removing: .title)
         .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
