@@ -136,7 +136,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Xong khi: test nhóm "chấm bài" (3) + "lịch Leitner" (4) pass.
   - Phụ thuộc: T2.06
 
-- [ ] **T2.08 · `StudyEngine` — xem đáp án, "Đã trả lời đúng?", đã thuộc**
+- [x] **T2.08 · `StudyEngine` — xem đáp án, "Đã trả lời đúng?", đã thuộc**
   - Làm: `revealAnswer`, `overrideAsCorrect` (hoàn tác nhánh sai, khôi phục snapshot box/streak), `markKnown`.
   - Xong khi: nhóm "tự xác nhận đúng" (2) pass.
   - Phụ thuộc: T2.07

@@ -148,6 +148,46 @@ public final class StudyEngine {
         return isCorrect
     }
 
+    /// "Xem đáp án": tính là một lần trả lời sai, nhưng không cho tự xác nhận đúng.
+    /// Chỉ cho thẻ gõ đáp án — thẻ tự chấm dùng `flipCard`.
+    public func revealAnswer() {
+        guard runtime != nil, let word = currentWord, word.typeAnswer, !answered else { return }
+        runtime!.attemptedCount += 1
+        applySchedule(false)
+        outcome = .wrong
+        canOverride = false
+    }
+
+    /// "Đã thuộc": đánh dấu thuộc ngay, vẫn hiện đáp án để đối chiếu.
+    public func markKnown() {
+        guard var rt = runtime, currentWord != nil, let id = currentIndex, !answered else { return }
+        if !rt.cardState[id].mastered {
+            rt.cardState[id].mastered = true
+            rt.cardState[id].streak = Self.masteryStreak
+            rt.masteredCount += 1
+            runtime = rt
+        }
+        outcome = .known
+        canOverride = false
+    }
+
+    /// Gõ sai chính tả nhưng thực chất biết từ: hoàn tác nhánh "sai", khôi phục box/streak trước khi
+    /// trả lời rồi áp lại lịch theo hướng "đúng" (streak nối tiếp, không khởi động lại từ 0).
+    public func overrideAsCorrect() {
+        guard var rt = runtime, let id = currentIndex, canOverride else { return }
+        rt.activeQueue.removeAll { $0 == id }
+        if let snap = answerSnapshot {
+            rt.cardState[id].box = snap.box
+            rt.cardState[id].streak = snap.streak
+        }
+        rt.correctCount += 1
+        runtime = rt
+        applySchedule(true)
+        outcome = .correct
+        canOverride = false
+        overridden = true
+    }
+
     private func matches(_ answer: String, _ word: StudyWord) -> Bool {
         answer == AnswerMatcher.normalize(word.back)
             || (word.altAnswers ?? []).contains { AnswerMatcher.normalize($0) == answer }

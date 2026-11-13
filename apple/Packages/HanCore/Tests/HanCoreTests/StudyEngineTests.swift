@@ -130,6 +130,47 @@ struct StudyEngineTests {
             #expect(s.cardSerial == e.cardSerial)
         }
     }
+    @Suite("tự xác nhận đúng")
+    struct Override {
+        @Test func hoanTacNhanhSaiVaApLaiLichTheoHuongDung() {
+            let e = buildEngine()
+            answerCurrentCorrectly(e)  // box 0→1, streak 0→1
+            e.nextCard()
+            while e.currentProgress?.streak != 1 { e.nextCard() }
+
+            e.checkAnswer("gõ nhầm chính tả")
+            #expect(e.canOverride)
+            #expect(!e.overridden)
+
+            e.overrideAsCorrect()
+            #expect(e.outcome == .correct)
+            #expect(!e.canOverride)
+            #expect(e.overridden)
+
+            e.nextCard()
+            #expect(!e.overridden)
+            // Streak nối tiếp từ 1 chứ không khởi động lại từ 0.
+            #expect(e.currentProgress?.streak == 2)
+            #expect(e.currentProgress?.box == 2)
+        }
+
+        @Test func khongChoTuXacNhanSauXemDapAn() {
+            let e = buildEngine()
+            e.revealAnswer()
+            #expect(e.outcome == .wrong)
+            #expect(!e.canOverride)
+            e.overrideAsCorrect()
+            #expect(e.correctCount == 0)
+        }
+
+        @Test func daThuocLamThuocNgayVaGiuDapAn() {
+            let e = buildEngine()
+            e.markKnown()
+            #expect(e.outcome == .known)
+            #expect(e.masteredCount == 1)
+            #expect(e.currentProgress?.mastered == true)
+        }
+    }
 }
 
 /// Dựng engine một nhóm, một bộ `d1`, đã `bootstrap` với seed cố định.
