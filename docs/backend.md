@@ -119,8 +119,8 @@ Chạy miễn phí: Postgres trên **Neon**, API trên **Render** (Docker). Rend
 
 1. Tạo project tại neon.tech (region gần nhất, Postgres 16).
 2. Lấy **connection string** (dạng `postgresql://user:pass@ep-xxx.neon.tech/neondb?sslmode=require`).
-   Dùng bản *pooled* hoặc *direct* đều được; `prisma migrate deploy` chạy ổn với direct — nếu
-   migrate treo, đổi sang direct.
+   Lấy cả hai: *pooled* → `DATABASE_URL` (app), *direct* (không `-pooler`) → `DATABASE_URL_UNPOOLED`
+   (`prisma migrate deploy`; qua pooler có thể lỗi/treo). Cách nhanh: `neon env pull`.
 
 ### 2. Sinh token
 
@@ -133,7 +133,7 @@ Lưu vào trình quản lý mật khẩu — đây là `API_TOKEN` (server) và 
 ### 3. Render (web service)
 
 1. Đẩy repo lên GitHub → Render › New › **Blueprint** → chọn repo (đọc `render.yaml` ở gốc).
-2. Điền hai biến `sync: false`: `DATABASE_URL` (Neon) và `API_TOKEN`.
+2. Điền ba biến `sync: false`: `DATABASE_URL` (pooled), `DATABASE_URL_UNPOOLED` (direct) và `API_TOKEN`.
 3. Deploy. Khi khởi động container chạy `npx prisma migrate deploy` rồi `node dist/src/index.js`
    (nghe `PORT` do Render đặt). Health check: `GET /health`.
 4. Thử:

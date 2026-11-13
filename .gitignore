@@ -23,3 +23,5 @@ backups/
 
 apple/build/
 apple/Packages/*/build/
+.neon
+.env.local

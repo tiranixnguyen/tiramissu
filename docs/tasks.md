@@ -73,10 +73,10 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Xong khi: `docker build backend` thành công (nếu có Docker); doc đủ bước cho T1.07–T1.08.
   - Phụ thuộc: T1.02
 
-- [ ] **T1.07 · 👤 Tạo Postgres (Neon) + web service (Render)** theo `docs/backend.md` › Deploy;
+- [ ] **T1.07 · 👤 Tạo Postgres (Neon) + web service (Render)** _(Neon xong: project + migration đã áp; còn Render + `API_TOKEN`)_ theo `docs/backend.md` › Deploy;
   sinh `API_TOKEN` (`openssl rand -hex 32`), lưu vào trình quản lý mật khẩu.
-- [ ] **T1.08 · 👤 Chuyển dữ liệu cũ**: `pg_dump` DB của `flashcard-app` → restore lên Neon →
-  `curl -H "Authorization: Bearer …" https://<app>.onrender.com/content` thấy đủ nhóm/bộ.
+- [x] **T1.08 · ~~Chuyển dữ liệu cũ~~ — BỎ** (quyết định: không chuyển `pg_dump` lên Neon). Dữ liệu cũ chỉ dùng làm
+  dữ liệu mẫu: `reference/content.sample.json`, app đóng gói sẵn và nạp khi chưa có cache. DB Neon bắt đầu trống.
 - [ ] **T1.09 · 👤 Dựng Google Drive** theo `docs/drive-setup.md`; chép 4 prompt vào `05_Prompt/`;
   tạo notebook NotebookLM cho khoá đang học.
 

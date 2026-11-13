@@ -13,6 +13,9 @@ services:
       # Chuỗi kết nối Neon (có ?sslmode=require) — dán tay trên dashboard.
       - key: DATABASE_URL
         sync: false
+      # Chuỗi direct của Neon (không `-pooler`) — dùng cho `prisma migrate deploy` lúc khởi động.
+      - key: DATABASE_URL_UNPOOLED
+        sync: false
       # Sinh bằng `openssl rand -hex 32`; app Mac/iPhone gửi qua Bearer.
       - key: API_TOKEN
         sync: false
