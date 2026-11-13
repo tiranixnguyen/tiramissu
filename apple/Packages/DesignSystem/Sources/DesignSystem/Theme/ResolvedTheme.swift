@@ -58,6 +58,14 @@
             }
         }
 
+        public var symbol: String {
+            switch self {
+            case .system: "circle.lefthalf.filled"
+            case .light: "sun.max"
+            case .dark: "moon"
+            }
+        }
+
         public var label: String {
             switch self {
             case .system: "Theo hệ thống"

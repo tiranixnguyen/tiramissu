@@ -1,53 +1,37 @@
-import SwiftUI
 import DesignSystem
 import HanCore
+import SwiftUI
 
-/// App Mac — nơi học chính + soạn, nhập, cắt clip. Khung rỗng; các màn được dựng theo `docs/tasks.md` (GĐ2).
+/// App Mac — nơi học chính + soạn, nhập, cắt clip.
 @main
 struct TiramissuMacApp: App {
     @State private var model = AppModel.live()
+    @State private var nav = Navigation()
+    @State private var themes = ThemeStore()
 
     var body: some Scene {
         WindowGroup("Tiramissu") {
             MainWindow()
                 .environment(model)
-                .frame(minWidth: 1100, minHeight: 700)
+                .environment(nav)
+                .environment(themes)
+                .themed(themes)
                 .task { await model.start() }
         }
-        .windowToolbarStyle(.unified)
-    }
-}
-
-/// Các màn trong sidebar, theo thứ tự `⌘1…⌘5`.
-enum MacScreen: String, CaseIterable, Identifiable {
-    case today = "Hôm nay"
-    case study = "Học"
-    case library = "Thư viện"
-    case importAI = "Nhập từ AI"
-    case audioClip = "Cắt clip âm thanh"
-
-    var id: String { rawValue }
-}
-
-struct MainWindow: View {
-    @Environment(AppModel.self) private var model
-    @State private var screen: MacScreen? = .today
-
-    var body: some View {
-        NavigationSplitView {
-            List(MacScreen.allCases, selection: $screen) { item in
-                Text(item.rawValue).tag(item)
+        .windowResizability(.contentMinSize)
+        .commands {
+            CommandMenu("Màn hình") {
+                ForEach(Array(MacScreen.allCases.enumerated()), id: \.element) { index, screen in
+                    Button(screen.rawValue) { nav.screen = screen }
+                        .keyboardShortcut(KeyEquivalent(Character("\(index + 1)")), modifiers: .command)
+                }
             }
-            .navigationSplitViewColumnWidth(min: 200, ideal: 220)
-        } detail: {
-            ContentUnavailableView(
-                screen?.rawValue ?? "Tiramissu",
-                systemImage: "hammer",
-                description: Text(
-                    "Màn này chưa được dựng — xem docs/tasks.md\n"
-                        + "Dữ liệu: \(model.content.groups.count) nhóm · \(model.content.decks.count) bộ · "
-                        + "\(model.content.decks.reduce(0) { $0 + $1.cards.count }) thẻ")
-            )
+            CommandGroup(after: .toolbar) {
+                Button("Đổi sáng/tối") { themes.cycleAppearance() }
+                    .keyboardShortcut("d", modifiers: [.command, .option])
+                Button("Bảng lệnh") { nav.showPalette.toggle() }
+                    .keyboardShortcut("k", modifiers: .command)
+            }
         }
     }
 }

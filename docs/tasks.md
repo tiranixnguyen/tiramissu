@@ -239,6 +239,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
 - [ ] **T2.32 · Khung cửa sổ: sidebar + toolbar**
   - Làm: `NavigationSplitView` (sidebar kính hệ thống: 5 màn + bộ ảo ⭐/漢/📖/🔀/🎧), toolbar: tiêu đề màn,
     nút ⌘K, nút theme (xoay vòng), nút sáng/tối; `⌘1…5`; trạng thái đồng bộ ở chân sidebar.
+  - Trạng thái: code xong, build sạch; còn bước 👤 soát bố cục (chưa tick). ⌘K mới là nút giữ chỗ (bảng lệnh làm sau); 🎧 Clip nghe tắt tới GĐ3.
   - Xong khi: 👤 khớp bố cục artboard "Mac · Hôm nay"; đổi theme áp ngay toàn app.
   - Phụ thuộc: T2.21, T2.31
 - [ ] **T2.33 · Cài đặt**

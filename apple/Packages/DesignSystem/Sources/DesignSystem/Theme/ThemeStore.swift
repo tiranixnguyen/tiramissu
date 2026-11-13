@@ -42,6 +42,12 @@
             themeID = themes[(i + 1) % themes.count].id
         }
 
+        /// Xoay vòng Theo hệ thống → Sáng → Tối.
+        public func cycleAppearance() {
+            let all = AppearanceMode.allCases
+            appearance = all[((all.firstIndex(of: appearance) ?? 0) + 1) % all.count]
+        }
+
         /// Chế độ sáng/tối thực tế cho `colorScheme` của môi trường.
         public func resolved(colorScheme: ColorScheme) -> ResolvedTheme? {
             guard let theme = current else { return nil }
