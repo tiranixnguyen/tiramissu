@@ -43,7 +43,7 @@ struct StudyView: View {
 
     private var base: some View {
         content
-            .padding(.horizontal, 6)
+            .padding(.leading, 2).padding(.trailing, 6)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
@@ -208,7 +208,7 @@ struct StudyView: View {
             GlassActionBar(actions(for: word))
                 .padding(.bottom, 12)
         }
-        .padding(.horizontal, 8)
+        .padding(.leading, 0).padding(.trailing, 8)
         .padding(.top, 8)
     }
 
