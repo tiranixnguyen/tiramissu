@@ -22,7 +22,8 @@ Giao diện + comment: **tiếng Việt**. Agent khác: xem `AGENTS.md`.
 | `docs/plan.md` | bối cảnh, kiến trúc tổng, các giai đoạn, rủi ro |
 | `docs/tasks.md` | checklist việc cần làm (nguồn sự thật về tiến độ) |
 | `docs/architecture.md` | module Swift, mô hình dữ liệu, API, đồng bộ offline-first |
-| `docs/design-system.md` | token, 6 theme, quy tắc Liquid Glass, component, prototype |
+| `docs/design-system.md` | token, 6 theme, quy tắc Liquid Glass, component |
+| `design/prototype/` | **prototype offline**: ảnh từng màn + nguồn HTML — đọc trước khi làm màn nào |
 | `docs/study-algorithm.md` | thuật toán ôn trong lượt, deck ảo, gợi ý ôn lại — **đặc tả để port** |
 | `docs/backend.md` | 3 fix trong `db.ts`, cấu trúc module, dữ liệu, file nghe |
 | `docs/testing.md` | test Swift + backend, bẫy |
@@ -60,7 +61,7 @@ npx tsc --noEmit && npm run lint && npx vitest run
   `handle()`. Thêm biến env → cập nhật `backend/.env.example`.
 - **Không tự curl route ghi (POST/PATCH/DELETE) vào server thật/dev** — từng mất dữ liệu. GET thoải mái.
 - Không đổi `DEFAULT_USER_EMAIL` mặc định (`local@vocab-app.local`) — dữ liệu thật gắn với email này.
-- Không sửa tay `reference/` (chỉ để đọc) và `reference/content.sample.json` (xuất bằng `npm run export-content`).
+- Không sửa tay `reference/`, `design/prototype/` (chỉ để đọc) và `reference/content.sample.json` (xuất bằng `npm run export-content`).
 - Không ghi tên/ID model AI vào commit, PR, comment code.
 - Trước khi báo xong: `swift test` sạch ở package đã đụng; đụng backend thì `tsc`, lint, vitest sạch.
   Không chạy được (thiếu toolchain/Postgres) → nói rõ, không giả vờ đã chạy.

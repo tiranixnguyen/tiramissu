@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Mac · Thư viện</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+KR:wght@400;500;700&amp;family=Noto+Serif+KR:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit}
+button{cursor:pointer}
+.glass{background:var(--glass);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid var(--gb);box-shadow:var(--sh),inset 0 1px 0 var(--gb)}
+.desk{background:radial-gradient(circle at 8% 12%,color-mix(in srgb,var(--ac) 50%,transparent),transparent 38%),radial-gradient(circle at 92% 88%,color-mix(in srgb,var(--flag) 40%,transparent),transparent 45%),var(--bg)}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px;border-radius:10px;font-size:13px;font-weight:500;color:var(--ink2);text-decoration:none;border:0;background:transparent;font-family:Inter,'Noto Sans KR',sans-serif;text-align:left}
+.nav.on{background:color-mix(in srgb,var(--ac) 18%,transparent);color:var(--ink);font-weight:600}
+.card{background:var(--sf);border:1px solid var(--line);border-radius:18px}
+td,th{padding:11px 14px;border-bottom:1px solid var(--line);text-align:left}
+</style>
+</helmet>
+<div class="desk" style="{{vars}}; position: relative; width: 1280px; height: 800px; box-sizing: border-box; color: var(--ink); font-family: Inter, 'Noto Sans KR', sans-serif; overflow: hidden;">
+  <div style="position: absolute; left: 240px; right: 0; top: 0; bottom: 0; background: var(--bg);"></div>
+
+  <nav aria-label="Điều hướng" class="glass" style="position: absolute; left: 10px; top: 10px; bottom: 10px; width: 216px; box-sizing: border-box; border-radius: 20px; padding: 14px 10px; display: flex; flex-direction: column; gap: 2px;">
+    <div style="display: flex; gap: 7px; padding: 2px 8px 16px;"><span style="width: 12px; height: 12px; border-radius: 99px; background: #FF5F57;"></span><span style="width: 12px; height: 12px; border-radius: 99px; background: #FEBC2E;"></span><span style="width: 12px; height: 12px; border-radius: 99px; background: #28C840;"></span></div>
+    <a class="nav" href="Mac-Today.dc.html">Hôm nay</a>
+    <a class="nav" href="Mac-Study.dc.html">Học</a>
+    <a class="nav on" href="Mac-Library.dc.html">Thư viện</a>
+    <a class="nav" href="Mac-Import.dc.html">Nhập từ AI</a>
+    <a class="nav" href="Mac-Audio.dc.html">Cắt clip âm thanh</a>
+    <div style="padding: 16px 10px 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; color: var(--ink2);">NHÓM</div>
+    <sc-for list="{{groups}}" as="g" hint-placeholder-count="7">
+      <button class="{{g.cls}}" onClick="{{g.pick}}" aria-pressed="{{g.on}}"><span>{{g.name}}</span><span style="font-size: 12px; color: var(--ink2);">{{g.n}}</span></button>
+    </sc-for>
+  </nav>
+
+  <header class="glass" style="position: absolute; left: 252px; right: 12px; top: 10px; height: 52px; box-sizing: border-box; border-radius: 16px; padding: 0 10px 0 14px; display: flex; align-items: center; gap: 10px;">
+    <input placeholder="Tìm bộ, từ Hàn hoặc nghĩa…  ⌘F" aria-label="Tìm" style="width: 320px; height: 34px; box-sizing: border-box; border-radius: 10px; border: 1px solid var(--line); background: color-mix(in srgb, var(--sf) 60%, transparent); color: var(--ink); padding: 0 12px; font: 400 13px Inter, sans-serif;">
+    <div style="flex: 1;"></div>
+    <a href="Mac-Import.dc.html" style="height: 34px; padding: 0 12px; border-radius: 10px; background: var(--ac); color: var(--on); font: 600 12px Inter, sans-serif; display: flex; align-items: center; text-decoration: none;">+ Bộ mới từ AI</a>
+    <button onClick="{{nextTheme}}" aria-label="Đổi theme" style="height: 34px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--ink); font: 600 12px Inter, sans-serif; display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 99px; background: var(--ac);"></span>{{themeName}}</button>
+    <button onClick="{{toggleDark}}" aria-label="Sáng / tối" style="width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--ink); display: flex; align-items: center; justify-content: center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"></path></svg></button>
+  </header>
+
+  <section aria-label="Bộ từ" style="position: absolute; left: 252px; top: 78px; bottom: 12px; width: 300px; display: flex; flex-direction: column; gap: 8px; overflow: hidden;">
+    <div style="font-size: 18px; font-weight: 700; padding: 2px 4px 4px;">{{groupName}}</div>
+    <sc-for list="{{decks}}" as="d" hint-placeholder-count="5">
+      <button onClick="{{d.pick}}" aria-pressed="{{d.on}}" style="display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; border-radius: 14px; border: 1.5px solid {{d.border}}; background: var(--sf); color: var(--ink); text-align: left; font-family: Inter, 'Noto Sans KR', sans-serif;">
+        <span style="font-size: 14px; font-weight: 600;">{{d.name}}</span>
+        <span style="display: flex; gap: 6px; align-items: center; font-size: 12px; color: var(--ink2);"><span style="padding: 2px 7px; border-radius: 999px; background: color-mix(in srgb, var(--ac) 14%, var(--sf)); color: var(--ink); font-weight: 600; font-family: 'Noto Sans KR', sans-serif;">{{d.skill}}</span>{{d.meta}}</span>
+      </button>
+    </sc-for>
+  </section>
+
+  <section class="card" aria-label="Thẻ" style="position: absolute; left: 566px; right: 12px; top: 78px; bottom: 12px; display: flex; flex-direction: column; overflow: hidden;">
+    <div style="padding: 18px 20px 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <h1 style="margin: 0; font-size: 22px; font-weight: 700;">{{deck.name}}</h1>
+        <div style="font-size: 12px; color: var(--ink2);">Nguồn: Drive › 01_Giáo trình › SNU 4A › Bài 07 · ôn lại sau 7 ngày</div>
+      </div>
+      <a href="Mac-Study.dc.html" style="height: 34px; padding: 0 14px; border-radius: 10px; background: var(--ink); color: var(--sf); font: 600 12px Inter, sans-serif; display: flex; align-items: center; text-decoration: none;">Học bộ này ↵</a>
+    </div>
+    <div style="overflow: auto; flex: 1;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+        <thead><tr style="font-size: 12px; color: var(--ink2);"><th style="font-weight: 600;">Mặt trước</th><th style="font-weight: 600;">Mặt sau</th><th style="font-weight: 600;">Kiểu</th><th style="font-weight: 600;">Cờ</th></tr></thead>
+        <tbody>
+          <sc-for list="{{cards}}" as="c" hint-placeholder-count="6">
+            <tr><td>{{c.front}}</td><td style="font-family: 'Noto Sans KR', sans-serif; font-weight: 500;">{{c.back}}</td><td style="font-size: 12px; color: var(--ink2);">{{c.kind}}</td><td style="font-weight: 600;">{{c.flags}}</td></tr>
+          </sc-for>
+          <tr><td colspan="4" style="color: var(--ink2); font-size: 13px;">+ Thêm thẻ (⌘N) · bấm đúp một ô để sửa ngay trong bảng</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { theme: 'paper', dark: false, group: 'Oct1', deck: 0 };
+    this.TH = {
+      paper: ['Giấy', { bg: '#F5F4F0', sf: '#FFFFFF', ink: '#191C24', ink2: '#4C5260', ac: '#2B54C9', line: '#DDDBD3', on: '#FFFFFF' }, { bg: '#121418', sf: '#1B1E24', ink: '#ECEEF2', ink2: '#A9AFBC', ac: '#7C9BFF', line: '#343946', on: '#0B1020' }],
+      ink: ['Mực đêm', { bg: '#EEF0F6', sf: '#FFFFFF', ink: '#141826', ink2: '#4A5068', ac: '#5B4BD6', line: '#D7DAE6', on: '#FFFFFF' }, { bg: '#0E1020', sf: '#171A2E', ink: '#E8E9F5', ink2: '#A3A7C4', ac: '#A99BFF', line: '#2B2F4A', on: '#120E2A' }],
+      pine: ['Rừng thông', { bg: '#F1F4EF', sf: '#FFFFFF', ink: '#17201A', ink2: '#475449', ac: '#1F6B4A', line: '#D6DED6', on: '#FFFFFF' }, { bg: '#0F1712', sf: '#17221B', ink: '#E5EEE7', ink2: '#9DB0A3', ac: '#5CCB95', line: '#2A3A2F', on: '#06140C' }],
+      dusk: ['Hoàng hôn', { bg: '#FAF3EE', sf: '#FFFFFF', ink: '#2A1A14', ink2: '#6A4E43', ac: '#B8402A', line: '#EADBD2', on: '#FFFFFF' }, { bg: '#1A1210', sf: '#251A17', ink: '#F5E9E4', ink2: '#C2A79D', ac: '#FF8A66', line: '#3D2C27', on: '#2A0E05' }],
+      contrast: ['Tương phản cao', { bg: '#FFFFFF', sf: '#FFFFFF', ink: '#000000', ink2: '#222222', ac: '#0033CC', line: '#000000', on: '#FFFFFF' }, { bg: '#000000', sf: '#0A0A0A', ink: '#FFFFFF', ink2: '#E6E6E6', ac: '#FFD400', line: '#FFFFFF', on: '#000000' }],
+      system: ['Hệ thống', { bg: '#F2F2F4', sf: '#FFFFFF', ink: '#1D1D1F', ink2: '#55555B', ac: '#0064D2', line: '#DADADF', on: '#FFFFFF' }, { bg: '#161618', sf: '#1F1F22', ink: '#F2F2F4', ink2: '#AAAAB0', ac: '#409CFF', line: '#38383C', on: '#03182E' }]
+    };
+  }
+  renderVals() {
+    const s = this.state; const go = (p) => this.setState(p);
+    const ST = s.dark ? { ok: '#5CC48E', bad: '#F08174', flag: '#F2B54B', glass: 'rgba(30,32,40,0.5)', gb: 'rgba(255,255,255,0.16)', sh: '0 10px 34px rgba(0,0,0,0.5)' } : { ok: '#1C7146', bad: '#B23A2E', flag: '#9A5B00', glass: 'rgba(255,255,255,0.55)', gb: 'rgba(255,255,255,0.75)', sh: '0 10px 34px rgba(20,24,40,0.16)' };
+    const t = Object.assign({}, this.TH[s.theme][s.dark ? 2 : 1], ST);
+    const keys = Object.keys(this.TH);
+    const groups = [['Sep1', 9], ['Sep2', 8], ['Sep3', 11], ['Oct1', 6], ['10월 듣기2', 6], ['10월 읽기2', 5], ['Phân biệt', 3]];
+    const decks = [
+      { name: 'Plastic · tái chế', skill: '읽기', meta: '5 thẻ · 1 clip · hôm nay' },
+      { name: 'Rừng & Bảo vệ môi trường', skill: '읽기', meta: '26 thẻ · 7 ngày nữa' },
+      { name: '듣기 4-8번 > 병원', skill: '듣기', meta: '11 thẻ · 3 clip · trễ 1 ngày' },
+      { name: 'Tự học ngữ pháp', skill: '문법', meta: '9 thẻ · ngày mai' },
+      { name: 'Lỗi sai · Bài tập 07', skill: '쓰기', meta: '5 thẻ · mới' }
+    ];
+    return {
+      vars: `--bg:${t.bg};--sf:${t.sf};--ink:${t.ink};--ink2:${t.ink2};--ac:${t.ac};--line:${t.line};--on:${t.on};--ok:${t.ok};--bad:${t.bad};--flag:${t.flag};--glass:${t.glass};--gb:${t.gb};--sh:${t.sh}`,
+      themeName: this.TH[s.theme][0],
+      nextTheme: () => go({ theme: keys[(keys.indexOf(s.theme) + 1) % keys.length] }),
+      toggleDark: () => go({ dark: !s.dark }),
+      groupName: s.group,
+      groups: groups.map(([name, n]) => ({ name, n, on: String(s.group === name), cls: s.group === name ? 'nav on' : 'nav', pick: () => go({ group: name }) })),
+      decks: decks.map((d, i) => Object.assign({}, d, { on: String(s.deck === i), border: s.deck === i ? t.ac : t.line, pick: () => go({ deck: i }) })),
+      deck: decks[s.deck],
+      cards: [
+        { front: 'tái chế chai nhựa', back: '플라스틱 병을 재활용하다', kind: 'Gõ đáp án', flags: '★' },
+        { front: 'dùng chai nhựa làm chất liệu chính', back: '플라스틱 병을 소재로 하다', kind: 'Gõ đáp án', flags: '' },
+        { front: 'chi phí chế tạo ít tốn kém', back: '제작 비용이 적게 들다', kind: 'Gõ đáp án', flags: '' },
+        { front: '플라스틱 병을 재활용하는 방법에는…', back: 'Có nhiều cách để tái chế chai nhựa.', kind: 'Tự chấm · đoạn văn', flags: '' },
+        { front: 'tái chế', back: '재활용하다', kind: 'Gõ đáp án', flags: '漢' },
+        { front: '▶︎ Clip 0:42.5 (4.5s)', back: '플라스틱 병을 소재로 해서 운동복을…', kind: 'Clip · chép chính tả', flags: '' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

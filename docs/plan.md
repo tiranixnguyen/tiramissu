@@ -1,7 +1,7 @@
 # Kế hoạch — Tiramissu
 
 > Bản kế hoạch cho người đọc. Việc cụ thể từng bước: [`tasks.md`](tasks.md).
-> Prototype giao diện (đã duyệt v2): https://claude.ai/artifact/VoCymBbC7z1bQRoSRwkvVq
+> Prototype giao diện (đã duyệt v2): `design/prototype/` (ảnh + nguồn) · bản tương tác: https://claude.ai/artifact/VoCymBbC7z1bQRoSRwkvVq
 
 ## 1. Bối cảnh & mục tiêu
 

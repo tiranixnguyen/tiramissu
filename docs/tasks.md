@@ -14,8 +14,11 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
 
 - [x] **T0.1 · Prototype v1** (màn iPhone + Mac, design system đầu tiên)
 - [x] **T0.2 · Prototype v2**: Mac-first, Liquid Glass, 6 theme, ⌘K, cắt clip âm thanh
-  — https://claude.ai/artifact/VoCymBbC7z1bQRoSRwkvVq
+  — https://claude.ai/artifact/VoCymBbC7z1bQRoSRwkvVq · bản offline: `design/prototype/`
 - [x] **T0.3 · Khởi tạo monorepo**: docs, CLAUDE.md, khung Swift, backend chép từ `flashcard-app`
+- [x] **T0.3b · Prototype offline** → `design/prototype/` (ảnh chụp mọi màn sáng/tối + 6 theme, mã nguồn)
+  để agent không đăng nhập claude.ai vẫn đọc được. Màn Mac/iOS: đọc ảnh `design/prototype/screens/<màn>-*.png`
+  + nguồn `src/<màn>.dc.html` trước khi làm.
 - [ ] **T0.4 · 👤 Chốt góp ý prototype** → ghi thay đổi (nếu có) vào `docs/design-system.md`
 
 ---

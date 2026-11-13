@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Mac · Cắt clip âm thanh</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+KR:wght@400;500;700&amp;family=Noto+Serif+KR:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit}
+button{cursor:pointer}
+.glass{background:var(--glass);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid var(--gb);box-shadow:var(--sh),inset 0 1px 0 var(--gb)}
+.tglass{background:color-mix(in srgb,var(--ac) 70%,transparent);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid color-mix(in srgb,#fff 35%,transparent);box-shadow:inset 0 1px 0 color-mix(in srgb,#fff 45%,transparent);color:var(--on)}
+.desk{background:radial-gradient(circle at 8% 12%,color-mix(in srgb,var(--ac) 50%,transparent),transparent 38%),radial-gradient(circle at 92% 88%,color-mix(in srgb,var(--flag) 40%,transparent),transparent 45%),var(--bg)}
+.nav{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;font-size:13px;font-weight:500;color:var(--ink2);text-decoration:none}
+.nav.on{background:color-mix(in srgb,var(--ac) 18%,transparent);color:var(--ink);font-weight:600}
+.kbd{font:600 11px ui-monospace,Menlo,monospace;padding:2px 6px;border-radius:6px;border:1px solid var(--line);color:var(--ink2)}
+.card{background:var(--sf);border:1px solid var(--line);border-radius:18px}
+.tb{height:36px;padding:0 12px;border-radius:999px;border:0;background:transparent;color:var(--ink);font:600 13px Inter,sans-serif;display:flex;align-items:center;gap:7px}
+</style>
+</helmet>
+<div class="desk" style="{{vars}}; position: relative; width: 1280px; height: 800px; box-sizing: border-box; color: var(--ink); font-family: Inter, 'Noto Sans KR', sans-serif; overflow: hidden;">
+  <div style="position: absolute; left: 240px; right: 0; top: 0; bottom: 0; background: var(--bg);"></div>
+
+  <nav aria-label="Điều hướng" class="glass" style="position: absolute; left: 10px; top: 10px; bottom: 10px; width: 216px; box-sizing: border-box; border-radius: 20px; padding: 14px 10px; display: flex; flex-direction: column; gap: 2px;">
+    <div style="display: flex; gap: 7px; padding: 2px 8px 16px;"><span style="width: 12px; height: 12px; border-radius: 99px; background: #FF5F57;"></span><span style="width: 12px; height: 12px; border-radius: 99px; background: #FEBC2E;"></span><span style="width: 12px; height: 12px; border-radius: 99px; background: #28C840;"></span></div>
+    <a class="nav" href="Mac-Today.dc.html">Hôm nay</a>
+    <a class="nav" href="Mac-Study.dc.html">Học</a>
+    <a class="nav" href="Mac-Library.dc.html">Thư viện</a>
+    <a class="nav" href="Mac-Import.dc.html">Nhập từ AI</a>
+    <a class="nav on" href="Mac-Audio.dc.html">Cắt clip âm thanh</a>
+    <div style="padding: 16px 10px 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; color: var(--ink2);">FILE GẦN ĐÂY</div>
+    <div class="nav" style="background: color-mix(in srgb, var(--ink) 7%, transparent); color: var(--ink);">SNU4A-07-듣기.m4a</div>
+    <div class="nav">뉴스-환경-1103.mp3</div>
+    <div class="nav">드라마-ep3.m4a</div>
+    <div style="margin: 8px 6px 0; padding: 14px 10px; border-radius: 12px; border: 1.5px dashed var(--line); font-size: 12px; color: var(--ink2); text-align: center; line-height: 1.5;">Kéo thả file âm thanh vào đây<br>mp3 · m4a · wav</div>
+  </nav>
+
+  <header class="glass" style="position: absolute; left: 252px; right: 12px; top: 10px; height: 52px; box-sizing: border-box; border-radius: 16px; padding: 0 10px 0 18px; display: flex; align-items: center; gap: 12px;">
+    <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+      <div style="font-size: 14px; font-weight: 600;">SNU4A-07-듣기.m4a</div>
+      <div style="font-size: 12px; color: var(--ink2);">12:40 · ~/Korean Audio · file gốc ở yên trên Mac, chỉ đoạn cắt được đồng bộ</div>
+    </div>
+    <button onClick="{{nextTheme}}" aria-label="Đổi theme" style="height: 34px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--ink); font: 600 12px Inter, sans-serif; display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 99px; background: var(--ac);"></span>{{themeName}}</button>
+    <button onClick="{{toggleDark}}" aria-label="Sáng / tối" style="width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--ink); display: flex; align-items: center; justify-content: center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"></path></svg></button>
+  </header>
+
+  <main style="position: absolute; left: 252px; right: 304px; top: 78px; bottom: 12px; display: flex; flex-direction: column; gap: 14px;">
+    <section class="card" style="padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 10px;">
+      <div style="height: 8px; border-radius: 99px; background: color-mix(in srgb, var(--ink) 8%, var(--sf)); position: relative;" aria-label="Toàn bộ file">
+        <div style="position: absolute; left: 3.9%; width: 3.9%; top: 0; bottom: 0; border-radius: 99px; background: color-mix(in srgb, var(--ac) 45%, var(--sf));"></div>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--ink2); font-family: ui-monospace, Menlo, monospace;"><span>0:30.0</span><span>Đang xem 30 giây · zoom ⌘+ / ⌘−</span><span>1:00.0</span></div>
+      <div style="position: relative; height: 200px; border-radius: 12px; background: color-mix(in srgb, var(--ink) 4%, var(--sf)); overflow: hidden;">
+        <div style="position: absolute; top: 0; bottom: 0; left: {{selLeft}}; width: {{selWidth}}; background: color-mix(in srgb, var(--ok) 20%, transparent); border-left: 2px solid var(--ok); border-right: 2px solid var(--ok);"></div>
+        <div style="position: absolute; inset: 0; display: flex; align-items: center; gap: 2px; padding: 0 2px;">
+          <sc-for list="{{bars}}" as="b" hint-placeholder-count="150">
+            <div style="flex: 1; height: {{b.h}}; border-radius: 2px; background: {{b.c}};"></div>
+          </sc-for>
+        </div>
+        <div style="position: absolute; top: 6px; left: {{selLeft}}; transform: translateX(-50%); padding: 2px 6px; border-radius: 6px; background: var(--ok); color: var(--sf); font: 700 11px Inter, sans-serif;">A</div>
+        <div style="position: absolute; top: 6px; left: {{bLeft}}; transform: translateX(-50%); padding: 2px 6px; border-radius: 6px; background: var(--ok); color: var(--sf); font: 700 11px Inter, sans-serif;">B</div>
+        <div style="position: absolute; top: 0; bottom: 0; left: {{headLeft}}; width: 2px; background: var(--bad);"></div>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--ink2); font-family: ui-monospace, Menlo, monospace;">
+        <span>Đầu {{headLabel}}</span><span>A {{aLabel}} → B {{bLabel}} · dài {{lenLabel}}</span>
+      </div>
+    </section>
+
+    <section class="card" style="padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; flex: 1; min-height: 0;">
+      <label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: var(--ink2);">Câu nghe được (tiếng Hàn)
+        <textarea rows="2" lang="ko" value="{{transcript}}" onChange="{{onTranscript}}" style="box-sizing: border-box; border-radius: 12px; border: 1px solid var(--line); background: var(--sf); color: var(--ink); padding: 10px 12px; font: 500 18px/1.5 'Noto Sans KR', sans-serif; resize: none;"></textarea></label>
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 12px;">
+        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: var(--ink2);">Nghĩa tiếng Việt
+          <input value="{{translation}}" onChange="{{onTranslation}}" style="height: 40px; box-sizing: border-box; border-radius: 12px; border: 1px solid var(--line); background: var(--sf); color: var(--ink); padding: 0 12px; font: 400 14px Inter, sans-serif;"></label>
+        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: var(--ink2);">Gắn vào bộ
+          <select style="height: 40px; border-radius: 12px; border: 1px solid var(--line); background: var(--sf); color: var(--ink); padding: 0 8px; font: 500 14px Inter, sans-serif;"><option>Plastic · tái chế</option><option>듣기 4-8번 > 병원</option><option>Không gắn</option></select></label>
+      </div>
+      <div style="font-size: 12px; color: var(--ink2);">Lưu = xuất đoạn A–B thành M4A (~50 KB) → tải lên server → có trên iPhone ở lần đồng bộ sau.</div>
+    </section>
+  </main>
+
+  <div class="glass" style="position: absolute; left: 50%; transform: translateX(-66%); bottom: 24px; display: flex; align-items: center; gap: 2px; padding: 6px; border-radius: 999px;">
+    <button class="tb" onClick="{{back}}" aria-label="Lùi 2 giây">−2s</button>
+    <button class="tb" onClick="{{togglePlay}}">{{playLabel}} <span class="kbd">Space</span></button>
+    <button class="tb" onClick="{{fwd}}" aria-label="Tiến 2 giây">+2s</button>
+    <span style="width: 1px; height: 22px; background: var(--line);"></span>
+    <button class="tb" onClick="{{setA}}">Đặt A <span class="kbd">[</span></button>
+    <button class="tb" onClick="{{setB}}">Đặt B <span class="kbd">]</span></button>
+    <button class="tb" onClick="{{nudge}}">B +0.1s <span class="kbd">⌥→</span></button>
+    <button class="tb" onClick="{{toggleLoop}}" aria-pressed="{{loopStr}}" style="background: {{loopBg}};">Lặp <span class="kbd">L</span></button>
+    <button class="tb" onClick="{{cycleSpeed}}">{{speedLabel}}</button>
+    <button class="tb tglass" onClick="{{save}}" style="padding: 0 16px;">Lưu clip <span style="font: 600 11px ui-monospace, Menlo, monospace; opacity: 0.8;">⌘S</span></button>
+  </div>
+
+  <aside aria-label="Clip của file này" style="position: absolute; right: 12px; top: 78px; bottom: 12px; width: 280px; display: flex; flex-direction: column; gap: 10px; overflow: hidden;">
+    <div style="font-size: 14px; font-weight: 600; padding: 4px 4px 0;">Clip đã cắt · {{savedCount}}</div>
+    <sc-for list="{{saved}}" as="c" hint-placeholder-count="3">
+      <div class="card" style="padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; border-radius: 14px;">
+        <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--ink2); font-family: ui-monospace, Menlo, monospace;"><span>{{c.range}}</span><span>{{c.len}}</span></div>
+        <div style="font: 600 14px/1.45 'Noto Sans KR', sans-serif;">{{c.t}}</div>
+        <div style="font-size: 12px; color: var(--ink2);">{{c.v}}</div>
+      </div>
+    </sc-for>
+  </aside>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { theme: 'paper', dark: false, head: 42.5, a: 42.5, b: 47.0, playing: false, loop: true, speed: 0.75,
+      transcript: '플라스틱 병을 소재로 해서 운동복을 만들면 가볍고 시원하다',
+      translation: 'Dùng chai nhựa làm chất liệu may đồ thể thao thì nhẹ và mát.',
+      saved: [{ s: 18.0, e: 21.2, t: '음식물 쓰레기를 줄이기 위해서', v: 'Để giảm rác thải thực phẩm' }, { s: 96.4, e: 101.4, t: '재활용률이 점점 높아지고 있다', v: 'Tỉ lệ tái chế đang dần tăng lên' }] };
+    this.amp = Array.from({ length: 150 }, (_, i) => { const x = Math.sin(i * 0.37) * Math.sin(i * 0.11 + 1) + Math.sin(i * 1.7) * 0.35; const gap = (i % 37 > 31) ? 0.08 : 1; return Math.max(0.06, Math.min(1, Math.abs(x) * gap + 0.08)); });
+    this.TH = {
+      paper: ['Giấy', { bg: '#F5F4F0', sf: '#FFFFFF', ink: '#191C24', ink2: '#4C5260', ac: '#2B54C9', line: '#DDDBD3', on: '#FFFFFF' }, { bg: '#121418', sf: '#1B1E24', ink: '#ECEEF2', ink2: '#A9AFBC', ac: '#7C9BFF', line: '#343946', on: '#0B1020' }],
+      ink: ['Mực đêm', { bg: '#EEF0F6', sf: '#FFFFFF', ink: '#141826', ink2: '#4A5068', ac: '#5B4BD6', line: '#D7DAE6', on: '#FFFFFF' }, { bg: '#0E1020', sf: '#171A2E', ink: '#E8E9F5', ink2: '#A3A7C4', ac: '#A99BFF', line: '#2B2F4A', on: '#120E2A' }],
+      pine: ['Rừng thông', { bg: '#F1F4EF', sf: '#FFFFFF', ink: '#17201A', ink2: '#475449', ac: '#1F6B4A', line: '#D6DED6', on: '#FFFFFF' }, { bg: '#0F1712', sf: '#17221B', ink: '#E5EEE7', ink2: '#9DB0A3', ac: '#5CCB95', line: '#2A3A2F', on: '#06140C' }],
+      dusk: ['Hoàng hôn', { bg: '#FAF3EE', sf: '#FFFFFF', ink: '#2A1A14', ink2: '#6A4E43', ac: '#B8402A', line: '#EADBD2', on: '#FFFFFF' }, { bg: '#1A1210', sf: '#251A17', ink: '#F5E9E4', ink2: '#C2A79D', ac: '#FF8A66', line: '#3D2C27', on: '#2A0E05' }],
+      contrast: ['Tương phản cao', { bg: '#FFFFFF', sf: '#FFFFFF', ink: '#000000', ink2: '#222222', ac: '#0033CC', line: '#000000', on: '#FFFFFF' }, { bg: '#000000', sf: '#0A0A0A', ink: '#FFFFFF', ink2: '#E6E6E6', ac: '#FFD400', line: '#FFFFFF', on: '#000000' }],
+      system: ['Hệ thống', { bg: '#F2F2F4', sf: '#FFFFFF', ink: '#1D1D1F', ink2: '#55555B', ac: '#0064D2', line: '#DADADF', on: '#FFFFFF' }, { bg: '#161618', sf: '#1F1F22', ink: '#F2F2F4', ink2: '#AAAAB0', ac: '#409CFF', line: '#38383C', on: '#03182E' }]
+    };
+  }
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      const s = this.state; if (!s.playing) return;
+      let h = s.head + 0.1 * s.speed;
+      if (s.loop && h >= s.b) h = s.a;
+      if (h >= 60) { this.setState({ playing: false, head: 60 }); return; }
+      this.setState({ head: h });
+    }, 100);
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+  fmt(x) { const m = Math.floor(x / 60); const s = (x - m * 60).toFixed(1); return m + ':' + (s.length < 4 ? '0' + s : s); }
+  renderVals() {
+    const s = this.state; const go = (p) => this.setState(p);
+    const ST = s.dark ? { ok: '#5CC48E', bad: '#F08174', flag: '#F2B54B', glass: 'rgba(30,32,40,0.5)', gb: 'rgba(255,255,255,0.16)', sh: '0 10px 34px rgba(0,0,0,0.5)' } : { ok: '#1C7146', bad: '#B23A2E', flag: '#9A5B00', glass: 'rgba(255,255,255,0.55)', gb: 'rgba(255,255,255,0.75)', sh: '0 10px 34px rgba(20,24,40,0.16)' };
+    const t = Object.assign({}, this.TH[s.theme][s.dark ? 2 : 1], ST);
+    const keys = Object.keys(this.TH);
+    const W0 = 30, W = 30; const pct = (x) => (Math.max(0, Math.min(1, (x - W0) / W)) * 100).toFixed(2) + '%';
+    const clamp = (x) => Math.max(W0, Math.min(W0 + W, x));
+    const speeds = [0.5, 0.75, 1];
+    return {
+      vars: `--bg:${t.bg};--sf:${t.sf};--ink:${t.ink};--ink2:${t.ink2};--ac:${t.ac};--line:${t.line};--on:${t.on};--ok:${t.ok};--bad:${t.bad};--flag:${t.flag};--glass:${t.glass};--gb:${t.gb};--sh:${t.sh}`,
+      themeName: this.TH[s.theme][0],
+      nextTheme: () => go({ theme: keys[(keys.indexOf(s.theme) + 1) % keys.length] }),
+      toggleDark: () => go({ dark: !s.dark }),
+      bars: this.amp.map((v, i) => { const x = W0 + i * 0.2; const inSel = x >= s.a && x <= s.b; return { h: Math.round(v * 92) + '%', c: inSel ? t.ok : (x < s.head ? `color-mix(in srgb, ${t.ac} 70%, ${t.sf})` : `color-mix(in srgb, ${t.ink} 30%, ${t.sf})`) }; }),
+      selLeft: pct(s.a), selWidth: (((s.b - s.a) / W) * 100).toFixed(2) + '%', bLeft: pct(s.b), headLeft: pct(s.head),
+      headLabel: this.fmt(s.head), aLabel: this.fmt(s.a), bLabel: this.fmt(s.b), lenLabel: (s.b - s.a).toFixed(1) + 's',
+      togglePlay: () => go({ playing: !s.playing }), playLabel: s.playing ? 'Dừng' : 'Phát',
+      back: () => go({ head: clamp(s.head - 2) }), fwd: () => go({ head: clamp(s.head + 2) }),
+      setA: () => go({ a: s.head, b: Math.max(s.b, s.head + 0.5) }), setB: () => go({ b: Math.max(s.head, s.a + 0.5) }),
+      nudge: () => go({ b: clamp(s.b + 0.1) }),
+      toggleLoop: () => go({ loop: !s.loop }), loopStr: String(s.loop), loopBg: s.loop ? `color-mix(in srgb, ${t.ok} 18%, transparent)` : 'transparent',
+      cycleSpeed: () => go({ speed: speeds[(speeds.indexOf(s.speed) + 1) % 3] }), speedLabel: s.speed + '×',
+      transcript: s.transcript, translation: s.translation,
+      onTranscript: (e) => go({ transcript: e.target.value }), onTranslation: (e) => go({ translation: e.target.value }),
+      save: () => { if (!s.transcript.trim()) return; go({ saved: [{ s: s.a, e: s.b, t: s.transcript, v: s.translation }].concat(s.saved), transcript: '', translation: '' }); },
+      savedCount: s.saved.length,
+      saved: s.saved.map(c => ({ t: c.t, v: c.v, range: this.fmt(c.s) + ' → ' + this.fmt(c.e), len: (c.e - c.s).toFixed(1) + 's' }))
+    };
+  }
+}
+</script>
+</body>
+</html>

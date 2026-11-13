@@ -1,7 +1,8 @@
 # Design system
 
-Prototype (nguồn sự thật về giao diện): https://claude.ai/artifact/VoCymBbC7z1bQRoSRwkvVq
-— artboard "Design system", "Mac · Học (+ ⌘K)", "Mac · Hôm nay", "Mac · Thư viện", "Mac · Nhập từ AI",
+Prototype (nguồn sự thật về giao diện): **`design/prototype/`** — ảnh chụp từng màn (`screens/`) + mã nguồn
+(`src/`), xem bảng trong `design/prototype/README.md`. Bản tương tác (chỉ người, cần đăng nhập):
+https://claude.ai/artifact/VoCymBbC7z1bQRoSRwkvVq — artboard "Design system", "Mac · Học (+ ⌘K)", "Mac · Hôm nay", "Mac · Thư viện", "Mac · Nhập từ AI",
 "Mac · Cắt clip âm thanh", "iPhone · …". Bấm Play trên artboard để thử tương tác.
 
 ## 1. Nguyên tắc

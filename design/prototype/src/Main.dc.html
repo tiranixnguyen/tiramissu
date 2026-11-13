@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Hanstudy design system</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+KR:wght@400;500;700&amp;family=Noto+Serif+KR:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#2B54C9}a:hover{color:#1E3E99}
+button{cursor:pointer}
+.glass{background:var(--glass);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid var(--gb);box-shadow:var(--sh),inset 0 1px 0 var(--gb)}
+.tglass{background:color-mix(in srgb,var(--ac) 62%,transparent);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid color-mix(in srgb,#fff 35%,transparent);box-shadow:var(--sh),inset 0 1px 0 color-mix(in srgb,#fff 45%,transparent);color:var(--on)}
+.desk{background:radial-gradient(circle at 12% 18%,color-mix(in srgb,var(--ac) 55%,transparent),transparent 42%),radial-gradient(circle at 88% 82%,color-mix(in srgb,var(--flag) 45%,transparent),transparent 48%),radial-gradient(circle at 70% 10%,color-mix(in srgb,var(--ok) 35%,transparent),transparent 40%),var(--bg)}
+</style>
+</helmet>
+<div style="{{vars}}; width: 1280px; height: 1400px; box-sizing: border-box; padding: 48px 56px; background: var(--bg); color: var(--ink); font-family: Inter, 'Noto Sans KR', sans-serif; display: flex; flex-direction: column; gap: 32px;">
+
+  <header style="display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap;">
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <div style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2);">Design system · v0.2 · macOS 26 / iOS 26</div>
+      <h1 style="margin: 0; font-size: 44px; font-weight: 700; letter-spacing: -0.02em;">Hanstudy <span style="font-family: 'Noto Serif KR', serif; color: var(--ac);">한공부</span></h1>
+      <p style="margin: 0; font-size: 15px; line-height: 1.5; color: var(--ink2); max-width: 620px;">Kính lỏng cho lớp điều khiển (sidebar, toolbar, thanh nút nổi). Nội dung học luôn nằm trên nền đặc để chữ Hàn rõ nét. Mọi màu là token của theme — đổi theme là đổi cả app.</p>
+    </div>
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <button onClick="{{toggleDark}}" aria-pressed="{{darkStr}}" style="height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--sf); color: var(--ink); font: 600 13px Inter, sans-serif;">{{darkLabel}}</button>
+    </div>
+  </header>
+
+  <section style="display: flex; flex-direction: column; gap: 12px;">
+    <h2 style="margin: 0; font-size: 18px; font-weight: 600;">Theme — bấm để đổi (giống Command Palette › Theme của VS Code)</h2>
+    <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px;">
+      <sc-for list="{{themes}}" as="t" hint-placeholder-count="6">
+        <button onClick="{{t.pick}}" aria-pressed="{{t.on}}" style="display: flex; flex-direction: column; gap: 10px; padding: 12px; border-radius: 16px; border: 2px solid {{t.ring}}; background: var(--sf); color: var(--ink); text-align: left; font-family: Inter, sans-serif;">
+          <span style="display: flex; height: 44px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line);">
+            <span style="flex: 2; background: {{t.bg}};"></span><span style="flex: 2; background: {{t.sf}};"></span><span style="flex: 1; background: {{t.ink}};"></span><span style="flex: 1; background: {{t.ac}};"></span>
+          </span>
+          <span style="font-size: 14px; font-weight: 600;">{{t.name}}</span>
+          <span style="font-size: 12px; color: var(--ink2);">{{t.desc}}</span>
+        </button>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="display: grid; grid-template-columns: 1.25fr 1fr; gap: 24px;">
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <h2 style="margin: 0; font-size: 18px; font-weight: 600;">Liquid Glass</h2>
+      <div class="desk" style="position: relative; height: 330px; border-radius: 22px; overflow: hidden; border: 1px solid var(--line);">
+        <div style="position: absolute; left: 150px; right: 24px; top: 24px; bottom: 24px; background: var(--sf); border-radius: 16px; padding: 22px; display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-size: 12px; color: var(--ink2); font-weight: 600;">NỘI DUNG · nền đặc</div>
+          <div style="font-family: 'Noto Serif KR', serif; font-size: 34px; font-weight: 700;">재활용하다</div>
+          <div style="font-size: 15px; color: var(--ink2);">tái chế · 再活用</div>
+        </div>
+        <div class="glass" style="position: absolute; left: 14px; top: 14px; bottom: 14px; width: 150px; border-radius: 18px; padding: 14px 10px; display: flex; flex-direction: column; gap: 4px;">
+          <div style="display: flex; gap: 6px; padding: 2px 6px 10px;"><span style="width: 11px; height: 11px; border-radius: 99px; background: #FF5F57;"></span><span style="width: 11px; height: 11px; border-radius: 99px; background: #FEBC2E;"></span><span style="width: 11px; height: 11px; border-radius: 99px; background: #28C840;"></span></div>
+          <div style="padding: 7px 10px; border-radius: 10px; background: color-mix(in srgb, var(--ac) 18%, transparent); font-size: 13px; font-weight: 600;">Học</div>
+          <div style="padding: 7px 10px; font-size: 13px; color: var(--ink2);">Hôm nay</div>
+          <div style="padding: 7px 10px; font-size: 13px; color: var(--ink2);">Thư viện</div>
+          <div style="padding: 7px 10px; font-size: 13px; color: var(--ink2);">Cắt clip</div>
+          <div style="margin-top: auto; padding: 4px 10px; font-size: 11px; color: var(--ink2);">Sidebar · kính trong</div>
+        </div>
+        <div class="glass" style="position: absolute; left: 50%; bottom: 30px; transform: translateX(-28%); display: flex; gap: 6px; padding: 6px; border-radius: 999px;">
+          <span style="padding: 9px 14px; border-radius: 999px; font-size: 13px; font-weight: 600;">Xem đáp án</span>
+          <span class="tglass" style="padding: 9px 16px; border-radius: 999px; font-size: 13px; font-weight: 600;">Chấm bài ↵</span>
+        </div>
+      </div>
+      <div style="font-size: 12px; color: var(--ink2);">SwiftUI: <code>.glassEffect()</code> cho sidebar/thanh nổi · <code>.glassEffect(.regular.tint(accent))</code> cho nút chính · gom trong <code>GlassEffectContainer</code> để kính “chảy” vào nhau.</div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <h2 style="margin: 0; font-size: 18px; font-weight: 600;">Token màu · {{themeName}} {{modeName}}</h2>
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px;">
+        <sc-for list="{{swatches}}" as="c" hint-placeholder-count="12">
+          <div style="display: flex; flex-direction: column; gap: 5px;">
+            <div style="height: 46px; border-radius: 10px; border: 1px solid var(--line); background: {{c.hex}};"></div>
+            <div style="font-size: 12px; font-weight: 600;">{{c.name}}</div>
+            <div style="font-size: 11px; color: var(--ink2); font-family: ui-monospace, Menlo, monospace;">{{c.hex}}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="font-size: 12px; line-height: 1.5; color: var(--ink2); background: var(--sf); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; font-family: ui-monospace, Menlo, monospace; white-space: pre-line;">{{jsonPreview}}</div>
+    </div>
+  </section>
+
+  <section style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px;">
+    <div style="background: var(--sf); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 10px;">
+      <div style="font-size: 12px; font-weight: 600; color: var(--ink2);">Chữ</div>
+      <div style="font-family: 'Noto Serif KR', serif; font-size: 36px; font-weight: 700;">재활용하다</div>
+      <div style="font-size: 24px; font-weight: 700;">Hôm nay ôn 3 bộ</div>
+      <div style="font-size: 16px; line-height: 1.5;">플라스틱 병을 소재로 하다 — dùng chai nhựa làm chất liệu</div>
+      <div style="font-size: 13px; color: var(--ink2);">Ôn lại sau 7 ngày · 92% đúng</div>
+    </div>
+    <div style="background: var(--sf); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 10px;">
+      <div style="font-size: 12px; font-weight: 600; color: var(--ink2);">Ô trả lời</div>
+      <input value="재활용" aria-label="Mặc định" style="height: 46px; box-sizing: border-box; border-radius: 12px; border: 1.5px solid var(--line); background: var(--sf); color: var(--ink); padding: 0 14px; font: 500 18px 'Noto Sans KR', sans-serif;">
+      <input value="재활용하다" aria-label="Đúng" style="height: 46px; box-sizing: border-box; border-radius: 12px; border: 1.5px solid var(--ok); background: color-mix(in srgb, var(--ok) 13%, var(--sf)); color: var(--ink); padding: 0 14px; font: 500 18px 'Noto Sans KR', sans-serif;">
+      <input value="재활하다" aria-label="Sai" style="height: 46px; box-sizing: border-box; border-radius: 12px; border: 1.5px solid var(--bad); background: color-mix(in srgb, var(--bad) 13%, var(--sf)); color: var(--ink); padding: 0 14px; font: 500 18px 'Noto Sans KR', sans-serif;">
+    </div>
+    <div style="background: var(--sf); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 10px;">
+      <div style="font-size: 12px; font-weight: 600; color: var(--ink2);">Nút &amp; cờ</div>
+      <div style="display: flex; gap: 8px;">
+        <button style="flex: 1; height: 44px; border-radius: 12px; border: 0; background: color-mix(in srgb, var(--bad) 15%, var(--sf)); color: var(--ink); font: 600 14px Inter, sans-serif;">Chưa nhớ</button>
+        <button style="flex: 1; height: 44px; border-radius: 12px; border: 0; background: color-mix(in srgb, var(--ok) 15%, var(--sf)); color: var(--ink); font: 600 14px Inter, sans-serif;">Nhớ</button>
+      </div>
+      <button style="height: 44px; border-radius: 12px; border: 0; background: var(--ac); color: var(--on); font: 600 15px Inter, sans-serif;">Chấm bài</button>
+      <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+        <span style="padding: 5px 10px; border-radius: 999px; background: color-mix(in srgb, var(--flag) 18%, var(--sf)); color: var(--ink); font-size: 13px; font-weight: 600;">★ Khó nhớ</span>
+        <span style="padding: 5px 10px; border-radius: 999px; background: color-mix(in srgb, var(--ink) 8%, var(--sf)); font-size: 13px; font-weight: 600; font-family: 'Noto Serif KR', serif;">漢 Hán Hàn</span>
+        <span style="padding: 5px 10px; border-radius: 999px; background: color-mix(in srgb, var(--ok) 15%, var(--sf)); font-size: 13px; font-weight: 600;">Clip nghe</span>
+      </div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1400}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { theme: 'paper', dark: false }; }
+  renderVals() {
+    const TH = {
+      paper: { name: 'Giấy', desc: 'Mặc định · trắng ngà, mực xanh', l: { bg: '#F5F4F0', sf: '#FFFFFF', ink: '#191C24', ink2: '#4C5260', ac: '#2B54C9', line: '#DDDBD3', on: '#FFFFFF' }, d: { bg: '#121418', sf: '#1B1E24', ink: '#ECEEF2', ink2: '#A9AFBC', ac: '#7C9BFF', line: '#343946', on: '#0B1020' } },
+      ink: { name: 'Mực đêm', desc: 'Tím chàm, dịu mắt buổi tối', l: { bg: '#EEF0F6', sf: '#FFFFFF', ink: '#141826', ink2: '#4A5068', ac: '#5B4BD6', line: '#D7DAE6', on: '#FFFFFF' }, d: { bg: '#0E1020', sf: '#171A2E', ink: '#E8E9F5', ink2: '#A3A7C4', ac: '#A99BFF', line: '#2B2F4A', on: '#120E2A' } },
+      pine: { name: 'Rừng thông', desc: 'Xanh lá trầm, tập trung', l: { bg: '#F1F4EF', sf: '#FFFFFF', ink: '#17201A', ink2: '#475449', ac: '#1F6B4A', line: '#D6DED6', on: '#FFFFFF' }, d: { bg: '#0F1712', sf: '#17221B', ink: '#E5EEE7', ink2: '#9DB0A3', ac: '#5CCB95', line: '#2A3A2F', on: '#06140C' } },
+      dusk: { name: 'Hoàng hôn', desc: 'Cam đất ấm áp', l: { bg: '#FAF3EE', sf: '#FFFFFF', ink: '#2A1A14', ink2: '#6A4E43', ac: '#B8402A', line: '#EADBD2', on: '#FFFFFF' }, d: { bg: '#1A1210', sf: '#251A17', ink: '#F5E9E4', ink2: '#C2A79D', ac: '#FF8A66', line: '#3D2C27', on: '#2A0E05' } },
+      contrast: { name: 'Tương phản cao', desc: 'Đen trắng, dễ đọc nhất', l: { bg: '#FFFFFF', sf: '#FFFFFF', ink: '#000000', ink2: '#222222', ac: '#0033CC', line: '#000000', on: '#FFFFFF' }, d: { bg: '#000000', sf: '#0A0A0A', ink: '#FFFFFF', ink2: '#E6E6E6', ac: '#FFD400', line: '#FFFFFF', on: '#000000' } },
+      system: { name: 'Hệ thống', desc: 'Theo màu nhấn macOS', l: { bg: '#F2F2F4', sf: '#FFFFFF', ink: '#1D1D1F', ink2: '#55555B', ac: '#0064D2', line: '#DADADF', on: '#FFFFFF' }, d: { bg: '#161618', sf: '#1F1F22', ink: '#F2F2F4', ink2: '#AAAAB0', ac: '#409CFF', line: '#38383C', on: '#03182E' } }
+    };
+    const ST = { l: { ok: '#1C7146', bad: '#B23A2E', flag: '#9A5B00', glass: 'rgba(255,255,255,0.55)', gb: 'rgba(255,255,255,0.75)', sh: '0 10px 34px rgba(20,24,40,0.16)' }, d: { ok: '#5CC48E', bad: '#F08174', flag: '#F2B54B', glass: 'rgba(30,32,40,0.5)', gb: 'rgba(255,255,255,0.16)', sh: '0 10px 34px rgba(0,0,0,0.5)' } };
+    const s = this.state; const m = s.dark ? 'd' : 'l';
+    const t = Object.assign({}, TH[s.theme][m], ST[m]);
+    const vars = `--bg:${t.bg};--sf:${t.sf};--ink:${t.ink};--ink2:${t.ink2};--ac:${t.ac};--line:${t.line};--on:${t.on};--ok:${t.ok};--bad:${t.bad};--flag:${t.flag};--glass:${t.glass};--gb:${t.gb};--sh:${t.sh}`;
+    const keys = ['bg', 'sf', 'line', 'ink', 'ink2', 'ac', 'on', 'ok', 'bad', 'flag', 'glass', 'gb'];
+    return {
+      vars,
+      themes: Object.keys(TH).map(k => { const c = TH[k][m]; return { name: TH[k].name, desc: TH[k].desc, bg: c.bg, sf: c.sf, ink: c.ink, ac: c.ac, on: String(s.theme === k), ring: s.theme === k ? t.ac : 'transparent', pick: () => this.setState({ theme: k }) }; }),
+      toggleDark: () => this.setState({ dark: !s.dark }),
+      darkStr: String(s.dark), darkLabel: s.dark ? 'Tối ● · đổi sang sáng' : 'Sáng ● · đổi sang tối',
+      themeName: TH[s.theme].name, modeName: s.dark ? '(tối)' : '(sáng)',
+      swatches: keys.map(k => ({ name: k, hex: t[k] })),
+      jsonPreview: `// themes/${s.theme}.json\n{ "name": "${TH[s.theme].name}", "mode": "${s.dark ? 'dark' : 'light'}",\n  "bg": "${t.bg}", "surface": "${t.sf}", "ink": "${t.ink}",\n  "accent": "${t.ac}", "cardKoreanFont": "serif" }`
+    };
+  }
+}
+</script>
+</body>
+</html>

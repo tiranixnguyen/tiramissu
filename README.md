@@ -17,7 +17,7 @@ Google Docs (bài học, bài tập) ──► Gemini / NotebookLM (prompt soạ
 - Liquid Glass (macOS 26 / iOS 26), 6 theme đổi được như VS Code (⌘K › Theme).
 - Ôn theo Leitner trong lượt + lịch ôn 1 → 3 → 7 → 14 → 30 → 60 ngày.
 
-Prototype giao diện: https://claude.ai/artifact/VoCymBbC7z1bQRoSRwkvVq
+Prototype giao diện: `design/prototype/` (ảnh chụp + nguồn) · bản tương tác: https://claude.ai/artifact/VoCymBbC7z1bQRoSRwkvVq
 
 ## Cấu trúc
 

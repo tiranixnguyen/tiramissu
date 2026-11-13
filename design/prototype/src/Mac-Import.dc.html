@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Mac · Nhập từ AI</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+KR:wght@400;500;700&amp;family=Noto+Serif+KR:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit}
+button{cursor:pointer}
+.glass{background:var(--glass);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid var(--gb);box-shadow:var(--sh),inset 0 1px 0 var(--gb)}
+.desk{background:radial-gradient(circle at 8% 12%,color-mix(in srgb,var(--ac) 50%,transparent),transparent 38%),radial-gradient(circle at 92% 88%,color-mix(in srgb,var(--flag) 40%,transparent),transparent 45%),var(--bg)}
+.nav{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;font-size:13px;font-weight:500;color:var(--ink2);text-decoration:none}
+.nav.on{background:color-mix(in srgb,var(--ac) 18%,transparent);color:var(--ink);font-weight:600}
+.card{background:var(--sf);border:1px solid var(--line);border-radius:18px}
+.step{width:24px;height:24px;border-radius:99px;background:var(--ink);color:var(--sf);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+</style>
+</helmet>
+<div class="desk" style="{{vars}}; position: relative; width: 1280px; height: 800px; box-sizing: border-box; color: var(--ink); font-family: Inter, 'Noto Sans KR', sans-serif; overflow: hidden;">
+  <div style="position: absolute; left: 240px; right: 0; top: 0; bottom: 0; background: var(--bg);"></div>
+
+  <nav aria-label="Điều hướng" class="glass" style="position: absolute; left: 10px; top: 10px; bottom: 10px; width: 216px; box-sizing: border-box; border-radius: 20px; padding: 14px 10px; display: flex; flex-direction: column; gap: 2px;">
+    <div style="display: flex; gap: 7px; padding: 2px 8px 16px;"><span style="width: 12px; height: 12px; border-radius: 99px; background: #FF5F57;"></span><span style="width: 12px; height: 12px; border-radius: 99px; background: #FEBC2E;"></span><span style="width: 12px; height: 12px; border-radius: 99px; background: #28C840;"></span></div>
+    <a class="nav" href="Mac-Today.dc.html">Hôm nay</a>
+    <a class="nav" href="Mac-Study.dc.html">Học</a>
+    <a class="nav" href="Mac-Library.dc.html">Thư viện</a>
+    <a class="nav on" href="Mac-Import.dc.html">Nhập từ AI</a>
+    <a class="nav" href="Mac-Audio.dc.html">Cắt clip âm thanh</a>
+    <div style="margin-top: auto; margin-inline: 4px; padding: 12px; border-radius: 12px; background: color-mix(in srgb, var(--sf) 55%, transparent); font-size: 12px; line-height: 1.5; color: var(--ink2);">Quy trình: Doc bài học → chép prompt → Gemini / NotebookLM → dán JSON → tick “Đã đưa vào app ☐” trong Doc.</div>
+  </nav>
+
+  <header class="glass" style="position: absolute; left: 252px; right: 12px; top: 10px; height: 52px; box-sizing: border-box; border-radius: 16px; padding: 0 10px 0 18px; display: flex; align-items: center; gap: 12px;">
+    <div style="flex: 1; font-size: 15px; font-weight: 600;">Nhập từ AI</div>
+    <button onClick="{{nextTheme}}" aria-label="Đổi theme" style="height: 34px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--ink); font: 600 12px Inter, sans-serif; display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 99px; background: var(--ac);"></span>{{themeName}}</button>
+    <button onClick="{{toggleDark}}" aria-label="Sáng / tối" style="width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--ink); display: flex; align-items: center; justify-content: center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"></path></svg></button>
+  </header>
+
+  <main style="position: absolute; left: 252px; right: 12px; top: 78px; bottom: 12px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px;">
+    <section class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 12px; min-height: 0;">
+      <div style="display: flex; align-items: center; gap: 10px;"><span class="step">1</span><h2 style="margin: 0; font-size: 15px; font-weight: 600;">Chép prompt</h2></div>
+      <div role="group" aria-label="Loại nội dung" style="display: flex; flex-wrap: wrap; gap: 6px;">
+        <sc-for list="{{kinds}}" as="k" hint-placeholder-count="4">
+          <button onClick="{{k.pick}}" aria-pressed="{{k.on}}" style="height: 32px; padding: 0 12px; border-radius: 999px; border: 1px solid {{k.border}}; background: {{k.bg}}; color: {{k.ink}}; font: 600 12px Inter, sans-serif;">{{k.label}}</button>
+        </sc-for>
+      </div>
+      <div role="group" aria-label="Công cụ AI" style="display: flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; align-self: flex-start;">
+        <sc-for list="{{tools}}" as="t" hint-placeholder-count="2">
+          <button onClick="{{t.pick}}" aria-pressed="{{t.on}}" style="height: 32px; padding: 0 14px; border: 0; background: {{t.bg}}; color: var(--ink); font: 600 12px Inter, sans-serif;">{{t.label}}</button>
+        </sc-for>
+      </div>
+      <div style="flex: 1; min-height: 0; overflow-y: auto; font-size: 12.5px; line-height: 1.55; background: color-mix(in srgb, var(--ink) 5%, var(--sf)); border-radius: 12px; padding: 12px; white-space: pre-line; font-family: ui-monospace, Menlo, monospace;">{{promptText}}</div>
+      <button onClick="{{copy}}" style="height: 42px; border-radius: 12px; border: 0; background: {{copyBg}}; color: var(--on); font: 600 14px Inter, sans-serif;">{{copyLabel}}</button>
+    </section>
+
+    <section class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 12px; min-height: 0;">
+      <div style="display: flex; align-items: center; gap: 10px;"><span class="step">2</span><h2 style="margin: 0; font-size: 15px; font-weight: 600;">Dán kết quả</h2><span style="margin-left: auto; font-size: 12px; color: var(--ink2);">⌘V</span></div>
+      <textarea spellcheck="false" aria-label="JSON từ AI" value="{{json}}" onChange="{{onJson}}" style="flex: 1; min-height: 0; box-sizing: border-box; border-radius: 12px; border: 1.5px solid {{jsonBorder}}; background: var(--sf); color: var(--ink); padding: 12px; font: 400 12.5px/1.5 ui-monospace, Menlo, monospace; resize: none;"></textarea>
+      <div style="font-size: 13px; font-weight: 600; color: {{jsonInk}};">{{jsonStatus}}</div>
+    </section>
+
+    <section class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 12px; min-height: 0;">
+      <div style="display: flex; align-items: center; gap: 10px;"><span class="step">3</span><h2 style="margin: 0; font-size: 15px; font-weight: 600;">Xem trước &amp; tạo bộ</h2></div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;">
+        <label style="display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--ink2);">Tên bộ
+          <input value="{{deckName}}" readonly style="height: 36px; box-sizing: border-box; border-radius: 10px; border: 1px solid var(--line); background: var(--sf); color: var(--ink); padding: 0 10px; font: 500 13px Inter, sans-serif;"></label>
+        <label style="display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--ink2);">Nhóm
+          <select style="height: 36px; border-radius: 10px; border: 1px solid var(--line); background: var(--sf); color: var(--ink); padding: 0 8px; font: 500 13px Inter, sans-serif;"><option>Oct1</option><option>Sep3</option></select></label>
+      </div>
+      <ul style="list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: 12px; overflow-y: auto; flex: 1; min-height: 0;">
+        <sc-for list="{{preview}}" as="p" hint-placeholder-count="4">
+          <li style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-bottom: 1px solid var(--line); font-size: 13px;">
+            <span style="flex: 1; min-width: 0;">{{p.front}}</span>
+            <span style="font-family: 'Noto Sans KR', sans-serif; font-weight: 600;">{{p.back}}</span>
+            <sc-if value="{{p.dup}}" hint-placeholder-val="{{false}}"><span style="padding: 2px 7px; border-radius: 999px; background: color-mix(in srgb, var(--flag) 20%, var(--sf)); font-size: 11px; font-weight: 700;">Trùng</span></sc-if>
+          </li>
+        </sc-for>
+      </ul>
+      <button onClick="{{create}}" style="height: 44px; border-radius: 12px; border: 0; background: {{createBg}}; color: {{createInk}}; font: 600 14px Inter, sans-serif;">{{createLabel}}</button>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { theme: 'paper', dark: false, kind: 'vocab', tool: 'gemini', copied: false, created: false,
+      json: '```json\n{"name": "Plastic · tái chế",\n "words": [\n  {"front": "tái chế chai nhựa", "back": "플라스틱 병을 재활용하다"},\n  {"front": "chi phí chế tạo ít tốn kém", "back": "제작 비용이 적게 들다"},\n  {"front": "tái chế", "back": "재활용하다"},\n  {"front": "nhẹ và mát", "back": "가볍고 시원하다"}\n ]}\n```' };
+    this.TH = {
+      paper: ['Giấy', { bg: '#F5F4F0', sf: '#FFFFFF', ink: '#191C24', ink2: '#4C5260', ac: '#2B54C9', line: '#DDDBD3', on: '#FFFFFF' }, { bg: '#121418', sf: '#1B1E24', ink: '#ECEEF2', ink2: '#A9AFBC', ac: '#7C9BFF', line: '#343946', on: '#0B1020' }],
+      ink: ['Mực đêm', { bg: '#EEF0F6', sf: '#FFFFFF', ink: '#141826', ink2: '#4A5068', ac: '#5B4BD6', line: '#D7DAE6', on: '#FFFFFF' }, { bg: '#0E1020', sf: '#171A2E', ink: '#E8E9F5', ink2: '#A3A7C4', ac: '#A99BFF', line: '#2B2F4A', on: '#120E2A' }],
+      pine: ['Rừng thông', { bg: '#F1F4EF', sf: '#FFFFFF', ink: '#17201A', ink2: '#475449', ac: '#1F6B4A', line: '#D6DED6', on: '#FFFFFF' }, { bg: '#0F1712', sf: '#17221B', ink: '#E5EEE7', ink2: '#9DB0A3', ac: '#5CCB95', line: '#2A3A2F', on: '#06140C' }],
+      dusk: ['Hoàng hôn', { bg: '#FAF3EE', sf: '#FFFFFF', ink: '#2A1A14', ink2: '#6A4E43', ac: '#B8402A', line: '#EADBD2', on: '#FFFFFF' }, { bg: '#1A1210', sf: '#251A17', ink: '#F5E9E4', ink2: '#C2A79D', ac: '#FF8A66', line: '#3D2C27', on: '#2A0E05' }],
+      contrast: ['Tương phản cao', { bg: '#FFFFFF', sf: '#FFFFFF', ink: '#000000', ink2: '#222222', ac: '#0033CC', line: '#000000', on: '#FFFFFF' }, { bg: '#000000', sf: '#0A0A0A', ink: '#FFFFFF', ink2: '#E6E6E6', ac: '#FFD400', line: '#FFFFFF', on: '#000000' }],
+      system: ['Hệ thống', { bg: '#F2F2F4', sf: '#FFFFFF', ink: '#1D1D1F', ink2: '#55555B', ac: '#0064D2', line: '#DADADF', on: '#FFFFFF' }, { bg: '#161618', sf: '#1F1F22', ink: '#F2F2F4', ink2: '#AAAAB0', ac: '#409CFF', line: '#38383C', on: '#03182E' }]
+    };
+  }
+  parse(text) {
+    let raw = (text || '').trim();
+    const f = raw.match(/```(?:json)?\s*([\s\S]*?)```/); if (f) raw = f[1].trim();
+    if (!raw) return { words: [], error: 'Chưa có nội dung' };
+    try { const j = JSON.parse(raw); const list = Array.isArray(j) ? j : j.words; if (!Array.isArray(list)) return { words: [], error: 'Cần mảng "words"' };
+      const words = list.filter(w => w && w.front && w.back); return { name: j.name, words, error: words.length === list.length ? '' : (list.length - words.length) + ' từ thiếu front/back' };
+    } catch (e) { return { words: [], error: 'JSON không hợp lệ' }; }
+  }
+  renderVals() {
+    const s = this.state; const go = (p) => this.setState(p);
+    const ST = s.dark ? { ok: '#5CC48E', bad: '#F08174', flag: '#F2B54B', glass: 'rgba(30,32,40,0.5)', gb: 'rgba(255,255,255,0.16)', sh: '0 10px 34px rgba(0,0,0,0.5)' } : { ok: '#1C7146', bad: '#B23A2E', flag: '#9A5B00', glass: 'rgba(255,255,255,0.55)', gb: 'rgba(255,255,255,0.75)', sh: '0 10px 34px rgba(20,24,40,0.16)' };
+    const t = Object.assign({}, this.TH[s.theme][s.dark ? 2 : 1], ST);
+    const keys = Object.keys(this.TH);
+    const kinds = [['vocab', 'Từ vựng'], ['grammar', 'Ngữ pháp'], ['fix', 'Chữa bài tập'], ['listen', 'Câu nghe']];
+    const src = s.tool === 'nlm' ? 'Dựa trên source "Bài 07 – Plastic" trong notebook này.' : 'Đoạn văn:\n<dán phần “Từ vựng” của Doc vào đây>';
+    const body = {
+      vocab: 'Tách đoạn tiếng Hàn thành từ vựng để học (Hàn → Việt).\nChỉ trả về MỘT khối JSON:\n{"name": "...", "words": [{"front": "<nghĩa Việt>", "back": "<từ Hàn>"}]}\n- Ưu tiên collocation, cụm từ hay dùng.\n- Bỏ số, tên riêng; không lặp từ.\n- Động/tính từ về dạng -다.',
+      grammar: 'Với mỗi cấu trúc ngữ pháp, tạo 2 thẻ tự chấm:\n1) front = cấu trúc + “nghĩa là gì?”, back = ý nghĩa\n2) front = câu đục lỗ ___, back = câu đầy đủ\nnote = cách dùng + 2 ví dụ (Markdown). typeAnswer: false.',
+      fix: 'So sánh bài làm và phần chữa của giáo viên.\nMỗi lỗi một thẻ: front = câu mình viết sai, back = câu đúng, note = vì sao sai.\nSau JSON, in bảng | Sai | Đúng | Lý do | để dán vào “Sổ lỗi sai”.',
+      listen: 'Từ phần chép lời dưới đây, mỗi câu khó nghe một thẻ:\nfront = nghĩa Việt, back = câu Hàn nguyên văn,\nhint = 2 âm tiết đầu. typeAnswer: false.'
+    }[s.kind];
+    const r = this.parse(s.json);
+    const known = new Set(['플라스틱 병을 재활용하다']);
+    const n = r.words.length;
+    return {
+      vars: `--bg:${t.bg};--sf:${t.sf};--ink:${t.ink};--ink2:${t.ink2};--ac:${t.ac};--line:${t.line};--on:${t.on};--ok:${t.ok};--bad:${t.bad};--flag:${t.flag};--glass:${t.glass};--gb:${t.gb};--sh:${t.sh}`,
+      themeName: this.TH[s.theme][0],
+      nextTheme: () => go({ theme: keys[(keys.indexOf(s.theme) + 1) % keys.length] }),
+      toggleDark: () => go({ dark: !s.dark }),
+      kinds: kinds.map(([k, label]) => ({ label, on: String(s.kind === k), bg: s.kind === k ? t.ink : 'transparent', ink: s.kind === k ? t.sf : t.ink, border: s.kind === k ? t.ink : t.line, pick: () => go({ kind: k, copied: false }) })),
+      tools: [['gemini', 'Gemini'], ['nlm', 'NotebookLM']].map(([k, label]) => ({ label, on: String(s.tool === k), bg: s.tool === k ? `color-mix(in srgb, ${t.ac} 18%, ${t.sf})` : 'transparent', pick: () => go({ tool: k, copied: false }) })),
+      promptText: body + '\n\n' + src,
+      copy: () => go({ copied: true }),
+      copyLabel: s.copied ? 'Đã chép — dán vào ' + (s.tool === 'nlm' ? 'NotebookLM' : 'Gemini') : 'Chép prompt  ⌘⇧C',
+      copyBg: s.copied ? t.ok : t.ac,
+      json: s.json, onJson: (e) => go({ json: e.target.value, created: false }),
+      jsonBorder: r.error ? t.bad : t.ok, jsonInk: r.error ? t.bad : t.ok,
+      jsonStatus: r.error ? r.error : 'JSON hợp lệ · ' + n + ' từ (đã bỏ khung ```json)',
+      deckName: r.name || 'Bộ mới',
+      preview: r.words.slice(0, 12).map(w => ({ front: w.front, back: w.back, dup: known.has(w.back.trim()) })),
+      create: () => { if (n && !r.error) go({ created: true }); },
+      createLabel: s.created ? 'Đã tạo · đang đồng bộ sang iPhone' : (n && !r.error ? 'Tạo bộ ' + n + ' thẻ  ⌘↵' : 'Chưa tạo được'),
+      createBg: s.created ? t.ok : (n && !r.error ? t.ink : t.line), createInk: s.created ? t.sf : (n && !r.error ? t.sf : t.ink2)
+    };
+  }
+}
+</script>
+</body>
+</html>
