@@ -209,12 +209,11 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Xong khi: test tương phản ≥ 4.5:1 cho 6 theme × 2 chế độ (các cặp ở `docs/design-system.md` §2) pass.
   - Phụ thuộc: T2.01
 
-- [ ] **T2.21 · Component + kính**
+- [x] **T2.21 · Component + kính**
   - File: `DS/Sources/DesignSystem/{Glass,Components}/*.swift`, `DS/Sources/DesignSystem/Gallery/ComponentGallery.swift`
   - Làm: `CardSurface`, `AnswerField`, `GlassActionBar`, `Kbd`, `DeckRow`, `FlagChip`, `ProgressRing`,
     `ThemePreviewTile` theo `docs/design-system.md` §4–5. Mỗi component có `#Preview`; `ComponentGallery`
     xếp tất cả + picker theme để soát.
-  - Trạng thái: code đã viết + `swift build` sạch; còn bước 👤 soát bằng mắt (chưa tick).
   - Xong khi: 👤 mở `ComponentGallery` trong Xcode Preview, đổi 6 theme × sáng/tối, khớp prototype
     artboard "Design system".
   - Phụ thuộc: T2.20
