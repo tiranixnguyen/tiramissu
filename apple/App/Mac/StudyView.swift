@@ -26,8 +26,8 @@ struct StudyView: View {
             // Thanh trên nằm TRONG toolbar hệ thống → hệ điều hành tự lo đèn giao thông,
             // nút sidebar và hoạt ảnh ẩn/hiện sidebar (không tự tính lề).
             .toolbar {
-                // Trái: theme + sáng/tối (kính mặc định của toolbar).
-                ToolbarItemGroup(placement: .navigation) {
+                // Phải: theme rồi sáng/tối ở ngoài cùng (kính mặc định của toolbar).
+                ToolbarItemGroup(placement: .primaryAction) {
                     Button { themes.cycleTheme() } label: {
                         HStack(spacing: 6) {
                             Circle().fill(theme?.accent ?? .accentColor).frame(width: 10, height: 10)
@@ -40,9 +40,9 @@ struct StudyView: View {
                     }
                     .help("Giao diện: \(themes.appearance.label) (⌥⌘D)")
                 }
-                // Phải: tên bộ + tiến độ + thống kê.
+                // Trái: tên bộ + tiến độ + thống kê.
                 ToolbarItem(placement: .principal) {
-                    header.frame(minWidth: 280, maxWidth: .infinity, alignment: .trailing)
+                    header.frame(minWidth: 280, maxWidth: .infinity, alignment: .leading)
                 }
                 .sharedBackgroundVisibility(.hidden)
             }
@@ -78,7 +78,7 @@ struct StudyView: View {
         return group.map { "\(name) · \($0)" } ?? name
     }
 
-    /// Thanh trên cùng như prototype: kính bo 16 — tên bộ + tiến độ + thống kê (theme/sáng-tối nằm riêng bên trái toolbar).
+    /// Thanh trên cùng như prototype: kính bo 16 — tên bộ + tiến độ + thống kê (theme/sáng-tối nằm riêng bên phải toolbar).
     private var header: some View {
         ViewThatFits(in: .horizontal) {
             headerRow(showStats: true)
