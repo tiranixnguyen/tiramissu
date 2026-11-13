@@ -359,6 +359,54 @@ public final class StudyEngine {
             id: randomDeckId, name: "🔀 Deck ngẫu nhiên (\(words.count))", words: words, isVirtual: true)
     }
 
+    // MARK: Nội dung đổi giữa lượt
+
+    /// Nhận nội dung mới (tải lại từ server, sửa/xoá/thêm thẻ) mà không làm mất lượt đang học: tiến
+    /// trình mang theo id thẻ. Trả `true` nếu thẻ đang hiển thị đã đổi sang thẻ khác (UI cần dọn ô nhập).
+    @discardableResult
+    public func replaceContent(_ catalog: StudyCatalog) -> Bool {
+        let oldDeck = currentDeck
+        let oldRuntime = runtime
+        let oldWordId = currentWord?.id
+
+        decks = catalog.decks
+        vocabGroups = catalog.vocabGroups
+        markedIds = catalog.markedIds
+        hanjaIds = catalog.hanjaIds
+        passageIds = catalog.passageIds
+
+        if !vocabGroups.contains(where: { $0.id == currentVocabGroup }) {
+            currentVocabGroup = vocabGroups.first?.id ?? ""
+            openDeck(visibleDecks.first?.id)
+            return true
+        }
+
+        // Dựng lại bộ ảo từ nội dung mới (🔀 giữ danh sách thẻ đã rút, theo id).
+        var byId: [String: StudyWord] = [:]
+        for d in decks { for w in d.words { byId[w.id] = w } }
+        if currentDeckId == randomDeckId {
+            setRandomDeck((oldDeck?.words ?? []).compactMap { byId[$0.id] })
+        } else if let id = currentDeckId, flagKeyPath(id) != nil {
+            buildFlaggedDeck(id)
+        }
+
+        let newDeck = currentDeck
+        let belongs = newDeck.map { $0.isVirtual || $0.group == currentVocabGroup } ?? false
+        guard belongs, let newDeck, let oldDeck, let oldRuntime else {
+            openDeck(visibleDecks.first?.id)
+            return true
+        }
+
+        runtime = carryRuntime(from: oldDeck, runtime: oldRuntime, to: newDeck)
+        if let oldWordId, let i = newDeck.words.firstIndex(where: { $0.id == oldWordId }) {
+            currentIndex = i
+            return false
+        }
+        if currentIndex == nil { return false }  // đang ở màn hoàn thành: để yên
+        loadCard()
+        return true
+    }
+
     /// Mang lượt đang học từ `old` sang `new` theo id thẻ: thẻ còn thì giữ box/streak/đã thuộc và vị trí
     /// trong hàng đợi, thẻ bị bỏ thì rơi ra, thẻ mới xếp (xáo) vào cuối hàng đợi.
     func carryRuntime(from old: StudyDeck, runtime oldRuntime: DeckRuntime, to new: StudyDeck) -> DeckRuntime {

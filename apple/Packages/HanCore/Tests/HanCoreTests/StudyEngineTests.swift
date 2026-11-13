@@ -465,6 +465,125 @@ struct StudyEngineTests {
             #expect(e.currentDeck?.words != first)
         }
     }
+    @Suite("nội dung thay đổi giữa lượt (replaceContent)")
+    struct Replace {
+        @Test func suaTheGiuLuotHocTheDangHoiHienNoiDungMoi() {
+            let content = contentOf([contentDeck("d1", threeWords)])
+            let e = engineFor(content)
+            answerCurrentCorrectly(e)
+            let id = e.currentWord!.id
+            let serial = e.cardSerial
+
+            let changed = replaceWith(e, content.updateCard(id) { $0.front = "nghĩa mới" })
+
+            #expect(!changed)
+            #expect(e.currentWord?.id == id)
+            #expect(e.currentWord?.front == "nghĩa mới")
+            #expect(e.cardSerial == serial)
+            #expect(e.answered)
+            #expect(e.currentProgress?.streak == 1)
+            #expect(e.attemptedCount == 1)
+        }
+
+        @Test func xoaTheDangHoiChuyenSangTheKhacKhongQuayLai() {
+            let content = contentOf([contentDeck("d1", threeWords)])
+            let e = engineFor(content)
+            let gone = e.currentWord!.id
+
+            let changed = replaceWith(e, content.removeCard(gone))
+
+            #expect(changed)
+            #expect(e.totalCount == 2)
+            var seen = Set<String>()
+            for _ in 0..<6 {
+                seen.insert(e.currentWord!.id)
+                e.revealAnswer()
+                e.nextCard()
+            }
+            #expect(!seen.contains(gone))
+        }
+
+        @Test func xoaMotTheChiRoiDungTheDo() {
+            let content = contentOf([contentDeck("d1", threeWords)])
+            let e = engineFor(content)
+            #expect(e.totalCount == 3)
+            replaceWith(e, content.removeCard("d1-0"))
+            #expect(e.totalCount == 2)
+        }
+
+        @Test func themTuVaoBoDangHocTuMoiDuocHoi() {
+            let e = engineFor(contentOf([contentDeck("d1", Array(threeWords.prefix(2)))]))
+            replaceWith(e, contentOf([contentDeck("d1", threeWords)]))
+            #expect(e.totalCount == 3)
+            var seen = Set<String>()
+            for _ in 0..<10 {
+                seen.insert(e.currentWord!.back)
+                e.revealAnswer()
+                e.nextCard()
+            }
+            #expect(seen.contains("학교"))
+        }
+
+        @Test func theDaThuocVanThuocSauKhiTaiLai() {
+            let content = contentOf([contentDeck("d1", threeWords)])
+            let e = engineFor(content)
+            e.markKnown()
+            #expect(e.masteredCount == 1)
+            replaceWith(e, content)
+            #expect(e.masteredCount == 1)
+        }
+
+        @Test func boDangHocBiXoaThiMoBoDauTien() {
+            let e = engineFor(
+                contentOf([contentDeck("d1", threeWords), contentDeck("d2", threeWords, position: 1)]))
+            e.switchDeck("d2")
+            let changed = replaceWith(e, contentOf([contentDeck("d1", threeWords)]))
+            #expect(changed)
+            #expect(e.currentDeckId == "d1")
+        }
+
+        @Test func boSaoTrenMayKhacKhiDangHocDeckSaoTheRoiKhoiLuot() {
+            let content = contentOf([contentDeck("d1", threeWords, marked: [0, 1])])
+            let e = engineFor(content)
+            e.switchDeck(markedDeckId)
+            #expect(e.totalCount == 2)
+
+            replaceWith(e, content.updateCard("d1-0") { $0.marked = false })
+            #expect(e.currentDeckId == markedDeckId)
+            #expect(e.totalCount == 1)
+            #expect(e.currentWord?.id == "d1-1")
+        }
+
+        @Test func taiLaiGiuaLuotDeckPassageDungLaiTheoCoMoi() {
+            let e = engineFor(contentOf([contentDeck("d1", threeWords, passage: [0])]))
+            e.switchDeck(passageDeckId)
+            replaceWith(e, contentOf([contentDeck("d1", threeWords, passage: [0, 1])]))
+            #expect(e.currentDeckId == passageDeckId)
+            #expect(e.totalCount == 2)
+        }
+
+        @Test func taiLaiGiuaLucDaLatVanGiuTrangThaiLat() {
+            let words = [
+                RawWord(front: "học sinh", back: "학생", typeAnswer: false),
+                RawWord(front: "giáo viên", back: "선생님", typeAnswer: false),
+                RawWord(front: "trường học", back: "학교", typeAnswer: false),
+            ]
+            let content = contentOf([contentDeck("d1", words)])
+            let e = engineFor(content)
+            e.flipCard()
+            let id = e.currentWord!.id
+            replaceWith(e, content.updateCard(id) { $0.front = "nghĩa mới" })
+            #expect(e.currentWord?.front == "nghĩa mới")
+            #expect(e.flipped)
+        }
+
+        @Test func boAoGiuNguyenKieuTheCuaTheGoc() {
+            let words = [RawWord(front: "học sinh", back: "학생", typeAnswer: false)]
+            let e = engineFor(contentOf([contentDeck("d1", words, marked: [0])]))
+            e.switchDeck(markedDeckId)
+            #expect(e.currentWord?.typeAnswer == false)
+        }
+    }
 }
 
 /// Dựng engine từ nội dung (có cờ), đã `bootstrap` với seed cố định.
@@ -475,6 +594,12 @@ func engineFor(_ content: ContentSnapshot, seed: UInt64 = 1) -> StudyEngine {
         passageIds: c.passageIds, random: SeededGenerator(seed: seed))
     e.bootstrap()
     return e
+}
+
+/// Nạp nội dung mới vào engine như khi tải lại từ server.
+@discardableResult
+func replaceWith(_ e: StudyEngine, _ content: ContentSnapshot) -> Bool {
+    e.replaceContent(content.buildStudyCatalog())
 }
 
 /// Dựng engine một nhóm, một bộ `d1`, đã `bootstrap` với seed cố định.

@@ -41,3 +41,23 @@ let threeWords = [
     RawWord(front: "giáo viên", back: "선생님"),
     RawWord(front: "trường học", back: "학교"),
 ]
+
+extension ContentSnapshot {
+    /// Sửa một thẻ theo id (test).
+    func updateCard(_ id: String, _ change: (inout ContentCard) -> Void) -> ContentSnapshot {
+        var copy = self
+        for d in copy.decks.indices {
+            for c in copy.decks[d].cards.indices where copy.decks[d].cards[c].id == id {
+                change(&copy.decks[d].cards[c])
+            }
+        }
+        return copy
+    }
+
+    /// Xoá một thẻ theo id (test).
+    func removeCard(_ id: String) -> ContentSnapshot {
+        var copy = self
+        for d in copy.decks.indices { copy.decks[d].cards.removeAll { $0.id == id } }
+        return copy
+    }
+}

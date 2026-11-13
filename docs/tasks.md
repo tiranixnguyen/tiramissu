@@ -158,7 +158,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Xong khi: nhóm "mỗi lần vào bộ là một lượt mới" (2) pass.
   - Phụ thuộc: T2.10
 
-- [ ] **T2.12 · `StudyEngine` — `replaceContent`**
+- [x] **T2.12 · `StudyEngine` — `replaceContent`**
   - Làm: mang tiến trình theo id thẻ khi nội dung đổi giữa lượt.
   - Xong khi: nhóm "nội dung thay đổi giữa lượt" (7) pass → **toàn bộ** test engine port xong.
   - Phụ thuộc: T2.11
