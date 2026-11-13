@@ -101,7 +101,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Xong khi: decode `content.sample.json` không lỗi, đúng số nhóm/bộ/thẻ; test cache cũ `kr`/`vi`;
     encode → decode giữ nguyên (round-trip).
 
-- [ ] **T2.03 · Tiện ích: `SeededGenerator`, `Clock`**
+- [x] **T2.03 · Tiện ích: `SeededGenerator`, `Clock`**
   - File: `HC/Sources/HanCore/Util/{SeededGenerator,Clock}.swift` + test
   - Làm: `SeededGenerator: RandomNumberGenerator` (SplitMix64); `Clock` = `@Sendable () -> Date` +
     `Calendar` tiêm được.
