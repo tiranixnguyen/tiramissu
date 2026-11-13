@@ -177,7 +177,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Xong khi: 13 test port pass (Calendar cố định `Asia/Ho_Chi_Minh`).
   - Phụ thuộc: T2.02, T2.03
 
-- [ ] **T2.15 · `APIClient`**
+- [x] **T2.15 · `APIClient`**
   - File: `HC/Sources/HanCore/Sync/{APIClient,APIError,Endpoints}.swift` + `APIClientTests.swift`
   - Làm: `protocol ContentAPI` (cho fake trong test) + `URLSessionContentAPI` (async/await, Bearer token,
     base URL). Mọi route ở `docs/architecture.md` §4 trừ `/clips` (T3.01). Chỉ ném
