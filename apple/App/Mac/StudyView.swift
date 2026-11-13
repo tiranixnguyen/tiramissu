@@ -208,7 +208,7 @@ struct StudyView: View {
             GlassActionBar(actions(for: word))
                 .padding(.bottom, 12)
         }
-        .padding(.leading, 0).padding(.trailing, 8)
+        .padding(.leading, 6).padding(.trailing, 8)
         .padding(.top, 8)
     }
 
