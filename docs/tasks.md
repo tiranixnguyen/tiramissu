@@ -245,6 +245,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
 - [ ] **T2.33 · Cài đặt**
   - Làm: `Settings` scene (`⌘,`): Server (URL + token lưu Keychain + nút "Kiểm tra" gọi `/health` và
     `/content`), Giao diện (lưới `ThemePreviewTile`, sáng/tối/theo hệ thống, nhập/xuất .json), Giọng đọc (TTS ko-KR).
+  - Trạng thái: code xong, build sạch; còn bước 👤 thử với server thật (chưa tick).
   - Xong khi: 👤 nhập token thật → đồng bộ được với server cloud.
   - Phụ thuộc: T2.22, T2.32
 - [ ] **T2.34 · Màn Học — thẻ gõ đáp án**

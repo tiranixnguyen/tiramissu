@@ -7,7 +7,15 @@ import SwiftUI
 struct TiramissuMacApp: App {
     @State private var model = AppModel.live()
     @State private var nav = Navigation()
-    @State private var themes = ThemeStore()
+    @State private var themes: ThemeStore
+    @State private var server = ServerSettings()
+    @State private var tts = TTS()
+
+    init() {
+        // Theme có sẵn + theme người dùng đã nhập (Application Support/Tiramissu/Themes).
+        let builtIn = (try? ThemeCatalog.allBuiltIn()) ?? []
+        _themes = State(initialValue: ThemeStore(themes: builtIn + ThemeLibrary.loadUserThemes().themes))
+    }
 
     var body: some Scene {
         WindowGroup("Tiramissu") {
@@ -16,7 +24,10 @@ struct TiramissuMacApp: App {
                 .environment(nav)
                 .environment(themes)
                 .themed(themes)
-                .task { await model.start() }
+                .task {
+                    model.configureAPI(baseURL: server.baseURL, token: { ServerSettings.currentToken() })
+                    await model.start()
+                }
         }
         .windowResizability(.contentMinSize)
         .commands {
@@ -32,6 +43,14 @@ struct TiramissuMacApp: App {
                 Button("Bảng lệnh") { nav.showPalette.toggle() }
                     .keyboardShortcut("k", modifiers: .command)
             }
+        }
+        Settings {
+            SettingsView()
+                .environment(model)
+                .environment(themes)
+                .environment(server)
+                .environment(tts)
+                .themed(themes)
         }
     }
 }
