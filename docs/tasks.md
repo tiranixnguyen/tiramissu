@@ -227,12 +227,13 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
 
 ### G2 · App Mac
 
-- [ ] **T2.30 · 👤 `xcodegen` + chạy khung app** trên macOS 26 (sidebar 5 mục, màn trống).
+- [x] **T2.30 · 👤 `xcodegen` + chạy khung app** trên macOS 26 (sidebar 5 mục, màn trống).
 - [ ] **T2.31 · Lưu trữ + `AppModel`**
   - File: `apple/App/Shared/{AppModel,Persistence}.swift`
   - Làm: SwiftData `@Model` lưu `ContentSnapshot` (JSON blob), hàng đợi, lần học, nháp; cài `LocalStore`.
     `AppModel` (@Observable, @MainActor) cầm `StudyEngine`, `SyncEngine`, phát `StudySessionState`. Lần đầu
     không có cache → nạp `content.sample.json` đóng gói (thêm vào resources của target).
+  - Trạng thái: code xong, 2 target build sạch (macOS + iOS Simulator); còn bước 👤 chạy thử (chưa tick).
   - Xong khi: 👤 mở app offline lần đầu thấy dữ liệu mẫu; tắt mở lại vẫn còn.
   - Phụ thuộc: T2.16, T2.30
 - [ ] **T2.32 · Khung cửa sổ: sidebar + toolbar**

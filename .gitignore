@@ -20,3 +20,6 @@ backups/
 # Editor
 .vscode/
 .idea/
+
+apple/build/
+apple/Packages/*/build/

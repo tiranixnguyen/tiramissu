@@ -28,6 +28,8 @@ targets:
       - App/Mac
       - path: App/Shared
         excludes: ["README.md"]
+      - path: ../reference/content.sample.json
+        buildPhase: resources
     dependencies:
       - package: HanCore
       - package: DesignSystem
@@ -47,6 +49,8 @@ targets:
       - App/iOS
       - path: App/Shared
         excludes: ["README.md"]
+      - path: ../reference/content.sample.json
+        buildPhase: resources
     dependencies:
       - package: HanCore
       - package: DesignSystem
@@ -57,3 +61,16 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         TARGETED_DEVICE_FAMILY: "1"
+schemes:
+  Tiramissu-macOS:
+    build:
+      targets:
+        Tiramissu-macOS: all
+    run:
+      config: Debug
+  Tiramissu-iOS:
+    build:
+      targets:
+        Tiramissu-iOS: all
+    run:
+      config: Debug

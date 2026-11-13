@@ -5,10 +5,14 @@ import HanCore
 /// App Mac — nơi học chính + soạn, nhập, cắt clip. Khung rỗng; các màn được dựng theo `docs/tasks.md` (GĐ2).
 @main
 struct TiramissuMacApp: App {
+    @State private var model = AppModel.live()
+
     var body: some Scene {
         WindowGroup("Tiramissu") {
             MainWindow()
+                .environment(model)
                 .frame(minWidth: 1100, minHeight: 700)
+                .task { await model.start() }
         }
         .windowToolbarStyle(.unified)
     }
@@ -26,6 +30,7 @@ enum MacScreen: String, CaseIterable, Identifiable {
 }
 
 struct MainWindow: View {
+    @Environment(AppModel.self) private var model
     @State private var screen: MacScreen? = .today
 
     var body: some View {
@@ -38,7 +43,10 @@ struct MainWindow: View {
             ContentUnavailableView(
                 screen?.rawValue ?? "Tiramissu",
                 systemImage: "hammer",
-                description: Text("Màn này chưa được dựng — xem docs/tasks.md")
+                description: Text(
+                    "Màn này chưa được dựng — xem docs/tasks.md\n"
+                        + "Dữ liệu: \(model.content.groups.count) nhóm · \(model.content.decks.count) bộ · "
+                        + "\(model.content.decks.reduce(0) { $0 + $1.cards.count }) thẻ")
             )
         }
     }
