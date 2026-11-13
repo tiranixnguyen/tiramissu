@@ -18,18 +18,18 @@ struct StudyView: View {
     private var state: StudySessionState { model.state }
 
     var body: some View {
-        VStack(spacing: 14) {
-            header
-            content
-        }
-        .padding(.trailing, 12).padding(.top, 10)
-        .padding(.leading, nav.sidebarHidden ? 140 : 12)  // chừa chỗ đèn giao thông + nút sidebar
-        .animation(.default, value: nav.sidebarHidden)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .ignoresSafeArea(.container, edges: .top)  // thanh trên chiếm chỗ vùng toolbar trống
-        .navigationTitle("")
-        .toolbar(removing: .title)
-        .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
+        content
+            .padding(.horizontal, 12)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .navigationTitle("")
+            .toolbar(removing: .title)
+            .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
+            // Thanh trên nằm TRONG toolbar hệ thống → hệ điều hành tự lo đèn giao thông,
+            // nút sidebar và hoạt ảnh ẩn/hiện sidebar (không tự tính lề).
+            .toolbar {
+                ToolbarItem(placement: .principal) { header.frame(minWidth: 320, maxWidth: .infinity) }
+                    .sharedBackgroundVisibility(.hidden)
+            }
         .onChange(of: state.cardSerial) {
             input = ""
             focusField()
@@ -69,7 +69,7 @@ struct StudyView: View {
             headerRow(showStats: false)
         }
         .padding(.leading, 16).padding(.trailing, 10)
-        .frame(height: 52)
+        .frame(height: 44)
         .glassEffect(.regular, in: .rect(cornerRadius: 16))
     }
 
