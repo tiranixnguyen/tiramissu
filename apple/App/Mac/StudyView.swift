@@ -23,7 +23,7 @@ struct StudyView: View {
             content
         }
         .padding(.trailing, 12).padding(.top, 10)
-        .padding(.leading, nav.sidebarHidden ? 150 : 12)  // chừa chỗ đèn giao thông + nút sidebar
+        .padding(.leading, nav.sidebarHidden ? 140 : 12)  // chừa chỗ đèn giao thông + nút sidebar
         .animation(.default, value: nav.sidebarHidden)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea(.container, edges: .top)  // thanh trên chiếm chỗ vùng toolbar trống
@@ -64,6 +64,16 @@ struct StudyView: View {
 
     /// Thanh trên cùng như prototype: kính bo 16, cao 52 — tên bộ + tiến độ, thống kê, Lệnh, theme, sáng/tối.
     private var header: some View {
+        ViewThatFits(in: .horizontal) {
+            headerRow(showStats: true)
+            headerRow(showStats: false)
+        }
+        .padding(.leading, 16).padding(.trailing, 10)
+        .frame(height: 52)
+        .glassEffect(.regular, in: .rect(cornerRadius: 16))
+    }
+
+    private func headerRow(showStats: Bool) -> some View {
         HStack(spacing: 14) {
             VStack(alignment: .leading, spacing: 3) {
                 (Text(deckTitleMain).fontWeight(.semibold)
@@ -80,9 +90,12 @@ struct StudyView: View {
                     }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            Text("\(state.masteredCount)/\(state.totalCount) thuộc · đúng \(state.correctCount)/\(state.attemptedCount)")
-                .font(.system(size: 12)).monospacedDigit()
-                .foregroundStyle(theme?.ink2 ?? .secondary)
+            if showStats {
+                Text("\(state.masteredCount)/\(state.totalCount) thuộc · đúng \(state.correctCount)/\(state.attemptedCount)")
+                    .font(.system(size: 12)).monospacedDigit()
+                    .foregroundStyle(theme?.ink2 ?? .secondary)
+                    .fixedSize()
+            }
             headerButton { nav.showPalette.toggle() } label: {
                 HStack(spacing: 8) { Text("Lệnh"); Kbd("⌘K") }
             }
@@ -96,9 +109,6 @@ struct StudyView: View {
                 Image(systemName: themes.appearance.symbol).font(.system(size: 14))
             }
         }
-        .padding(.leading, 16).padding(.trailing, 10)
-        .frame(height: 52)
-        .glassEffect(.regular, in: .rect(cornerRadius: 16))
     }
 
     private func headerButton<L: View>(
