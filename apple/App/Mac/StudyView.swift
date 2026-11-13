@@ -12,46 +12,61 @@ struct StudyView: View {
     @Environment(TTS.self) private var tts
     @Environment(\.theme) private var theme
 
+    /// Cửa sổ học gọn (`⌥⌘L`): chỉ thẻ + ô trả lời, không thanh trên, không cột phải.
+    var compact = false
+
     @State private var input = ""
     @FocusState private var fieldFocused: Bool
 
     private var state: StudySessionState { model.state }
 
     var body: some View {
-        content
-            .padding(.horizontal, 12)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .navigationTitle("")
-            .toolbar(removing: .title)
-            .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
-            // Thanh trên nằm TRONG toolbar hệ thống → hệ điều hành tự lo đèn giao thông,
-            // nút sidebar và hoạt ảnh ẩn/hiện sidebar (không tự tính lề).
-            .toolbar {
-                // Phải: theme rồi sáng/tối ở ngoài cùng (kính mặc định của toolbar).
-                ToolbarItemGroup(placement: .primaryAction) {
-                    Button { themes.cycleTheme() } label: {
-                        HStack(spacing: 6) {
-                            Circle().fill(theme?.accent ?? .accentColor).frame(width: 10, height: 10)
-                            Text(themes.current?.name ?? "")
-                        }
-                    }
-                    .help("Đổi theme")
-                    Button { themes.cycleAppearance() } label: {
-                        Image(systemName: themes.appearance.symbol)
-                    }
-                    .help("Giao diện: \(themes.appearance.label) (⌥⌘D)")
-                }
-                // Trái: tên bộ + tiến độ + thống kê.
-                ToolbarItem(placement: .principal) {
-                    header.frame(minWidth: 280, maxWidth: .infinity, alignment: .leading)
-                }
-                .sharedBackgroundVisibility(.hidden)
+        Group {
+            if compact {
+                base
+            } else {
+                base
+                    .navigationTitle("")
+                    .toolbar(removing: .title)
+                    .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
+                    // Thanh trên nằm TRONG toolbar hệ thống → hệ điều hành tự lo đèn giao thông,
+                    // nút sidebar và hoạt ảnh ẩn/hiện sidebar (không tự tính lề).
+                    .toolbar { studyToolbar }
             }
+        }
         .onChange(of: state.cardSerial) {
             input = ""
             focusField()
         }
         .onAppear { focusField() }
+    }
+
+    private var base: some View {
+        content
+            .padding(.horizontal, 12)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    @ToolbarContentBuilder private var studyToolbar: some ToolbarContent {
+        // Phải: theme rồi sáng/tối ở ngoài cùng (kính mặc định của toolbar).
+        ToolbarItemGroup(placement: .primaryAction) {
+            Button { themes.cycleTheme() } label: {
+                HStack(spacing: 6) {
+                    Circle().fill(theme?.accent ?? .accentColor).frame(width: 10, height: 10)
+                    Text(themes.current?.name ?? "")
+                }
+            }
+            .help("Đổi theme")
+            Button { themes.cycleAppearance() } label: {
+                Image(systemName: themes.appearance.symbol)
+            }
+            .help("Giao diện: \(themes.appearance.label) (⌥⌘D)")
+        }
+        // Trái: tên bộ + tiến độ + thống kê.
+        ToolbarItem(placement: .principal) {
+            header.frame(minWidth: 280, maxWidth: .infinity, alignment: .leading)
+        }
+        .sharedBackgroundVisibility(.hidden)
     }
 
     @ViewBuilder private var content: some View {
@@ -65,7 +80,7 @@ struct StudyView: View {
             } else if let word = state.currentWord {
                 HStack(alignment: .top, spacing: 0) {
                     card(word)
-                    sidebarColumn.padding(.top, 16).padding(.bottom, 16)
+                    if !compact { sidebarColumn.padding(.top, 16).padding(.bottom, 16) }
                 }
             } else {
                 ContentUnavailableView("Bộ này chưa có thẻ", systemImage: "tray")

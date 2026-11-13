@@ -265,6 +265,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Trạng thái: code xong (Space/1/2, ⭐/漢, cột phải, ▶︎ ⌘.) — còn bước 👤 thử tay (chưa tick).
   - Phụ thuộc: T2.34
 - [ ] **T2.36 · Cửa sổ học gọn (`⌥⌘L`)** — `Window` nhỏ, `.windowLevel(.floating)`, chỉ thẻ + ô trả lời.
+  - Trạng thái: code xong (⌥⌘L, menu Màn hình) — còn thử tay (chưa tick).
   - Phụ thuộc: T2.35
 - [ ] **T2.37 · Màn Hôm nay** — theo artboard: vòng tiến độ, danh sách bộ đến hạn (`ReviewSchedule`), clip
   hôm nay (rỗng tới G3), heatmap 14 ngày, nút "Bắt đầu ôn ↵" mở bộ đến hạn đầu tiên.
