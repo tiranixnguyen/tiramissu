@@ -13,6 +13,10 @@ public final class StudyEngine {
     public private(set) var decks: [StudyDeck]
     public private(set) var vocabGroups: [VocabGroup]
     private var random: any RandomNumberGenerator
+    private var markedIds: Set<String>
+    private var hanjaIds: Set<String>
+    private var passageIds: Set<String>
+    private var virtualDecks: [String: StudyDeck] = [:]
 
     private var runtime: DeckRuntime?
     public private(set) var currentVocabGroup: String
@@ -27,11 +31,15 @@ public final class StudyEngine {
     public private(set) var cardSerial = 0
 
     public init(
-        decks: [StudyDeck], vocabGroups: [VocabGroup],
+        decks: [StudyDeck], vocabGroups: [VocabGroup], markedIds: Set<String> = [],
+        hanjaIds: Set<String> = [], passageIds: Set<String> = [],
         random: any RandomNumberGenerator = SystemRandomNumberGenerator()
     ) {
         self.decks = decks
         self.vocabGroups = vocabGroups
+        self.markedIds = markedIds
+        self.hanjaIds = hanjaIds
+        self.passageIds = passageIds
         self.random = random
         currentVocabGroup = vocabGroups.first?.id ?? ""
     }
@@ -44,6 +52,7 @@ public final class StudyEngine {
 
     public func deck(byId id: String?) -> StudyDeck? {
         guard let id else { return nil }
+        if let virtual = virtualDecks[id] { return virtual }
         return decks.first { $0.id == id }
     }
 
@@ -56,6 +65,13 @@ public final class StudyEngine {
         guard let i = currentIndex, let rt = runtime, rt.cardState.indices.contains(i) else { return nil }
         return rt.cardState[i]
     }
+
+    public var currentIsMarked: Bool { currentWord.map { markedIds.contains($0.id) } ?? false }
+    public var currentIsHanja: Bool { currentWord.map { hanjaIds.contains($0.id) } ?? false }
+    public var currentIsPassage: Bool { currentWord.map { passageIds.contains($0.id) } ?? false }
+    public var markedCount: Int { flaggedWords(markedIds).count }
+    public var hanjaCount: Int { flaggedWords(hanjaIds).count }
+    public var passageCount: Int { flaggedWords(passageIds).count }
 
     public var correctCount: Int { runtime?.correctCount ?? 0 }
     public var attemptedCount: Int { runtime?.attemptedCount ?? 0 }
@@ -75,7 +91,9 @@ public final class StudyEngine {
             currentWord: currentWord, currentProgress: currentProgress, outcome: outcome,
             canOverride: canOverride, overridden: overridden, flipped: flipped, cardSerial: cardSerial,
             correctCount: correctCount, attemptedCount: attemptedCount, masteredCount: masteredCount,
-            totalCount: totalCount, remainingInRound: remainingInRound, isCompleted: isCompleted)
+            totalCount: totalCount, remainingInRound: remainingInRound, isCompleted: isCompleted,
+            currentIsMarked: currentIsMarked, currentIsHanja: currentIsHanja, currentIsPassage: currentIsPassage,
+            markedCount: markedCount, hanjaCount: hanjaCount, passageCount: passageCount)
     }
 
     // MARK: Khởi động
@@ -102,6 +120,7 @@ public final class StudyEngine {
 
     public func loadCard() {
         cardSerial += 1
+        pruneUnflagged()
         guard let deck = currentDeck, var rt = runtime else {
             currentIndex = nil
             return
@@ -244,4 +263,115 @@ public final class StudyEngine {
         copy.shuffle(using: &random)
         return copy
     }
+
+    // MARK: Cờ ⭐/漢/📖
+
+    /// Bật/tắt ⭐ cho thẻ hiện tại, trả giá trị mới (`nil` nếu không có thẻ).
+    @discardableResult public func toggleMark() -> Bool? { toggleFlag(\.markedIds) }
+    @discardableResult public func toggleHanja() -> Bool? { toggleFlag(\.hanjaIds) }
+    @discardableResult public func togglePassage() -> Bool? { toggleFlag(\.passageIds) }
+
+    /// Bỏ cờ ngay trong deck ảo tương ứng thì thẻ vẫn ở lại tới khi sang thẻ tiếp (xem `pruneUnflagged`).
+    private func toggleFlag(_ keyPath: ReferenceWritableKeyPath<StudyEngine, Set<String>>) -> Bool? {
+        guard let word = currentWord else { return nil }
+        if self[keyPath: keyPath].remove(word.id) != nil { return false }
+        self[keyPath: keyPath].insert(word.id)
+        return true
+    }
+
+    private func flagKeyPath(_ deckId: String?) -> KeyPath<StudyEngine, Set<String>>? {
+        switch deckId {
+        case markedDeckId: \.markedIds
+        case hanjaDeckId: \.hanjaIds
+        case passageDeckId: \.passageIds
+        default: nil
+        }
+    }
+
+    /// Gỡ khỏi deck ⭐/漢/📖 đang mở những thẻ đã bị bỏ cờ trong lượt này. Gọi lúc nạp thẻ mới nên thẻ
+    /// vừa bỏ cờ không quay lại và tổng số thẻ giảm theo — không thì lượt học không bao giờ hoàn thành.
+    private func pruneUnflagged() {
+        guard let deckId = currentDeckId, let kp = flagKeyPath(deckId), let deck = currentDeck,
+            let rt = runtime
+        else { return }
+        let flags = self[keyPath: kp]
+        if deck.words.allSatisfy({ flags.contains($0.id) }) { return }
+        let pruned = StudyDeck(
+            id: deck.id, name: deck.name, words: deck.words.filter { flags.contains($0.id) }, isVirtual: true)
+        virtualDecks[deckId] = pruned
+        runtime = carryRuntime(from: deck, runtime: rt, to: pruned)
+    }
+
+    /// Thẻ có cờ trong nhóm đang mở, theo thứ tự bộ/thẻ.
+    private func flaggedWords(_ flags: Set<String>) -> [StudyWord] {
+        visibleDecks.flatMap { $0.words.filter { flags.contains($0.id) } }
+    }
+
+    // MARK: Chuyển bộ / nhóm
+
+    /// Mở bộ khác — luôn là một lượt mới, kể cả khi quay lại bộ vừa học dở.
+    public func switchDeck(_ deckId: String) {
+        if deckId == currentDeckId { return }
+        if deckId == randomDeckId {
+            buildRandomDeck()
+        } else if flagKeyPath(deckId) != nil {
+            buildFlaggedDeck(deckId)
+        }
+        openDeck(deckId)
+    }
+
+    public func switchVocabGroup(_ groupId: String) {
+        if groupId == currentVocabGroup { return }
+        currentVocabGroup = groupId
+        openDeck(visibleDecks.first?.id)
+    }
+
+    private func buildFlaggedDeck(_ id: String) {
+        guard let kp = flagKeyPath(id), let name = flaggedDeckNames[id] else { return }
+        virtualDecks[id] = StudyDeck(
+            id: id, name: name, words: flaggedWords(self[keyPath: kp]), isVirtual: true)
+    }
+
+    /// 20 thẻ ngẫu nhiên rút từ mọi bộ đang hiển thị.
+    private func buildRandomDeck() {
+        let pool = visibleDecks.flatMap(\.words)
+        setRandomDeck(Array(shuffled(pool).prefix(20)))
+    }
+
+    private func setRandomDeck(_ words: [StudyWord]) {
+        virtualDecks[randomDeckId] = StudyDeck(
+            id: randomDeckId, name: "🔀 Deck ngẫu nhiên (\(words.count))", words: words, isVirtual: true)
+    }
+
+    /// Mang lượt đang học từ `old` sang `new` theo id thẻ: thẻ còn thì giữ box/streak/đã thuộc và vị trí
+    /// trong hàng đợi, thẻ bị bỏ thì rơi ra, thẻ mới xếp (xáo) vào cuối hàng đợi.
+    func carryRuntime(from old: StudyDeck, runtime oldRuntime: DeckRuntime, to new: StudyDeck) -> DeckRuntime {
+        let oldIndexOf = Dictionary(old.words.enumerated().map { ($1.id, $0) }, uniquingKeysWith: { a, _ in a })
+        let newIndexOf = Dictionary(new.words.enumerated().map { ($1.id, $0) }, uniquingKeysWith: { a, _ in a })
+        let cardState: [CardProgress] = new.words.map { w in
+            if let o = oldIndexOf[w.id], oldRuntime.cardState.indices.contains(o) { return oldRuntime.cardState[o] }
+            return CardProgress()
+        }
+        var queue = oldRuntime.activeQueue.compactMap { newIndexOf[old.words[$0].id] }
+        let added = new.words.indices.filter { oldIndexOf[new.words[$0].id] == nil }
+        queue.append(contentsOf: shuffled(added))
+        return DeckRuntime(
+            cardState: cardState, activeQueue: queue, correctCount: oldRuntime.correctCount,
+            attemptedCount: oldRuntime.attemptedCount, masteredCount: cardState.filter(\.mastered).count)
+    }
 }
+
+public let markedDeckId = "marked"
+public let hanjaDeckId = "hanja"
+public let passageDeckId = "passage"
+public let randomDeckId = "random20"
+
+public func isVirtualDeckId(_ id: String?) -> Bool {
+    id == markedDeckId || id == hanjaDeckId || id == passageDeckId || id == randomDeckId
+}
+
+private let flaggedDeckNames = [
+    markedDeckId: "⭐ Từ khó nhớ",
+    hanjaDeckId: "漢 Ôn từ Hán Hàn",
+    passageDeckId: "📖 Đoạn văn ngắn",
+]

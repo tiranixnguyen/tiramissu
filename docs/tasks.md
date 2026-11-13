@@ -146,7 +146,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Xong khi: nhóm "thẻ tự chấm" (9) pass — 7 test ở đây; 2 test cần `replaceContent`/`switchDeck` port ở T2.10 và T2.12.
   - Phụ thuộc: T2.08
 
-- [ ] **T2.10 · `StudyEngine` — cờ ⭐/漢/📖 + deck ảo**
+- [x] **T2.10 · `StudyEngine` — cờ ⭐/漢/📖 + deck ảo**
   - Làm: `toggleMark/Hanja/Passage`, deck ảo `marked`, `hanja`, `passage`, `random20` (theo
     `SeededGenerator`), phạm vi nhóm đang mở, `pruneUnflagged` khi nạp thẻ mới.
   - Xong khi: nhóm "đánh dấu và deck ảo" (11) + "mỗi thẻ độc lập" (2) pass.

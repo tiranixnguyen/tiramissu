@@ -261,6 +261,179 @@ struct StudyEngineTests {
             #expect(e.masteredCount == 1)
         }
     }
+    @Suite("mỗi thẻ độc lập (đã bỏ thẻ ngữ cảnh)")
+    struct Independent {
+        @Test func thuocMotTheKhongLamThuocTheKhac() {
+            let e = buildEngine()
+            e.markKnown()
+            #expect(e.masteredCount == 1)
+            e.nextCard()
+            answerCurrentCorrectly(e)
+            #expect(e.masteredCount == 1)
+        }
+
+        @Test func boAoDungChungTheVoiBoGoc() {
+            let c = contentOf([contentDeck("d1", threeWords, marked: [1])]).buildStudyCatalog()
+            let e = StudyEngine(
+                decks: c.decks, vocabGroups: c.vocabGroups, markedIds: c.markedIds,
+                random: SeededGenerator(seed: 1))
+            e.bootstrap()
+            e.switchDeck(markedDeckId)
+            #expect(e.currentWord == c.decks[0].words[1])
+        }
+    }
+
+    @Suite("đánh dấu và deck ảo")
+    struct Flags {
+        @Test func toggleTraGiaTriMoi() {
+            let e = buildEngine()
+            #expect(e.markedCount == 0)
+            #expect(e.toggleMark() == true)
+            #expect(e.currentIsMarked)
+            #expect(e.markedCount == 1)
+            #expect(e.toggleMark() == false)
+            #expect(!e.currentIsMarked)
+            #expect(e.markedCount == 0)
+        }
+
+        @Test func coHanHanTachBietVoiCoKhoNho() {
+            let e = buildEngine()
+            e.toggleHanja()
+            #expect(e.currentIsHanja)
+            #expect(!e.currentIsMarked)
+            #expect(e.hanjaCount == 1)
+            #expect(e.markedCount == 0)
+        }
+
+        @Test func coDoanVanTachBietVoiMarkHanja() {
+            let e = buildEngine()
+            #expect(e.togglePassage() == true)
+            #expect(e.currentIsPassage)
+            #expect(!e.currentIsMarked)
+            #expect(!e.currentIsHanja)
+            #expect(e.passageCount == 1)
+            #expect(e.togglePassage() == false)
+            #expect(e.passageCount == 0)
+        }
+
+        @Test func deckSachChiGomTheGanCoVaLaDeckAo() {
+            let e = engineFor(contentOf([contentDeck("d1", threeWords, hanja: [1], passage: [0, 2])]))
+            e.switchDeck(passageDeckId)
+            #expect(isVirtualDeckId(passageDeckId))
+            #expect(e.currentDeck?.isVirtual == true)
+            #expect(e.currentDeck?.name == "📖 Đoạn văn ngắn")
+            #expect(e.currentDeck?.words.map(\.id) == ["d1-0", "d1-2"])
+        }
+
+        @Test func boCoPassageTrongDeckThiTheRoiKhiSangTheTiep() {
+            let e = engineFor(contentOf([contentDeck("d1", threeWords, passage: [0, 2])]))
+            e.switchDeck(passageDeckId)
+            e.togglePassage()
+            #expect(e.totalCount == 2)
+            e.revealAnswer()
+            e.nextCard()
+            #expect(e.totalCount == 1)
+        }
+
+        @Test func coCoSanTuNoiDungDuocNapTheoIdThe() {
+            let e = engineFor(contentOf([contentDeck("d1", threeWords, marked: [2])]))
+            #expect(e.markedCount == 1)
+            e.switchDeck(markedDeckId)
+            #expect(e.currentWord?.back == "학교")
+            #expect(e.currentWord?.id == "d1-2")
+            #expect(e.currentIsMarked)
+        }
+
+        @Test func chuyenSangDeckSaoHocDungTuDaDanhDau() {
+            let e = buildEngine()
+            let marked = e.currentWord!.back
+            e.toggleMark()
+            e.switchDeck(markedDeckId)
+            #expect(e.currentDeckId == markedDeckId)
+            #expect(e.totalCount == 1)
+            #expect(e.currentWord?.back == marked)
+        }
+
+        @Test func deckSaoChiGomTuCuaNhomDangMo() {
+            let e = engineFor(
+                contentOf(
+                    [
+                        contentDeck("d1", threeWords, marked: [0]),
+                        contentDeck("d2", threeWords, groupId: "g2", marked: [0, 1]),
+                    ],
+                    groups: [
+                        ContentGroup(id: "g1", name: "Sep1", position: 0),
+                        ContentGroup(id: "g2", name: "Sep2", position: 1),
+                    ]))
+            #expect(e.markedCount == 1)
+            e.switchVocabGroup("g2")
+            #expect(e.markedCount == 2)
+        }
+
+        @Test func boSaoTrongDeckSaoTheOLaiRoiKhongQuayLai() {
+            let e = engineFor(contentOf([contentDeck("d1", threeWords, marked: [0, 1])]))
+            e.switchDeck(markedDeckId)
+            let dropped = e.currentWord!.id
+
+            #expect(e.toggleMark() == false)
+            #expect(e.currentWord?.id == dropped)
+            #expect(e.totalCount == 2)
+
+            e.revealAnswer()
+            e.nextCard()
+            #expect(e.totalCount == 1)
+            #expect(e.currentWord?.id != dropped)
+
+            for _ in 0..<StudyEngine.masteryStreak {
+                #expect(e.currentWord?.id != dropped)
+                answerCurrentCorrectly(e)
+                e.nextCard()
+            }
+            #expect(e.isCompleted)
+            #expect(e.currentWord == nil)
+        }
+
+        @Test func boSaoRoiBatLaiTruocKhiSangTheTiepThiTheVanOLai() {
+            let e = engineFor(contentOf([contentDeck("d1", threeWords, marked: [0, 1])]))
+            e.switchDeck(markedDeckId)
+            e.toggleMark()
+            e.toggleMark()
+            e.revealAnswer()
+            e.nextCard()
+            #expect(e.totalCount == 2)
+        }
+
+        @Test func boCoTheCuoiTrongDeckHanThiDeckRongKhongCrash() {
+            let e = engineFor(contentOf([contentDeck("d1", threeWords, hanja: [2])]))
+            e.switchDeck(hanjaDeckId)
+            e.toggleHanja()
+            e.markKnown()
+            e.nextCard()
+            #expect(e.totalCount == 0)
+            #expect(e.currentWord == nil)
+        }
+
+        @Test func deckNgauNhienRut20TheTrongNhomVaDungSeed() {
+            let words = (0..<30).map { RawWord(front: "v\($0)", back: "k\($0)") }
+            let a = engineFor(contentOf([contentDeck("d1", words)]), seed: 7)
+            let b = engineFor(contentOf([contentDeck("d1", words)]), seed: 7)
+            a.switchDeck(randomDeckId)
+            b.switchDeck(randomDeckId)
+            #expect(a.totalCount == 20)
+            #expect(a.currentDeck?.words == b.currentDeck?.words)
+            #expect(a.currentDeck?.isVirtual == true)
+        }
+    }
+}
+
+/// Dựng engine từ nội dung (có cờ), đã `bootstrap` với seed cố định.
+func engineFor(_ content: ContentSnapshot, seed: UInt64 = 1) -> StudyEngine {
+    let c = content.buildStudyCatalog()
+    let e = StudyEngine(
+        decks: c.decks, vocabGroups: c.vocabGroups, markedIds: c.markedIds, hanjaIds: c.hanjaIds,
+        passageIds: c.passageIds, random: SeededGenerator(seed: seed))
+    e.bootstrap()
+    return e
 }
 
 /// Dựng engine một nhóm, một bộ `d1`, đã `bootstrap` với seed cố định.

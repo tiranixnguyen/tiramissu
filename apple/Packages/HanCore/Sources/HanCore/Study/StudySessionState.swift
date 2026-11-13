@@ -17,6 +17,12 @@ public struct StudySessionState: Sendable, Hashable {
     public var totalCount: Int
     public var remainingInRound: Int
     public var isCompleted: Bool
+    public var currentIsMarked: Bool
+    public var currentIsHanja: Bool
+    public var currentIsPassage: Bool
+    public var markedCount: Int
+    public var hanjaCount: Int
+    public var passageCount: Int
 
     public var answered: Bool { outcome != .pending }
     public var progress: Double { totalCount == 0 ? 0 : Double(masteredCount) / Double(totalCount) }
