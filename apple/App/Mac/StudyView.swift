@@ -9,6 +9,7 @@ import SwiftUI
 struct StudyView: View {
     @Environment(AppModel.self) private var model
     @Environment(ThemeStore.self) private var themes
+    @Environment(TTS.self) private var tts
     @Environment(\.theme) private var theme
 
     @State private var input = ""
@@ -62,7 +63,10 @@ struct StudyView: View {
             } else if state.isCompleted {
                 completed
             } else if let word = state.currentWord {
-                card(word)
+                HStack(alignment: .top, spacing: 0) {
+                    card(word)
+                    sidebarColumn.padding(.top, 16).padding(.bottom, 16)
+                }
             } else {
                 ContentUnavailableView("Bộ này chưa có thẻ", systemImage: "tray")
             }
@@ -129,10 +133,14 @@ struct StudyView: View {
         VStack(spacing: 20) {
             CardSurface {
                 VStack(spacing: 0) {
-                    Text(word.typeAnswer ? "VIỆT → HÀN · GÕ ĐÁP ÁN" : "HÀN → VIỆT · TỰ CHẤM")
-                        .font(.caption.weight(.semibold)).tracking(1)
-                        .foregroundStyle(theme?.ink2 ?? .secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    HStack {
+                        Text(word.typeAnswer ? "VIỆT → HÀN · GÕ ĐÁP ÁN" : "HÀN → VIỆT · TỰ CHẤM")
+                            .font(.caption.weight(.semibold)).tracking(1)
+                            .foregroundStyle(theme?.ink2 ?? .secondary)
+                        Spacer()
+                        flagChip("star.fill", on: state.currentIsMarked, help: "Từ khó nhớ (⇧⌘8)", key: "8") { model.toggleMark() }
+                        flagChip(nil, on: state.currentIsHanja, help: "Hán Hàn (⇧⌘H)", key: "h") { model.toggleHanja() }
+                    }
                     Spacer(minLength: 16)
                     VStack(spacing: 14) {
                         Text(word.front)
@@ -143,15 +151,30 @@ struct StudyView: View {
                         if let hint = word.hint, !hint.isEmpty {
                             Text(hint).font(.callout).foregroundStyle(theme?.ink2 ?? .secondary)
                         }
-                        if state.answered {
-                            Text(word.back)
-                                .font(cardFont(size: 40))
-                                .foregroundStyle(theme?.accent ?? .accentColor)
-                                .textSelection(.enabled)
+                        if showBack {
+                            HStack(spacing: 12) {
+                                Text(word.back)
+                                    .font(cardFont(size: 40))
+                                    .foregroundStyle(theme?.accent ?? .accentColor)
+                                    .textSelection(.enabled)
+                                Button { tts.speak(word.back) } label: {
+                                    Image(systemName: "play.fill").font(.system(size: 14))
+                                        .frame(width: 40, height: 40)
+                                        .background(Circle().fill((theme?.accent ?? .accentColor).opacity(0.16)))
+                                }
+                                .buttonStyle(.plain)
+                                .keyboardShortcut(".", modifiers: .command)
+                                .help("Đọc (⌘.)")
+                            }
                             if let note = word.note, !note.isEmpty {
                                 Text(.init(note)).font(.callout)
                                     .foregroundStyle(theme?.ink2 ?? .secondary)
                                     .multilineTextAlignment(.center)
+                                    .padding(.horizontal, 14).padding(.vertical, 10)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill((theme?.ink ?? .primary).opacity(0.05)))
+                                    .frame(maxWidth: 560)
                             }
                         }
                     }
@@ -160,7 +183,7 @@ struct StudyView: View {
                         AnswerField(text: $input, state: answerState, onSubmit: submit)
                             .focused($fieldFocused)
                     } else {
-                        Text("Thẻ tự chấm — dùng Đã thuộc ⌘↵ (chấm tay làm ở T2.35)")
+                        Text(state.answered ? "" : state.flipped ? "Bạn nhớ từ này không?  1 = Chưa nhớ · 2 = Nhớ" : "Nghĩ đáp án rồi bấm Space để lật")
                             .font(.callout).foregroundStyle(theme?.ink2 ?? .secondary)
                     }
                 }
@@ -172,6 +195,75 @@ struct StudyView: View {
         }
         .padding(.horizontal, 24)
         .padding(.top, 16)
+    }
+
+    private var showBack: Bool { state.answered || state.flipped }
+
+    /// Nút vuông nhỏ góc thẻ: ⭐ (symbol) hoặc 漢 (symbol == nil).
+    private func flagChip(_ symbol: String?, on: Bool, help: String, key: KeyEquivalent, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Group {
+                if let symbol { Image(systemName: on ? symbol : "star") } else { Text("漢").font(.system(size: 15, weight: .bold, design: .serif)) }
+            }
+            .frame(width: 36, height: 36)
+            .foregroundStyle(on ? (theme?.accent ?? .accentColor) : (theme?.ink ?? .primary))
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(on ? (theme?.accent ?? .accentColor).opacity(0.16) : .clear))
+            .overlay(RoundedRectangle(cornerRadius: 10).stroke((theme?.ink ?? .primary).opacity(0.15)))
+        }
+        .buttonStyle(.plain)
+        .keyboardShortcut(key, modifiers: [.command, .shift])
+        .help(help)
+    }
+
+    // MARK: Cột phải
+
+    private var sidebarColumn: some View {
+        VStack(spacing: 12) {
+            panel {
+                Text("Lượt học này").font(.system(size: 13, weight: .semibold))
+                HStack(spacing: 20) {
+                    stat(state.masteredCount, "đã thuộc")
+                    stat(state.correctCount, "đúng")
+                    stat(max(state.attemptedCount - state.correctCount, 0), "sai")
+                }
+            }
+            panel {
+                Text("Sắp hỏi").font(.system(size: 13, weight: .semibold))
+                ForEach(state.upcoming) { q in
+                    HStack(spacing: 8) {
+                        Text(q.title).lineLimit(1)
+                        Spacer(minLength: 4)
+                        Text(q.isNew ? "mới" : "hộp \(q.box + 1)")
+                            .font(.system(size: 12)).foregroundStyle(theme?.ink2 ?? .secondary)
+                    }
+                    .font(.system(size: 13))
+                    .padding(.vertical, 4)
+                    Divider()
+                }
+                Spacer(minLength: 0)
+            }
+            .frame(maxHeight: .infinity, alignment: .top)
+        }
+        .frame(width: 232)
+        .padding(.trailing, 12)
+    }
+
+    private func stat(_ n: Int, _ label: String) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("\(n)").font(.system(size: 22, weight: .bold)).monospacedDigit()
+            Text(label).font(.system(size: 11)).foregroundStyle(theme?.ink2 ?? .secondary)
+        }
+    }
+
+    private func panel<C: View>(@ViewBuilder _ body: () -> C) -> some View {
+        VStack(alignment: .leading, spacing: 8) { body() }
+            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 18).fill(theme?.surface ?? Color.clear)
+                    .overlay(RoundedRectangle(cornerRadius: 18).stroke((theme?.ink ?? .primary).opacity(0.1))))
     }
 
     private var completed: some View {
@@ -211,6 +303,19 @@ struct StudyView: View {
                     model.nextCard()
                 })
             return list
+        }
+        if !word.typeAnswer {
+            if !state.flipped {
+                return [
+                    GlassAction(id: "known", title: "Đã thuộc", shortcut: "⌘↵", key: .init(.return, modifiers: .command)) { model.markKnown() },
+                    GlassAction(id: "flip", title: "Lật thẻ", shortcut: "Space", isPrimary: true, key: KeyboardShortcut(.space, modifiers: [])) { model.flipCard() },
+                ]
+            }
+            return [
+                GlassAction(id: "forgot", title: "Chưa nhớ", shortcut: "1", key: KeyboardShortcut("1", modifiers: [])) { model.gradeSelf(remembered: false) },
+                GlassAction(id: "known", title: "Đã thuộc", shortcut: "⌘↵", key: .init(.return, modifiers: .command)) { model.markKnown() },
+                GlassAction(id: "remembered", title: "Nhớ", shortcut: "2", isPrimary: true, key: KeyboardShortcut("2", modifiers: [])) { model.gradeSelf(remembered: true) },
+            ]
         }
         return [
             GlassAction(

@@ -1,3 +1,13 @@
+/// Một dòng trong "Sắp hỏi".
+public struct UpcomingCard: Sendable, Hashable, Identifiable {
+    public var id: String
+    public var title: String
+    /// Bậc hộp 0…3.
+    public var box: Int
+    /// Chưa trả lời lần nào trong lượt này.
+    public var isNew: Bool
+}
+
 /// Ảnh chụp bất biến của lượt học để UI vẽ — UI không cầm `StudyEngine`.
 public struct StudySessionState: Sendable, Hashable {
     public var vocabGroups: [VocabGroup]
@@ -23,6 +33,8 @@ public struct StudySessionState: Sendable, Hashable {
     public var markedCount: Int
     public var hanjaCount: Int
     public var passageCount: Int
+    /// Vài thẻ kế tiếp trong hàng đợi (không gồm thẻ đang hiện).
+    public var upcoming: [UpcomingCard]
 
     public var answered: Bool { outcome != .pending }
     public var progress: Double { totalCount == 0 ? 0 : Double(masteredCount) / Double(totalCount) }

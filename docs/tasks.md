@@ -262,6 +262,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Làm: `Space` lật, `1`/`2` chấm; nút ⭐/漢 (`⇧⌘8`/`⇧⌘H`); cột phải: đã thuộc/đúng/sai + "Sắp hỏi";
     nút ▶︎ đọc mặt sau bằng `AVSpeechSynthesizer` (`⌘.`); ghi chú Markdown dưới đáp án.
   - Xong khi: 👤 thẻ tự chấm + bộ ảo ⭐ hoạt động; cờ bấm offline được gửi khi có mạng.
+  - Trạng thái: code xong (Space/1/2, ⭐/漢, cột phải, ▶︎ ⌘.) — còn bước 👤 thử tay (chưa tick).
   - Phụ thuộc: T2.34
 - [ ] **T2.36 · Cửa sổ học gọn (`⌥⌘L`)** — `Window` nhỏ, `.windowLevel(.floating)`, chỉ thẻ + ô trả lời.
   - Phụ thuộc: T2.35

@@ -85,6 +85,16 @@ public final class StudyEngine {
         totalCount == 0 || masteredCount >= totalCount || currentIndex == nil
     }
 
+    /// Vài thẻ sắp được hỏi (theo hàng đợi hiện tại) — cho cột "Sắp hỏi".
+    public func upcomingCards(limit: Int = 5) -> [UpcomingCard] {
+        guard let deck = currentDeck, let rt = runtime else { return [] }
+        return rt.activeQueue.prefix(limit).compactMap { i in
+            guard deck.words.indices.contains(i), rt.cardState.indices.contains(i) else { return nil }
+            let cs = rt.cardState[i]
+            return UpcomingCard(id: deck.words[i].id, title: deck.words[i].front, box: cs.box, isNew: cs.box == 0 && cs.streak == 0)
+        }
+    }
+
     public func snapshot() -> StudySessionState {
         StudySessionState(
             vocabGroups: vocabGroups, currentVocabGroup: currentVocabGroup, currentDeckId: currentDeckId,
@@ -93,7 +103,8 @@ public final class StudyEngine {
             correctCount: correctCount, attemptedCount: attemptedCount, masteredCount: masteredCount,
             totalCount: totalCount, remainingInRound: remainingInRound, isCompleted: isCompleted,
             currentIsMarked: currentIsMarked, currentIsHanja: currentIsHanja, currentIsPassage: currentIsPassage,
-            markedCount: markedCount, hanjaCount: hanjaCount, passageCount: passageCount)
+            markedCount: markedCount, hanjaCount: hanjaCount, passageCount: passageCount,
+            upcoming: upcomingCards())
     }
 
     // MARK: Khởi động

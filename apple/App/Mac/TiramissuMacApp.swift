@@ -23,6 +23,7 @@ struct TiramissuMacApp: App {
                 .environment(model)
                 .environment(nav)
                 .environment(themes)
+                .environment(tts)
                 .themed(themes)
                 .task {
                     model.configureAPI(baseURL: server.baseURL, token: { ServerSettings.currentToken() })

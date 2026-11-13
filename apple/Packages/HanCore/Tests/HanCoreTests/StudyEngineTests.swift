@@ -614,3 +614,19 @@ func buildEngine(_ words: [RawWord] = threeWords, seed: UInt64 = 1) -> StudyEngi
 func answerCurrentCorrectly(_ e: StudyEngine) {
     #expect(e.checkAnswer(e.currentWord!.back))
 }
+
+@Suite("StudyEngine — Sắp hỏi")
+struct UpcomingTests {
+    @Test func khongGomTheDangHienVaTatCaDeuMoi() {
+        let e = buildEngine()
+        let s = e.snapshot()
+        #expect(s.upcoming.count == 2)  // 3 thẻ, trừ thẻ đang hiện
+        #expect(!s.upcoming.contains { $0.id == s.currentWord?.id })
+        #expect(s.upcoming.allSatisfy { $0.isNew && $0.box == 0 })
+    }
+
+    @Test func toiDa5Dong() {
+        let words = (0..<8).map { RawWord(front: "v\($0)", back: "k\($0)") }
+        #expect(buildEngine(words).snapshot().upcoming.count == 5)
+    }
+}
