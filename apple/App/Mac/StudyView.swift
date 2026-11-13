@@ -8,6 +8,8 @@ import SwiftUI
 /// Cài đặt hệ thống › Bàn phím › Nguồn nhập, rồi chuyển bằng phím Caps Lock hoặc ⌃Space.
 struct StudyView: View {
     @Environment(AppModel.self) private var model
+    @Environment(Navigation.self) private var nav
+    @Environment(ThemeStore.self) private var themes
     @Environment(\.theme) private var theme
 
     @State private var input = ""
@@ -16,6 +18,23 @@ struct StudyView: View {
     private var state: StudySessionState { model.state }
 
     var body: some View {
+        VStack(spacing: 14) {
+            header
+            content
+        }
+        .padding(.horizontal, 12).padding(.top, 10)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .navigationTitle("")
+        .toolbar(removing: .title)
+        .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
+        .onChange(of: state.cardSerial) {
+            input = ""
+            focusField()
+        }
+        .onAppear { focusField() }
+    }
+
+    @ViewBuilder private var content: some View {
         Group {
             if state.currentDeckId == nil {
                 ContentUnavailableView(
@@ -30,14 +49,6 @@ struct StudyView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .toolbar {
-            ToolbarItem(placement: .principal) { progressBar }
-        }
-        .onChange(of: state.cardSerial) {
-            input = ""
-            focusField()
-        }
-        .onAppear { focusField() }
     }
 
     // MARK: Thanh tiến độ
@@ -48,16 +59,66 @@ struct StudyView: View {
         return group.map { "\(name) · \($0)" } ?? name
     }
 
-    private var progressBar: some View {
-        HStack(spacing: 16) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(deckTitle).font(.callout.weight(.semibold)).foregroundStyle(theme?.ink ?? .primary)
-                ProgressView(value: state.progress).tint(theme?.accent).frame(width: 260)
+    /// Thanh trên cùng như prototype: kính bo 16, cao 52 — tên bộ + tiến độ, thống kê, Lệnh, theme, sáng/tối.
+    private var header: some View {
+        HStack(spacing: 14) {
+            VStack(alignment: .leading, spacing: 3) {
+                (Text(deckTitleMain).fontWeight(.semibold)
+                    + Text(deckTitleGroup).fontWeight(.medium).foregroundColor(theme?.ink2 ?? .secondary))
+                    .font(.system(size: 14))
+                    .lineLimit(1)
+                Capsule().fill((theme?.ink ?? .primary).opacity(0.12))
+                    .frame(height: 5).frame(maxWidth: 360)
+                    .overlay(alignment: .leading) {
+                        GeometryReader { g in
+                            Capsule().fill(theme?.accent ?? .accentColor)
+                                .frame(width: g.size.width * state.progress)
+                        }
+                    }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             Text("\(state.masteredCount)/\(state.totalCount) thuộc · đúng \(state.correctCount)/\(state.attemptedCount)")
-                .font(.caption).monospacedDigit()
+                .font(.system(size: 12)).monospacedDigit()
                 .foregroundStyle(theme?.ink2 ?? .secondary)
+            headerButton { nav.showPalette.toggle() } label: {
+                HStack(spacing: 8) { Text("Lệnh"); Kbd("⌘K") }
+            }
+            headerButton { themes.cycleTheme() } label: {
+                HStack(spacing: 8) {
+                    Circle().fill(theme?.accent ?? .accentColor).frame(width: 12, height: 12)
+                    Text(themes.current?.name ?? "")
+                }
+            }
+            headerButton(square: true) { themes.cycleAppearance() } label: {
+                Image(systemName: themes.appearance.symbol).font(.system(size: 14))
+            }
         }
+        .padding(.leading, 16).padding(.trailing, 10)
+        .frame(height: 52)
+        .glassEffect(.regular, in: .rect(cornerRadius: 16))
+    }
+
+    private func headerButton<L: View>(
+        square: Bool = false, action: @escaping () -> Void, @ViewBuilder label: () -> L
+    ) -> some View {
+        Button(action: action) {
+            label()
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(theme?.ink ?? .primary)
+                .padding(.horizontal, square ? 0 : 12)
+                .frame(width: square ? 34 : nil, height: 34)
+                .overlay { RoundedRectangle(cornerRadius: 10).strokeBorder(theme?.line ?? .secondary) }
+                .contentShape(.rect(cornerRadius: 10))
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var deckTitleMain: String {
+        model.visibleDecks.first { $0.id == state.currentDeckId }?.name ?? "Bộ ảo"
+    }
+
+    private var deckTitleGroup: String {
+        state.vocabGroups.first { $0.id == state.currentVocabGroup }.map { " · \($0.name)" } ?? ""
     }
 
     // MARK: Thẻ

@@ -121,29 +121,31 @@ struct MainWindow: View {
 
     @ToolbarContentBuilder private var toolbar: some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
-            Button {
+            if nav.screen != .study { Button {
                 nav.showPalette.toggle()
             } label: {
                 Label("Tìm lệnh", systemImage: "command")
             }
-            .help("⌘K — bảng lệnh (chưa dựng)")
+            .help("⌘K — bảng lệnh (chưa dựng)") }
         }
         ToolbarSpacer(.fixed)
         ToolbarItemGroup(placement: .primaryAction) {
             SettingsLink { Label("Cài đặt", systemImage: "gearshape") }
                 .help("Cài đặt (⌘,)")
-            Button {
-                themes.cycleTheme()
-            } label: {
-                Label("Đổi theme", systemImage: "paintpalette")
+            if nav.screen != .study {
+                Button {
+                    themes.cycleTheme()
+                } label: {
+                    Label("Đổi theme", systemImage: "paintpalette")
+                }
+                .help("Theme: \(themes.current?.name ?? "") — bấm để đổi")
+                Button {
+                    themes.cycleAppearance()
+                } label: {
+                    Label("Sáng/tối", systemImage: themes.appearance.symbol)
+                }
+                .help("Giao diện: \(themes.appearance.label) (⌥⌘D)")
             }
-            .help("Theme: \(themes.current?.name ?? "") — bấm để đổi")
-            Button {
-                themes.cycleAppearance()
-            } label: {
-                Label("Sáng/tối", systemImage: themes.appearance.symbol)
-            }
-            .help("Giao diện: \(themes.appearance.label) (⌥⌘D)")
         }
     }
 }
