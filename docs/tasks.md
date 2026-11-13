@@ -76,7 +76,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Xong khi: `docker build backend` thành công (nếu có Docker); doc đủ bước cho T1.07–T1.08.
   - Phụ thuộc: T1.02
 
-- [ ] **T1.07 · 👤 Tạo Postgres (Neon) + web service (Render)** _(Neon xong: project + migration đã áp; còn Render + `API_TOKEN`)_ theo `docs/backend.md` › Deploy;
+- [x] **T1.07 · 👤 Tạo Postgres (Neon) + web service (Render)** _(xong: Neon + Render `https://tiramissu-api.onrender.com`)_ theo `docs/backend.md` › Deploy;
   sinh `API_TOKEN` (`openssl rand -hex 32`), lưu vào trình quản lý mật khẩu.
 - [x] **T1.08 · ~~Chuyển dữ liệu cũ~~ — BỎ** (quyết định: không chuyển `pg_dump` lên Neon). Dữ liệu cũ chỉ dùng làm
   dữ liệu mẫu: `reference/content.sample.json`, app đóng gói sẵn và nạp khi chưa có cache. DB Neon bắt đầu trống.
@@ -245,10 +245,9 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Trạng thái: code xong, build sạch; còn bước 👤 soát bố cục (chưa tick). ⌘K mới là nút giữ chỗ (bảng lệnh làm sau); 🎧 Clip nghe tắt tới GĐ3.
   - Xong khi: 👤 khớp bố cục artboard "Mac · Hôm nay"; đổi theme áp ngay toàn app.
   - Phụ thuộc: T2.21, T2.31
-- [ ] **T2.33 · Cài đặt**
+- [x] **T2.33 · Cài đặt**
   - Làm: `Settings` scene (`⌘,`): Server (URL + token lưu Keychain + nút "Kiểm tra" gọi `/health` và
     `/content`), Giao diện (lưới `ThemePreviewTile`, sáng/tối/theo hệ thống, nhập/xuất .json), Giọng đọc (TTS ko-KR).
-  - Trạng thái: code xong, build sạch; còn bước 👤 thử với server thật (chưa tick).
   - Xong khi: 👤 nhập token thật → đồng bộ được với server cloud.
   - Phụ thuộc: T2.22, T2.32
 - [ ] **T2.34 · Màn Học — thẻ gõ đáp án**
