@@ -141,9 +141,9 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Xong khi: nhóm "tự xác nhận đúng" (2) pass.
   - Phụ thuộc: T2.07
 
-- [ ] **T2.09 · `StudyEngine` — thẻ tự chấm**
+- [x] **T2.09 · `StudyEngine` — thẻ tự chấm**
   - Làm: `flipCard`, `gradeSelf(remembered:)`, cờ `flipped`; thẻ gõ/tự chấm từ chối API của nhau.
-  - Xong khi: nhóm "thẻ tự chấm" (9) pass.
+  - Xong khi: nhóm "thẻ tự chấm" (9) pass — 7 test ở đây; 2 test cần `replaceContent`/`switchDeck` port ở T2.10 và T2.12.
   - Phụ thuộc: T2.08
 
 - [ ] **T2.10 · `StudyEngine` — cờ ⭐/漢/📖 + deck ảo**

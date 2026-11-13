@@ -158,6 +158,23 @@ public final class StudyEngine {
         canOverride = false
     }
 
+    /// Thẻ tự chấm: lật sang mặt sau. Lật **không** phải trả lời — chưa tính đúng/sai, chưa đụng hàng đợi.
+    public func flipCard() {
+        guard let word = currentWord, !word.typeAnswer, !answered else { return }
+        flipped = true
+    }
+
+    /// Thẻ tự chấm, sau khi lật: "Nhớ" đi đúng nhánh gõ đúng, "Chưa nhớ" đúng nhánh gõ sai.
+    /// Không có "Đã trả lời đúng?" (tự chấm rồi thì không còn gì để sửa).
+    public func gradeSelf(remembered: Bool) {
+        guard runtime != nil, let word = currentWord, !word.typeAnswer, flipped, !answered else { return }
+        runtime!.attemptedCount += 1
+        if remembered { runtime!.correctCount += 1 }
+        applySchedule(remembered)
+        outcome = remembered ? .correct : .wrong
+        canOverride = false
+    }
+
     /// "Đã thuộc": đánh dấu thuộc ngay, vẫn hiện đáp án để đối chiếu.
     public func markKnown() {
         guard var rt = runtime, currentWord != nil, let id = currentIndex, !answered else { return }

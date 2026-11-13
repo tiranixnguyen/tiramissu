@@ -171,6 +171,96 @@ struct StudyEngineTests {
             #expect(e.currentProgress?.mastered == true)
         }
     }
+    @Suite("thẻ tự chấm")
+    struct SelfGraded {
+        static let selfGraded = [
+            RawWord(front: "học sinh", back: "학생", typeAnswer: false),
+            RawWord(front: "giáo viên", back: "선생님", typeAnswer: false),
+            RawWord(front: "trường học", back: "학교", typeAnswer: false),
+        ]
+
+        @Test func latChuaPhaiLaTraLoi() {
+            let e = buildEngine(Self.selfGraded)
+            let remaining = e.remainingInRound
+            e.flipCard()
+            #expect(e.flipped)
+            #expect(!e.answered)
+            #expect(e.attemptedCount == 0)
+            #expect(e.remainingInRound == remaining)
+            #expect(e.currentProgress?.streak == 0)
+        }
+
+        @Test func chuaLatThiKhongTuChamDuoc() {
+            let e = buildEngine(Self.selfGraded)
+            e.gradeSelf(remembered: true)
+            #expect(!e.answered)
+            #expect(e.attemptedCount == 0)
+        }
+
+        @Test func nhoDiNhanhDungChuaNhoDiNhanhSai() {
+            let e = buildEngine(Self.selfGraded)
+            e.flipCard()
+            e.gradeSelf(remembered: true)
+            #expect(e.outcome == .correct)
+            #expect(e.currentProgress?.streak == 1)
+            #expect(e.currentProgress?.box == 1)
+            #expect(!e.canOverride)
+
+            e.nextCard()
+            #expect(!e.flipped)
+            e.flipCard()
+            e.gradeSelf(remembered: false)
+            #expect(e.outcome == .wrong)
+            #expect(e.currentProgress?.box == 0)
+            #expect(!e.canOverride)
+            #expect(e.correctCount == 1)
+            #expect(e.attemptedCount == 2)
+        }
+
+        @Test func chamHaiLanChiTinhLanDau() {
+            let e = buildEngine(Self.selfGraded)
+            e.flipCard()
+            e.gradeSelf(remembered: false)
+            e.gradeSelf(remembered: true)
+            #expect(e.attemptedCount == 1)
+            #expect(e.correctCount == 0)
+        }
+
+        @Test func nhoBaLanLienTiepThiThuocHetBo() {
+            let e = buildEngine([Self.selfGraded[0]])
+            for _ in 0..<StudyEngine.masteryStreak {
+                e.flipCard()
+                e.gradeSelf(remembered: true)
+                e.nextCard()
+            }
+            #expect(e.isCompleted)
+            #expect(e.masteredCount == 1)
+        }
+
+        @Test func theTuChamKhongNhanGoDapAnHayXemDapAn() {
+            let e = buildEngine(Self.selfGraded)
+            #expect(!e.checkAnswer(e.currentWord!.back))
+            e.revealAnswer()
+            #expect(!e.answered)
+            #expect(e.attemptedCount == 0)
+        }
+
+        @Test func theGoDapAnKhongLatHayTuChamDuoc() {
+            let e = buildEngine()
+            e.flipCard()
+            #expect(!e.flipped)
+            e.gradeSelf(remembered: true)
+            #expect(!e.answered)
+        }
+
+        @Test func daThuocVanDungDuocSauKhiLat() {
+            let e = buildEngine(Self.selfGraded)
+            e.flipCard()
+            e.markKnown()
+            #expect(e.outcome == .known)
+            #expect(e.masteredCount == 1)
+        }
+    }
 }
 
 /// Dựng engine một nhóm, một bộ `d1`, đã `bootstrap` với seed cố định.
