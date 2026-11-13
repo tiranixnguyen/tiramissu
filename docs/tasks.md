@@ -218,7 +218,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
     artboard "Design system".
   - Phụ thuộc: T2.20
 
-- [ ] **T2.22 · Nhập/xuất theme JSON**
+- [x] **T2.22 · Nhập/xuất theme JSON**
   - File: `DS/Sources/DesignSystem/Theme/ThemeLibrary.swift` + test
   - Làm: đọc theme người dùng ở Application Support/Themes, validate (thiếu khoá → lỗi tiếng Việt nêu
     khoá), id trùng built-in → thêm hậu tố; xuất theme ra `Data`.
