@@ -171,7 +171,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Xong khi: test: mở bộ rồi đổi ngay → không ghi; học hết → completed; bỏ dở → không completed; nháp chốt đúng giờ.
   - Phụ thuộc: T2.12
 
-- [ ] **T2.14 · `ReviewSchedule`**
+- [x] **T2.14 · `ReviewSchedule`**
   - File: `HC/Sources/HanCore/Review/ReviewSchedule.swift`, `ReviewScheduleTests.swift`
   - Đọc trước: `REF/domain/review_schedule.dart`, `REF/test/review_schedule_test.dart` (13 test)
   - Xong khi: 13 test port pass (Calendar cố định `Asia/Ho_Chi_Minh`).
