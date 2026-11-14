@@ -155,6 +155,23 @@ final class AppModel {
         apply(content.upsertingDeck(deck))
     }
 
+    /// Tải đoạn M4A lên rồi tạo clip trỏ tới nó. Cần mạng.
+    @discardableResult
+    func createClip(audio: Data, _ new: NewClip) async throws -> Clip {
+        let api = try online()
+        let upload = try await api.uploadAudio(audio, contentType: "audio/mp4")
+        var body = new
+        body.audioId = upload.id
+        let clip = try await api.createClip(body)
+        apply(content.upsertingClip(clip))
+        return clip
+    }
+
+    func deleteClip(id: String) async throws {
+        try await online().deleteClip(id: id)
+        apply(content.removingClip(id))
+    }
+
     func updateDeck(id: String, patch: DeckPatch) async throws {
         let deck = try await online().updateDeck(id: id, patch: patch)
         // Server có thể trả bộ không kèm thẻ → giữ thẻ đang có nếu rỗng.

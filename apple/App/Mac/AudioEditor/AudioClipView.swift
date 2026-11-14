@@ -1,15 +1,23 @@
 import DesignSystem
+import HanCore
 import SwiftUI
 import UniformTypeIdentifiers
 
 /// Màn "Cắt clip âm thanh": mở file → dạng sóng. (Phát A–B ở T3.03, lưu clip ở T3.04.)
 struct AudioClipView: View {
     @Environment(AudioDocument.self) private var doc
+    @Environment(AppModel.self) private var model
     @Environment(\.theme) private var theme
     @State private var importing = false
     @State private var windowStart: TimeInterval = 0
     @State private var windowLength: TimeInterval = 30
     @State private var dropTargeted = false
+    @State private var transcript = ""
+    @State private var translation = ""
+    @State private var deckId = ""
+    @State private var saving = false
+    @State private var message: (text: String, ok: Bool)?
+    @FocusState private var typing: Bool
 
     private static let minWindow: TimeInterval = 4
 
@@ -19,10 +27,12 @@ struct AudioClipView: View {
             VStack(spacing: 10) {
                 header
                 waveCard
+                if doc.waveform != nil { form }
                 Spacer(minLength: 0)
                 if doc.waveform != nil { GlassActionBar(playerActions).padding(.bottom, 4) }
             }
             .frame(maxWidth: .infinity)
+            clipsColumn.frame(width: 260)
         }
         .padding(.horizontal, 8).padding(.top, 8).padding(.bottom, 12)
         .fileImporter(isPresented: $importing, allowedContentTypes: Self.contentTypes) { result in
@@ -161,27 +171,134 @@ struct AudioClipView: View {
 
     private var playerActions: [GlassAction] {
         let p = doc.player
+        let plain: Bool = !typing
         func rateAction(_ r: Float, _ label: String, _ key: String) -> GlassAction {
             GlassAction(
                 id: "rate\(r)", title: label, shortcut: key, isPrimary: p.rate == r,
-                key: .init(KeyEquivalent(Character(key)), modifiers: [])
+                key: plain ? .init(KeyEquivalent(Character(key)), modifiers: []) : nil
             ) { p.setRate(r) }
         }
         return [
             GlassAction(id: "back", title: "−2s", key: .init(.leftArrow, modifiers: .command)) { p.skip(-2) },
             GlassAction(id: "play", title: p.isPlaying ? "Dừng" : "Phát", shortcut: "Space", isPrimary: true,
-                key: .init(.space, modifiers: [])) { p.toggle() },
+                key: plain ? .init(.space, modifiers: []) : nil) { p.toggle() },
             GlassAction(id: "fwd", title: "+2s", key: .init(.rightArrow, modifiers: .command)) { p.skip(2) },
-            GlassAction(id: "a", title: "Đặt A", shortcut: "[", key: .init("[", modifiers: [])) { p.setA() },
-            GlassAction(id: "b", title: "Đặt B", shortcut: "]", key: .init("]", modifiers: [])) { p.setB() },
+            GlassAction(id: "a", title: "Đặt A", shortcut: "[", key: plain ? .init("[", modifiers: []) : nil) { p.setA() },
+            GlassAction(id: "b", title: "Đặt B", shortcut: "]", key: plain ? .init("]", modifiers: []) : nil) { p.setB() },
             GlassAction(id: "bminus", title: "B −0.1s", shortcut: "⌥←", key: .init(.leftArrow, modifiers: .option), isEnabled: p.pointB != nil) { p.nudgeB(-0.1) },
             GlassAction(id: "bplus", title: "B +0.1s", shortcut: "⌥→", key: .init(.rightArrow, modifiers: .option), isEnabled: p.pointB != nil) { p.nudgeB(0.1) },
             GlassAction(id: "loop", title: "Lặp", shortcut: "L", isPrimary: p.loops,
-                key: .init("l", modifiers: [])) { p.loops.toggle() },
+                key: plain ? .init("l", modifiers: []) : nil) { p.loops.toggle() },
             rateAction(0.5, "0.5×", "5"),
             rateAction(0.75, "0.75×", "7"),
             rateAction(1, "1×", "1"),
         ]
+    }
+
+    // MARK: Form lưu clip
+
+    private var canSave: Bool {
+        let p = doc.player
+        guard let a = p.pointA, let b = p.pointB else { return false }
+        return !saving && b > a && b - a <= 60
+            && !transcript.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    private var form: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Câu nghe được (tiếng Hàn)").font(.system(size: 13, weight: .semibold))
+            TextEditor(text: $transcript)
+                .font(.system(size: 20)).scrollContentBackground(.hidden).focused($typing)
+                .frame(height: 72).padding(6)
+                .background(RoundedRectangle(cornerRadius: 10).fill(theme?.bg ?? .clear)
+                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(line)))
+            HStack(alignment: .bottom, spacing: 10) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Nghĩa tiếng Việt").font(.system(size: 13, weight: .semibold))
+                    TextField("Không bắt buộc", text: $translation).textFieldStyle(.roundedBorder).focused($typing)
+                }
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Gắn vào bộ").font(.system(size: 13, weight: .semibold))
+                    Picker("", selection: $deckId) {
+                        Text("Không gắn").tag("")
+                        ForEach(model.content.decks.sorted { $0.position < $1.position }) { Text($0.name).tag($0.id) }
+                    }
+                    .labelsHidden().frame(width: 200)
+                }
+                Button { Task { await save() } } label: {
+                    HStack(spacing: 6) { Text("Lưu clip").fontWeight(.semibold); Kbd("⌘S") }
+                }
+                .buttonStyle(.glassProminent).tint(theme?.accent)
+                .keyboardShortcut("s", modifiers: .command)
+                .disabled(!canSave)
+            }
+            Text(message?.text ?? "Lưu = xuất đoạn A–B thành M4A → tải lên server → có trên iPhone ở lần đồng bộ sau. Clip dài tối đa 60 giây.")
+                .font(.caption).foregroundStyle(message.map { $0.ok ? (theme?.ok ?? .green) : (theme?.bad ?? .red) } ?? ink2)
+        }
+        .padding(16)
+        .background(panel)
+    }
+
+    private func save() async {
+        guard let url = doc.url, let a = doc.player.pointA, let b = doc.player.pointB else { return }
+        saving = true
+        defer { saving = false }
+        do {
+            let data = try await ClipExporter.exportM4A(from: url, start: a, end: b)
+            let text = transcript.trimmingCharacters(in: .whitespacesAndNewlines)
+            let meaning = translation.trimmingCharacters(in: .whitespacesAndNewlines)
+            let new = NewClip(
+                audioId: "", sourceName: doc.name, startMs: Int(a * 1000), endMs: Int(b * 1000),
+                transcript: text, translation: meaning.isEmpty ? nil : meaning, deckId: deckId.isEmpty ? nil : deckId)
+            try await model.createClip(audio: data, new)
+            message = ("Đã lưu clip.", true)
+            transcript = ""
+            translation = ""
+            doc.player.pointA = nil
+            doc.player.pointB = nil
+        } catch let error as ClipExportError {
+            message = (error.localizedDescription, false)
+        } catch let error as APIError {
+            message = (error.message, false)
+        } catch {
+            message = ("Không lưu được clip.", false)
+        }
+    }
+
+    // MARK: Cột clip đã cắt
+
+    private var fileClips: [Clip] {
+        model.content.clips.filter { $0.sourceName == doc.name }.sorted { $0.startMs < $1.startMs }
+    }
+
+    private var clipsColumn: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Clip đã cắt · \(fileClips.count)").font(.system(size: 15, weight: .semibold))
+                if fileClips.isEmpty {
+                    Text(doc.url == nil ? "Mở file để xem các clip đã cắt." : "Chưa cắt clip nào từ file này.")
+                        .font(.callout).foregroundStyle(ink2)
+                }
+                ForEach(fileClips) { clip in
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Text("\(timeText(Double(clip.startMs) / 1000)) → \(timeText(Double(clip.endMs) / 1000))")
+                            Spacer()
+                            Text(String(format: "%.1fs", Double(clip.durationMs) / 1000))
+                        }
+                        .font(.system(size: 11, design: .monospaced)).foregroundStyle(ink2)
+                        Text(clip.transcript).font(.system(size: 15, weight: .semibold))
+                        if let t = clip.translation { Text(t).font(.system(size: 13)).foregroundStyle(ink2) }
+                    }
+                    .padding(12).frame(maxWidth: .infinity, alignment: .leading).background(panel)
+                    .onTapGesture {
+                        doc.player.pointA = Double(clip.startMs) / 1000
+                        doc.player.pointB = Double(clip.endMs) / 1000
+                        doc.player.seek(to: Double(clip.startMs) / 1000)
+                    }
+                }
+            }
+        }
     }
 
     // MARK: Hỗ trợ

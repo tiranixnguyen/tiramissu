@@ -312,6 +312,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   `timeRange`) → `POST /audio` (`audio/mp4`) → `POST /clips`; danh sách clip bên phải.
   - Xong khi: 👤 clip mới xuất hiện ở cột phải và trong `/content`.
   - Phụ thuộc: T3.01, T3.03
+  - Trạng thái: code xong, build sạch — còn 👤 thử cắt + lưu clip thật lên server (chưa tick).
 - [ ] **T3.05 · Luyện clip trong màn Học** — thẻ `.clip`: nút phát/lặp/tốc độ thay mặt trước, ô chép chính
   tả, kết quả tô theo `wordDiff`; Hôm nay hiện "Clip nghe hôm nay".
   - Phụ thuộc: T3.04, T2.37
