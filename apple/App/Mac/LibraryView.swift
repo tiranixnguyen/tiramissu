@@ -55,9 +55,9 @@ struct LibraryView: View {
                 Button("") { searchFocused = true }
                     .keyboardShortcut("f", modifiers: .command).opacity(0).frame(width: 0)
             }
+            .frame(maxWidth: 320, alignment: .leading)
             .padding(.horizontal, 12)
-            .frame(minWidth: 240, maxWidth: 320, minHeight: 34, alignment: .leading)
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(minWidth: 280, maxWidth: .infinity, alignment: .leading)
             .frame(height: 44)
             .glassEffect(.regular, in: .rect(cornerRadius: 16))
         }
@@ -164,19 +164,22 @@ struct LibraryView: View {
             if let deck {
                 HStack(alignment: .top, spacing: 12) {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(deck.name).font(.system(size: 22, weight: .bold))
+                        Text(deck.name).font(.system(size: 22, weight: .bold)).lineLimit(2)
                         Text(subtitle(deck)).font(.system(size: 12)).foregroundStyle(ink2)
                     }
                     Spacer()
-                    Button("Sửa bộ…") { showEditDeck = true }
-                    Button { showAddCard = true } label: { Label("Thêm thẻ", systemImage: "plus") }
-                        .keyboardShortcut("n", modifiers: .command)
-                    Button("Học bộ này ↵") {
-                        model.switchDeck(deck.id)
-                        nav.screen = .study
+                    HStack(spacing: 8) {
+                        Button("Sửa bộ…") { showEditDeck = true }
+                        Button { showAddCard = true } label: { Label("Thêm thẻ", systemImage: "plus") }
+                            .keyboardShortcut("n", modifiers: .command)
+                        Button("Học bộ này ↵") {
+                            model.switchDeck(deck.id)
+                            nav.screen = .study
+                        }
+                        .buttonStyle(.glassProminent)
+                        .keyboardShortcut(.return, modifiers: [])
                     }
-                    .buttonStyle(.glassProminent)
-                    .keyboardShortcut(.return, modifiers: [])
+                    .fixedSize()
                 }
                 .padding(.horizontal, 20).padding(.top, 18).padding(.bottom, 12)
                 table(deck)
