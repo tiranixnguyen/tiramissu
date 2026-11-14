@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
-<title>Luyện nghe clip</title>
+<title>Nghe</title>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -11,95 +11,111 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+KR:wght@400;500;700&amp;family=Noto+Serif+KR:wght@500;700&amp;display=swap" rel="stylesheet">
 <style>
 body{margin:0}
-a{color:#2B54C9}a:hover{color:#1E3E99}
+a{color:inherit}
 button{cursor:pointer}
+button,a[style*="height:"]{white-space:nowrap;flex-shrink:0}
+.glass{background:var(--glass);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid var(--gb);box-shadow:var(--sh),inset 0 1px 0 var(--gb)}
+.desk{word-break:keep-all;overflow-wrap:anywhere;background:radial-gradient(circle at 0% 0%,color-mix(in srgb,var(--ac) 30%,transparent),transparent 42%),radial-gradient(circle at 100% 78%,color-mix(in srgb,var(--flag) 22%,transparent),transparent 48%),var(--bg)}
+.card{background:var(--sf);border:1px solid var(--line);border-radius:20px}
+.scroll{position:absolute;inset:0;overflow-y:auto;box-sizing:border-box;padding:58px 20px 120px;display:flex;flex-direction:column;gap:20px;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.h1{margin:0;font-size:32px;font-weight:700;letter-spacing:-0.02em}
+.h2{margin:0;font-size:17px;font-weight:650}
+.sub{font-size:13px;font-weight:500;color:var(--ink2)}
+.sbar{position:absolute;top:0;left:0;right:0;height:50px;z-index:6;display:flex;align-items:center;justify-content:space-between;padding:0 14px 0 32px;font:600 15px Inter,sans-serif}
+.ctl{height:30px;min-width:30px;padding:0 10px;border-radius:999px;color:var(--ink);font:600 11px Inter,sans-serif;display:flex;align-items:center;justify-content:center;gap:6px}
+.tabbar{position:absolute;left:16px;right:16px;bottom:22px;height:62px;box-sizing:border-box;border-radius:999px;padding:5px;display:flex;align-items:center;gap:2px;z-index:5}
+.tab{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-radius:999px;font:500 10px Inter,sans-serif;color:var(--ink);text-decoration:none}
+.tab.on{background:color-mix(in srgb,var(--ac) 16%,transparent);color:var(--ac);font-weight:650}
+.fab{flex:none;width:60px;height:60px;margin:-14px 4px 0;border-radius:999px;background:var(--ac);color:var(--on);display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 8px 22px color-mix(in srgb,var(--ac) 45%,transparent),0 0 0 4px color-mix(in srgb,var(--sf) 70%,transparent)}
+.acc{position:absolute;left:16px;right:16px;z-index:5;box-sizing:border-box;border-radius:32px;padding:8px;display:flex;align-items:center;gap:8px}
+.pbtn{height:48px;border-radius:999px;border:0;font:650 15px Inter,sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 18px}
+.circ{width:44px;height:44px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:var(--ink);border:0;padding:0}
+.row{display:flex;align-items:center;gap:12px;padding:12px 14px;text-decoration:none;color:var(--ink)}
+.tile{width:44px;height:44px;flex:none;border-radius:12px;display:flex;align-items:center;justify-content:center;font:700 14px 'Noto Sans KR',sans-serif}
+.ell{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 </style>
 </helmet>
-<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F4F0; color: #191C24; font-family: Inter, 'Noto Sans KR', sans-serif; display: flex; flex-direction: column;">
-  <div style="flex: 1; min-height: 0; overflow-y: auto; padding: 56px 20px 20px; display: flex; flex-direction: column; gap: 16px;">
-    <header style="display: flex; justify-content: space-between; align-items: center;">
-      <h1 style="margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.02em;">Nghe</h1>
-      <span style="font-size: 13px; color: #4C5260;">Clip 2/5 hôm nay</span>
+<div class="desk" style="{{vars}}; position: relative; width: 390px; height: 844px; overflow: hidden; color: var(--ink); font-family: Inter, 'Noto Sans KR', sans-serif;">
+  <div class="sbar"><span>9:41</span><span style="display: flex; gap: 6px;"><button class="glass ctl" onClick="{{nextTheme}}" aria-label="Đổi theme"><span style="width: 10px; height: 10px; border-radius: 99px; background: var(--ac);"></span>{{themeName}}</button><button class="glass ctl" onClick="{{toggleDark}}" aria-label="Sáng / tối" style="padding: 0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg></button></span></div>
+  <div class="scroll" style="padding-bottom: 190px;">
+    <header style="display: flex; justify-content: space-between; align-items: flex-end; padding-top: 6px;">
+      <div style="display: flex; flex-direction: column; gap: 2px;">
+        <div class="sub">Clip 2/5 hôm nay</div>
+        <h1 class="h1">Nghe</h1>
+      </div>
     </header>
 
-    <section style="background: #FFFFFF; border: 1px solid #DDDBD3; border-radius: 22px; overflow: hidden; display: flex; flex-direction: column;">
-      <div style="position: relative; height: 150px; background: #EEEDE8; display: flex; align-items: center; justify-content: center;">
-        <div style="position: absolute; left: 14px; top: 12px; right: 14px; font-size: 12px; color: #4C5260; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">SNU4A-07-듣기.m4a · clip 4.5s</div>
-        <div aria-hidden="true" style="position: absolute; left: 14px; right: 14px; top: 44px; bottom: 44px; display: flex; align-items: center; gap: 3px; opacity: 0.55;"><sc-for list="{{wave}}" as="w" hint-placeholder-count="48"><div style="flex: 1; height: {{w}}; border-radius: 2px; background: #1C7146;"></div></sc-for></div>
-        <button onClick="{{togglePlay}}" aria-label="{{playLabel}}" style="position: relative; width: 64px; height: 64px; border-radius: 999px; border: 0; background: #191C24; color: #FFFFFF; display: flex; align-items: center; justify-content: center;">
-          <sc-if value="{{playing}}" hint-placeholder-val="{{false}}">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg>
-          </sc-if>
-          <sc-if value="{{paused}}" hint-placeholder-val="{{true}}">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
-          </sc-if>
-        </button>
-        <div style="position: absolute; left: 14px; bottom: 12px; padding: 3px 8px; border-radius: 6px; background: #FFFFFF; color: #191C24; font-size: 12px; font-family: ui-monospace, Menlo, monospace;">0:42.5 → 0:47.0</div>
-      </div>
-      <div style="padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 12px;">
-        <div style="display: flex; flex-direction: column; gap: 6px;">
-          <div style="position: relative; height: 8px; border-radius: 999px; background: #EEEDE8;">
-            <div style="position: absolute; left: 0; top: 0; height: 8px; width: {{posW}}; border-radius: 999px; background: #1C7146;"></div>
-          </div>
-          <div style="display: flex; justify-content: space-between; font-size: 12px; color: #4C5260; font-family: ui-monospace, Menlo, monospace;"><span>{{posLabel}}</span><span>4.5s</span></div>
-        </div>
-        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
-          <div role="group" aria-label="Tốc độ" style="display: flex; gap: 6px;">
-            <sc-for list="{{speeds}}" as="sp" hint-placeholder-count="3">
-              <button onClick="{{sp.pick}}" aria-pressed="{{sp.on}}" style="min-width: 52px; height: 40px; border-radius: 999px; border: 1px solid {{sp.border}}; background: {{sp.bg}}; color: {{sp.ink}}; font: 600 13px Inter, sans-serif;">{{sp.label}}</button>
-            </sc-for>
-          </div>
-          <button onClick="{{toggleLoop}}" aria-pressed="{{loopStr}}" style="height: 40px; padding: 0 12px; border-radius: 999px; border: 1px solid {{loopBorder}}; background: {{loopBg}}; color: {{loopInk}}; font: 600 13px Inter, sans-serif; display: flex; align-items: center; gap: 6px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l3 3-3 3"></path><path d="M4 11V9a4 4 0 0 1 4-4h12"></path><path d="M7 22l-3-3 3-3"></path><path d="M20 13v2a4 4 0 0 1-4 4H4"></path></svg>
-            Lặp A-B
-          </button>
-        </div>
+    <section class="card" style="overflow: hidden; display: flex; flex-direction: column;">
+      <div style="position: relative; height: 132px; background: color-mix(in srgb, var(--ok) 8%, var(--sf));">
+        <div class="ell" style="position: absolute; left: 14px; top: 12px; right: 14px; font-size: 12px; color: var(--ink2);">SNU4A-07-듣기.m4a · clip 4.5s</div>
+        <div aria-hidden="true" style="position: absolute; left: 14px; right: 14px; top: 38px; bottom: 30px; display: flex; align-items: center; gap: 3px;"><sc-for list="{{wave}}" as="w" hint-placeholder-count="48"><div style="flex: 1; height: {{w.h}}; border-radius: 2px; background: {{w.c}};"></div></sc-for></div>
+        <div aria-hidden="true" style="position: absolute; top: 34px; bottom: 26px; left: {{headX}}; width: 2px; border-radius: 2px; background: var(--ink);"></div>
+        <div style="position: absolute; left: 14px; right: 14px; bottom: 8px; display: flex; justify-content: space-between; font: 12px ui-monospace, Menlo, monospace; color: var(--ink2);"><span>0:42.5 → 0:47.0</span><span>{{posLabel}} / 4.5s</span></div>
       </div>
     </section>
 
     <section style="display: flex; flex-direction: column; gap: 10px;">
-      <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 600;">Chép chính tả — gõ lại câu bạn nghe được
-        <textarea value="{{answer}}" onChange="{{onType}}" lang="ko" rows="3" placeholder="듣고 쓰세요…" style="box-sizing: border-box; border-radius: 14px; border: 1.5px solid #DDDBD3; background: #FFFFFF; padding: 12px 14px; font: 500 17px/1.5 'Noto Sans KR', sans-serif; color: #191C24; resize: none;"></textarea>
+      <label style="display: flex; flex-direction: column; gap: 8px; font-size: 15px; font-weight: 650;">Chép chính tả
+        <span style="font-size: 13px; font-weight: 500; color: var(--ink2);">Gõ lại câu bạn nghe được</span>
+        <textarea value="{{answer}}" onChange="{{onType}}" lang="ko" rows="3" placeholder="듣고 쓰세요…" style="box-sizing: border-box; border-radius: 16px; border: 1.5px solid var(--line); background: var(--sf); padding: 12px 14px; font: 500 17px/1.5 'Noto Sans KR', sans-serif; color: var(--ink); resize: none; outline-color: var(--ac);"></textarea>
       </label>
       <sc-if value="{{checked}}" hint-placeholder-val="{{false}}">
-        <div style="background: #FFFFFF; border: 1px solid #DDDBD3; border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;">
-          <div style="display: flex; flex-wrap: wrap; gap: 6px; font-family: 'Noto Serif KR', serif; font-size: 18px; font-weight: 600;">
+        <div class="card" style="border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; flex-wrap: wrap; gap: 6px; font: 600 18px 'Noto Serif KR', serif;">
             <sc-for list="{{words}}" as="w" hint-placeholder-count="6">
               <span style="padding: 2px 6px; border-radius: 6px; background: {{w.bg}}; color: {{w.ink}};">{{w.t}}</span>
             </sc-for>
           </div>
-          <div style="font-size: 13px; color: #4C5260;">Dùng chai nhựa làm chất liệu may đồ thể thao thì nhẹ và mát. · Đúng {{score}}</div>
+          <div style="font-size: 13px; color: var(--ink2);">Dùng chai nhựa làm chất liệu may đồ thể thao thì nhẹ và mát. · Đúng {{score}}</div>
         </div>
       </sc-if>
       <div style="display: flex; gap: 10px;">
-        <button onClick="{{reveal}}" style="flex: 1; height: 50px; border-radius: 14px; border: 1px solid #DDDBD3; background: #FFFFFF; color: #191C24; font: 600 15px Inter, sans-serif;">Xem câu gốc</button>
-        <button onClick="{{check}}" style="flex: 1.4; height: 50px; border-radius: 14px; border: 0; background: #1C7146; color: #FFFFFF; font: 600 16px Inter, sans-serif;">Chấm</button>
+        <button class="pbtn" onClick="{{reveal}}" style="flex: 1; background: var(--sf); border: 1px solid var(--line); color: var(--ink);">Xem câu gốc</button>
+        <button class="pbtn" onClick="{{check}}" style="flex: 1.3; background: var(--ac); color: var(--on);">Chấm</button>
       </div>
     </section>
 
-    <section style="display: flex; flex-direction: column; gap: 8px;">
-      <h2 style="margin: 0; font-size: 15px; font-weight: 600;">Tiếp theo</h2>
-      <sc-for list="{{queue}}" as="q" hint-placeholder-count="2">
-        <div style="display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 14px; background: #FFFFFF; border: 1px solid #DDDBD3;">
-          <div style="width: 52px; height: 36px; border-radius: 8px; background: #191C24; color: #FFFFFF; font-size: 11px; display: flex; align-items: center; justify-content: center; font-family: ui-monospace, Menlo, monospace;">{{q.len}}</div>
-          <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
-            <div style="font-size: 14px; font-weight: 600; font-family: 'Noto Sans KR', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{q.t}}</div>
-            <div style="font-size: 12px; color: #4C5260;">{{q.meta}}</div>
+    <section style="display: flex; flex-direction: column; gap: 10px;">
+      <h2 class="h2">Tiếp theo</h2>
+      <div class="card" style="overflow: hidden;">
+        <sc-for list="{{queue}}" as="q" hint-placeholder-count="2">
+          <div class="row" style="border-top: {{q.sep}};">
+            <div style="width: 52px; height: 36px; flex: none; border-radius: 10px; background: color-mix(in srgb, var(--ok) 14%, var(--sf)); color: var(--ok); font: 600 11px ui-monospace, Menlo, monospace; display: flex; align-items: center; justify-content: center;">{{q.len}}</div>
+            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+              <div class="ell" style="font: 600 14px 'Noto Sans KR', sans-serif;">{{q.t}}</div>
+              <div style="font-size: 12px; color: var(--ink2);">{{q.meta}}</div>
+            </div>
           </div>
-        </div>
-      </sc-for>
+        </sc-for>
+      </div>
     </section>
   </div>
 
-  <nav aria-label="Điều hướng chính" style="display: flex; justify-content: space-around; padding: 10px 8px 30px; background: #FFFFFF; border-top: 1px solid #DDDBD3;">
-    <a href="Phone-Today.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 64px; font-size: 11px; font-weight: 500; color: #4C5260; text-decoration: none;">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"></path></svg>Hôm nay</a>
-    <a href="Phone-Study.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 64px; font-size: 11px; font-weight: 500; color: #4C5260; text-decoration: none;">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="14" height="16" rx="2"></rect><path d="M7 3h12a2 2 0 0 1 2 2v14"></path></svg>Học</a>
-    <a href="Phone-Listen.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 64px; font-size: 11px; font-weight: 600; color: #2B54C9; text-decoration: none;">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 14v-2a9 9 0 0 1 18 0v2"></path><rect x="3" y="14" width="4" height="7" rx="1.5"></rect><rect x="17" y="14" width="4" height="7" rx="1.5"></rect></svg>Nghe</a>
-    <a href="Mac-Library.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 64px; font-size: 11px; font-weight: 500; color: #4C5260; text-decoration: none;">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h4v16H4zM10 4h4v16h-4zM16 5l3.5-.9 3 15.5-3.5.9z"></path></svg>Thư viện</a>
+  <div class="glass acc" role="group" aria-label="Điều khiển phát" style="bottom: 96px; height: 64px;">
+    <button class="circ" onClick="{{togglePlay}}" aria-label="{{playLabel}}" style="width: 48px; height: 48px; background: var(--ac); color: var(--on);">
+      <sc-if value="{{playing}}" hint-placeholder-val="{{false}}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg>
+      </sc-if>
+      <sc-if value="{{paused}}" hint-placeholder-val="{{true}}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
+      </sc-if>
+    </button>
+    <div role="group" aria-label="Tốc độ" style="flex: 1; display: flex; gap: 2px; padding: 3px; border-radius: 999px; background: color-mix(in srgb, var(--ink) 7%, transparent);">
+      <sc-for list="{{speeds}}" as="sp" hint-placeholder-count="3">
+        <button onClick="{{sp.pick}}" aria-pressed="{{sp.on}}" style="flex: 1; height: 40px; border-radius: 999px; border: 0; background: {{sp.bg}}; color: var(--ink); font: {{sp.weight}} 13px Inter, sans-serif; box-shadow: {{sp.sh}};">{{sp.label}}</button>
+      </sc-for>
+    </div>
+    <button onClick="{{toggleLoop}}" aria-pressed="{{loopStr}}" aria-label="Lặp A-B" class="circ" style="width: 48px; height: 48px; background: {{loopBg}}; color: {{loopInk}};">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l3 3-3 3"></path><path d="M4 11V9a4 4 0 0 1 4-4h12"></path><path d="M7 22l-3-3 3-3"></path><path d="M20 13v2a4 4 0 0 1-4 4H4"></path></svg>
+    </button>
+  </div>
+  <nav aria-label="Điều hướng chính" class="glass tabbar">
+    <a class="tab" href="Phone-Today.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"></path></svg><span>Hôm nay</span></a>
+    <a class="tab on" href="Phone-Listen.dc.html" aria-current="page"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 14v-2a9 9 0 0 1 18 0v2"></path><rect x="3" y="14" width="4" height="7" rx="1.5"></rect><rect x="17" y="14" width="4" height="7" rx="1.5"></rect></svg><span>Nghe</span></a>
+    <a class="fab" href="Phone-Study.dc.html" aria-label="Học — bắt đầu ôn"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="14" height="16" rx="2"></rect><path d="M7 3h12a2 2 0 0 1 2 2v14"></path></svg></a>
+    <a class="tab" href="Phone-Library.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h4v16H4zM10 4h4v16h-4zM16 5l3.5-.9 3 15.5-3.5.9z"></path></svg><span>Thư viện</span></a>
+    <a class="tab" href="Phone-History.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg><span>Lịch sử</span></a>
   </nav>
 </div>
 </x-dc>
@@ -107,8 +123,31 @@ button{cursor:pointer}
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { playing: false, pos: 0, speed: 0.75, loop: true, answer: '', checked: false };
+    this.state = { theme: 'paper', dark: false, playing: false, pos: 1.6, speed: 0.75, loop: true, answer: '', checked: false };
     this.target = '플라스틱 병을 소재로 해서 운동복을 만들면 가볍고 시원하다';
+    this.initTheme();
+  }
+  initTheme() {
+    this.TH = {
+      paper: ['Giấy', { bg: '#F5F4F0', sf: '#FFFFFF', ink: '#191C24', ink2: '#4C5260', ac: '#2B54C9', line: '#DDDBD3', on: '#FFFFFF' }, { bg: '#121418', sf: '#1B1E24', ink: '#ECEEF2', ink2: '#A9AFBC', ac: '#7C9BFF', line: '#343946', on: '#0B1020' }],
+      ink: ['Mực đêm', { bg: '#EEF0F6', sf: '#FFFFFF', ink: '#141826', ink2: '#4A5068', ac: '#5B4BD6', line: '#D7DAE6', on: '#FFFFFF' }, { bg: '#0E1020', sf: '#171A2E', ink: '#E8E9F5', ink2: '#A3A7C4', ac: '#A99BFF', line: '#2B2F4A', on: '#120E2A' }],
+      pine: ['Rừng thông', { bg: '#F1F4EF', sf: '#FFFFFF', ink: '#17201A', ink2: '#475449', ac: '#1F6B4A', line: '#D6DED6', on: '#FFFFFF' }, { bg: '#0F1712', sf: '#17221B', ink: '#E5EEE7', ink2: '#9DB0A3', ac: '#5CCB95', line: '#2A3A2F', on: '#06140C' }],
+      dusk: ['Hoàng hôn', { bg: '#FAF3EE', sf: '#FFFFFF', ink: '#2A1A14', ink2: '#6A4E43', ac: '#B8402A', line: '#EADBD2', on: '#FFFFFF' }, { bg: '#1A1210', sf: '#251A17', ink: '#F5E9E4', ink2: '#C2A79D', ac: '#FF8A66', line: '#3D2C27', on: '#2A0E05' }],
+      contrast: ['Tương phản cao', { bg: '#FFFFFF', sf: '#FFFFFF', ink: '#000000', ink2: '#222222', ac: '#0033CC', line: '#000000', on: '#FFFFFF' }, { bg: '#000000', sf: '#0A0A0A', ink: '#FFFFFF', ink2: '#E6E6E6', ac: '#FFD400', line: '#FFFFFF', on: '#000000' }],
+      system: ['Hệ thống', { bg: '#F2F2F4', sf: '#FFFFFF', ink: '#1D1D1F', ink2: '#55555B', ac: '#0064D2', line: '#DADADF', on: '#FFFFFF' }, { bg: '#161618', sf: '#1F1F22', ink: '#F2F2F4', ink2: '#AAAAB0', ac: '#409CFF', line: '#38383C', on: '#03182E' }]
+    };
+  }
+  themeVals() {
+    const s = this.state; const go = (p) => this.setState(p);
+    const ST = s.dark ? { ok: '#5CC48E', bad: '#F08174', flag: '#F2B54B', glass: 'rgba(30,32,40,0.5)', gb: 'rgba(255,255,255,0.16)', sh: '0 10px 34px rgba(0,0,0,0.5)' } : { ok: '#1C7146', bad: '#B23A2E', flag: '#9A5B00', glass: 'rgba(255,255,255,0.55)', gb: 'rgba(255,255,255,0.75)', sh: '0 10px 34px rgba(20,24,40,0.16)' };
+    const t = Object.assign({}, this.TH[s.theme][s.dark ? 2 : 1], ST);
+    const keys = Object.keys(this.TH);
+    return {
+      vars: `--bg:${t.bg};--sf:${t.sf};--ink:${t.ink};--ink2:${t.ink2};--ac:${t.ac};--line:${t.line};--on:${t.on};--ok:${t.ok};--bad:${t.bad};--flag:${t.flag};--glass:${t.glass};--gb:${t.gb};--sh:${t.sh}`,
+      themeName: this.TH[s.theme][0],
+      nextTheme: () => go({ theme: keys[(keys.indexOf(s.theme) + 1) % keys.length] }),
+      toggleDark: () => go({ dark: !s.dark })
+    };
   }
   componentDidMount() {
     this.timer = setInterval(() => {
@@ -127,35 +166,39 @@ class Component extends DCLogic {
     const aw = s.answer.normalize('NFC').trim().split(/\s+/);
     const words = tw.map((t, i) => {
       const ok = aw[i] === t;
-      return { t, bg: ok ? '#E3F2EA' : '#FBE9E6', ink: ok ? '#155A37' : '#8E2B22' };
+      return { t, ok, bg: `color-mix(in srgb, var(${ok ? '--ok' : '--bad'}) 14%, var(--sf))`, ink: `var(${ok ? '--ok' : '--bad'})` };
     });
-    const hits = words.filter(w => w.bg === '#E3F2EA').length;
-    return {
+    const frac = s.pos / 4.5;
+    return Object.assign(this.themeVals(), {
       playing: s.playing, paused: !s.playing,
       playLabel: s.playing ? 'Tạm dừng' : 'Phát đoạn',
       togglePlay: () => go({ playing: !s.playing, pos: s.pos >= 4.5 ? 0 : s.pos }),
-      posW: Math.round(s.pos / 4.5 * 100) + '%',
+      headX: `calc(14px + (100% - 28px) * ${frac.toFixed(3)})`,
       posLabel: s.pos.toFixed(1) + 's',
       speeds: [0.5, 0.75, 1].map(v => ({
         label: v + '×', on: String(s.speed === v),
-        bg: s.speed === v ? '#191C24' : '#FFFFFF', ink: s.speed === v ? '#FFFFFF' : '#191C24', border: s.speed === v ? '#191C24' : '#DDDBD3',
+        bg: s.speed === v ? 'var(--sf)' : 'transparent', weight: s.speed === v ? '700' : '500',
+        sh: s.speed === v ? '0 1px 4px rgba(0,0,0,0.12)' : 'none',
         pick: () => go({ speed: v })
       })),
       loopStr: String(s.loop),
-      loopBg: s.loop ? '#E3F2EA' : '#FFFFFF', loopInk: s.loop ? '#155A37' : '#4C5260', loopBorder: s.loop ? '#1C7146' : '#DDDBD3',
+      loopBg: s.loop ? 'color-mix(in srgb, var(--ok) 18%, var(--sf))' : 'transparent', loopInk: s.loop ? 'var(--ok)' : 'var(--ink2)',
       toggleLoop: () => go({ loop: !s.loop }),
       answer: s.answer,
       onType: (e) => go({ answer: e.target.value, checked: false }),
       check: () => go({ checked: true }),
       reveal: () => go({ checked: true, answer: this.target }),
       checked: s.checked,
-      words, score: hits + '/' + tw.length + ' từ',
-      wave: Array.from({ length: 48 }, (_, i) => Math.round(18 + 80 * Math.abs(Math.sin(i * 0.45) * Math.sin(i * 0.13 + 1))) + '%'),
+      words, score: words.filter(w => w.ok).length + '/' + tw.length + ' từ',
+      wave: Array.from({ length: 48 }, (_, i) => ({
+        h: Math.round(18 + 80 * Math.abs(Math.sin(i * 0.45) * Math.sin(i * 0.13 + 1))) + '%',
+        c: i / 48 <= frac ? 'var(--ok)' : 'color-mix(in srgb, var(--ok) 35%, var(--sf))'
+      })),
       queue: [
         { len: '3.2s', t: '음식물 쓰레기를 줄이기 위해서', meta: 'Sai 2 lần · ★' },
         { len: '5.0s', t: '갓생이란 부지런하고 생산적인 삶을', meta: 'Mới thêm hôm qua' }
-      ]
-    };
+      ].map((q, i) => Object.assign(q, { sep: i ? '1px solid var(--line)' : '0' }))
+    });
   }
 }
 </script>

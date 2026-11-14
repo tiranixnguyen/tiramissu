@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
-<title>Học thẻ</title>
+<title>Học</title>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -11,167 +11,212 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+KR:wght@400;500;700&amp;family=Noto+Serif+KR:wght@500;700&amp;display=swap" rel="stylesheet">
 <style>
 body{margin:0}
-a{color:#2B54C9}a:hover{color:#1E3E99}
+a{color:inherit}
 button{cursor:pointer}
+button,a[style*="height:"]{white-space:nowrap;flex-shrink:0}
+.glass{background:var(--glass);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid var(--gb);box-shadow:var(--sh),inset 0 1px 0 var(--gb)}
+.desk{word-break:keep-all;overflow-wrap:anywhere;background:radial-gradient(circle at 0% 0%,color-mix(in srgb,var(--ac) 30%,transparent),transparent 42%),radial-gradient(circle at 100% 78%,color-mix(in srgb,var(--flag) 22%,transparent),transparent 48%),var(--bg)}
+.card{background:var(--sf);border:1px solid var(--line);border-radius:20px}
+.scroll{position:absolute;inset:0;overflow-y:auto;box-sizing:border-box;padding:58px 20px 120px;display:flex;flex-direction:column;gap:20px;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.h1{margin:0;font-size:32px;font-weight:700;letter-spacing:-0.02em}
+.h2{margin:0;font-size:17px;font-weight:650}
+.sub{font-size:13px;font-weight:500;color:var(--ink2)}
+.sbar{position:absolute;top:0;left:0;right:0;height:50px;z-index:6;display:flex;align-items:center;justify-content:space-between;padding:0 14px 0 32px;font:600 15px Inter,sans-serif}
+.ctl{height:30px;min-width:30px;padding:0 10px;border-radius:999px;color:var(--ink);font:600 11px Inter,sans-serif;display:flex;align-items:center;justify-content:center;gap:6px}
+.tabbar{position:absolute;left:16px;right:16px;bottom:22px;height:62px;box-sizing:border-box;border-radius:999px;padding:5px;display:flex;align-items:center;gap:2px;z-index:5}
+.tab{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-radius:999px;font:500 10px Inter,sans-serif;color:var(--ink);text-decoration:none}
+.tab.on{background:color-mix(in srgb,var(--ac) 16%,transparent);color:var(--ac);font-weight:650}
+.fab{flex:none;width:60px;height:60px;margin:-14px 4px 0;border-radius:999px;background:var(--ac);color:var(--on);display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 8px 22px color-mix(in srgb,var(--ac) 45%,transparent),0 0 0 4px color-mix(in srgb,var(--sf) 70%,transparent)}
+.acc{position:absolute;left:16px;right:16px;z-index:5;box-sizing:border-box;border-radius:32px;padding:8px;display:flex;align-items:center;gap:8px}
+.pbtn{height:48px;border-radius:999px;border:0;font:650 15px Inter,sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 18px}
+.circ{width:44px;height:44px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:var(--ink);border:0;padding:0}
+.row{display:flex;align-items:center;gap:12px;padding:12px 14px;text-decoration:none;color:var(--ink)}
+.tile{width:44px;height:44px;flex:none;border-radius:12px;display:flex;align-items:center;justify-content:center;font:700 14px 'Noto Sans KR',sans-serif}
+.ell{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 </style>
 </helmet>
-<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F4F0; color: #191C24; font-family: Inter, 'Noto Sans KR', sans-serif; display: flex; flex-direction: column; padding: 56px 20px 34px; gap: 18px;">
+<div class="desk" style="{{vars}}; position: relative; width: 390px; height: 844px; overflow: hidden; color: var(--ink); font-family: Inter, 'Noto Sans KR', sans-serif;">
+  <div class="sbar"><span>9:41</span><span style="display: flex; gap: 6px;"><button class="glass ctl" onClick="{{nextTheme}}" aria-label="Đổi theme"><span style="width: 10px; height: 10px; border-radius: 99px; background: var(--ac);"></span>{{themeName}}</button><button class="glass ctl" onClick="{{toggleDark}}" aria-label="Sáng / tối" style="padding: 0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg></button></span></div>
 
-  <header style="display: flex; align-items: center; gap: 12px;">
-    <a href="Phone-Today.dc.html" aria-label="Thoát lượt học" style="width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #191C24; background: #FFFFFF; border: 1px solid #DDDBD3;">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
-    </a>
-    <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
-      <div style="display: flex; justify-content: space-between; font-size: 12px; color: #4C5260;">
-        <span style="font-weight: 600; color: #191C24;">Plastic · tái chế</span>
-        <span>{{mastered}}/26 đã thuộc</span>
-      </div>
-      <div style="height: 6px; border-radius: 999px; background: #DDDBD3; overflow: hidden;">
-        <div style="height: 6px; width: {{progressW}}; background: #2B54C9; border-radius: 999px;"></div>
-      </div>
-    </div>
-  </header>
-
-  <section style="flex: 1; min-height: 0; background: #FFFFFF; border: 1px solid #DDDBD3; border-radius: 22px; padding: 20px; display: flex; flex-direction: column; gap: 16px;">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-      <span style="font-size: 12px; font-weight: 600; color: #4C5260; letter-spacing: 0.04em;">{{kindLabel}}</span>
-      <div style="display: flex; gap: 6px;">
-        <button onClick="{{toggleStar}}" aria-label="Đánh dấu khó nhớ" aria-pressed="{{starredStr}}" style="width: 44px; height: 44px; border-radius: 12px; border: 1px solid #DDDBD3; background: {{starBg}}; color: {{starInk}}; display: flex; align-items: center; justify-content: center;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="{{starFill}}" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"></path></svg>
-        </button>
-        <button onClick="{{toggleHanja}}" aria-label="Đánh dấu từ Hán Hàn" aria-pressed="{{hanjaStr}}" style="width: 44px; height: 44px; border-radius: 12px; border: 1px solid #DDDBD3; background: {{hanjaBg}}; color: {{hanjaInk}}; font-family: 'Noto Serif KR', serif; font-size: 17px; font-weight: 700;">漢</button>
-      </div>
-    </div>
-
-    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 10px; text-align: center;">
-      <div style="font-size: {{frontSize}}; font-family: {{frontFont}}; font-weight: 600; line-height: 1.4;">{{card.front}}</div>
-      <sc-if value="{{card.hint}}" hint-placeholder-val="{{false}}">
-        <div style="font-size: 13px; color: #4C5260;">Gợi ý: {{card.hint}}</div>
-      </sc-if>
-    </div>
-
-    <sc-if value="{{showBack}}" hint-placeholder-val="{{false}}">
-      <div style="border-top: 1px dashed #DDDBD3; padding-top: 16px; display: flex; align-items: center; justify-content: center; gap: 10px;">
-        <div style="font-family: {{backFont}}; font-size: {{backSize}}; font-weight: 700; color: {{backInk}}; text-align: center; line-height: 1.4;">{{card.back}}</div>
-        <button aria-label="Nghe phát âm" style="flex: none; width: 44px; height: 44px; border-radius: 999px; border: 0; background: #E6ECFB; color: #1E3E99; display: flex; align-items: center; justify-content: center;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"></path><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"></path></svg>
-        </button>
-      </div>
-    </sc-if>
-    <sc-if value="{{showNote}}" hint-placeholder-val="{{false}}">
-      <div style="font-size: 13px; line-height: 1.5; color: #4C5260; background: #F5F4F0; border-radius: 12px; padding: 10px 12px;">{{card.note}}</div>
-    </sc-if>
-  </section>
-
-  <sc-if value="{{isTyped}}" hint-placeholder-val="{{true}}">
-    <div style="display: flex; flex-direction: column; gap: 10px;">
-      <label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: {{fieldLabelInk}};">{{fieldLabel}}
-        <input value="{{answer}}" onChange="{{onType}}" onKeyDown="{{onKey}}" lang="ko" autocomplete="off" placeholder="Gõ tiếng Hàn…" style="height: 54px; box-sizing: border-box; border-radius: 14px; border: 1.5px solid {{fieldBorder}}; background: {{fieldBg}}; color: #191C24; padding: 0 16px; font: 500 20px 'Noto Sans KR', sans-serif; outline-color: #2B54C9;">
-      </label>
-      <sc-if value="{{isAsk}}" hint-placeholder-val="{{true}}">
-        <div style="display: flex; gap: 10px;">
-          <button onClick="{{reveal}}" style="flex: 1; height: 50px; border-radius: 14px; border: 1px solid #DDDBD3; background: #FFFFFF; color: #191C24; font: 600 15px Inter, sans-serif;">Xem đáp án</button>
-          <button onClick="{{check}}" style="flex: 1.4; height: 50px; border-radius: 14px; border: 0; background: #2B54C9; color: #FFFFFF; font: 600 16px Inter, sans-serif;">Chấm bài</button>
+    <header style="position: absolute; left: 16px; right: 16px; top: 54px; display: flex; align-items: center; gap: 12px;">
+      <a class="glass circ" href="Phone-Today.dc.html" aria-label="Về Hôm nay">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>
+      </a>
+      <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 7px;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px;">
+          <span class="ell" style="font-size: 17px; font-weight: 700;">Plastic · tái chế</span>
+          <span style="font-size: 12px; color: var(--ink2); flex: none;">{{mastered}}/26 · đúng {{correct}}/{{attempted}}</span>
         </div>
+        <div style="height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--ink) 10%, transparent); overflow: hidden;"><div style="height: 6px; width: {{progressW}}; background: var(--ac); border-radius: 999px;"></div></div>
+      </div>
+      <button class="glass circ" onClick="{{toggleMenu}}" aria-label="Tuỳ chọn lượt học" aria-expanded="{{menuStr}}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle></svg>
+      </button>
+    </header>
+
+    <section class="card" style="position: absolute; left: 16px; right: 16px; top: 116px; bottom: 112px; border-radius: 26px; padding: 18px; display: flex; flex-direction: column; gap: 14px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 11px; font-weight: 650; color: var(--ink2); letter-spacing: 0.06em;">{{kindLabel}}</span>
+        <div style="display: flex; gap: 6px;">
+          <button class="circ" onClick="{{toggleStar}}" aria-label="Đánh dấu khó nhớ" aria-pressed="{{starredStr}}" style="width: 40px; height: 40px; background: {{starBg}}; color: {{starInk}};">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="{{starFill}}" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"></path></svg>
+          </button>
+          <button class="circ" onClick="{{toggleHanja}}" aria-label="Đánh dấu từ Hán Hàn" aria-pressed="{{hanjaStr}}" style="width: 40px; height: 40px; background: {{hanjaBg}}; color: {{hanjaInk}}; font: 700 16px 'Noto Serif KR', serif;">漢</button>
+        </div>
+      </div>
+
+      <div style="flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 10px; text-align: center;">
+        <div style="font-size: {{frontSize}}; font-family: {{frontFont}}; font-weight: 600; line-height: 1.4;">{{card.front}}</div>
+        <sc-if value="{{showHint}}" hint-placeholder-val="{{false}}">
+          <div style="font-size: 13px; color: var(--ink2);">Gợi ý: {{card.hint}}</div>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{showBack}}" hint-placeholder-val="{{false}}">
+        <div style="border-top: 1px dashed var(--line); padding-top: 14px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+          <sc-if value="{{showStatus}}" hint-placeholder-val="{{false}}">
+            <span style="padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 650; background: color-mix(in srgb, {{statusInk}} 14%, var(--sf)); color: {{statusInk}};">{{statusLabel}}</span>
+          </sc-if>
+          <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+            <div style="font-family: {{backFont}}; font-size: {{backSize}}; font-weight: 700; line-height: 1.4;">{{card.back}}</div>
+            <button class="circ" aria-label="Nghe phát âm" style="flex: none; background: color-mix(in srgb, var(--ac) 14%, var(--sf)); color: var(--ac);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"></path><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"></path></svg>
+            </button>
+          </div>
+          <sc-if value="{{showWrongAnswer}}" hint-placeholder-val="{{false}}">
+            <div style="font-size: 13px; color: var(--ink2);">Bạn gõ: <span style="font-family: 'Noto Sans KR', sans-serif; color: var(--bad); text-decoration: line-through;">{{answer}}</span></div>
+          </sc-if>
+          <sc-if value="{{showNote}}" hint-placeholder-val="{{false}}">
+            <div style="align-self: stretch; font-size: 13px; line-height: 1.5; color: var(--ink2); background: color-mix(in srgb, var(--ink) 5%, var(--sf)); border-radius: 12px; padding: 10px 12px; text-align: left;">{{card.note}}</div>
+          </sc-if>
+        </div>
+      </sc-if>
+    </section>
+
+    <div class="glass acc" style="bottom: 34px; height: 64px;">
+      <sc-if value="{{isAsk}}" hint-placeholder-val="{{true}}">
+        <input value="{{answer}}" onChange="{{onType}}" onKeyDown="{{onKey}}" lang="ko" autocomplete="off" placeholder="Gõ tiếng Hàn…" aria-label="Câu trả lời" style="flex: 1; min-width: 0; height: 48px; box-sizing: border-box; border-radius: 999px; border: 1.5px solid var(--line); background: var(--sf); color: var(--ink); padding: 0 18px; font: 500 18px 'Noto Sans KR', sans-serif; outline-color: var(--ac);">
+        <button class="circ" onClick="{{reveal}}" aria-label="Xem đáp án" style="width: 48px; height: 48px; background: transparent; border: 1px solid var(--line);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        </button>
+        <button class="circ" onClick="{{check}}" aria-label="Chấm bài" style="width: 48px; height: 48px; background: var(--ac); color: var(--on);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"></path></svg>
+        </button>
       </sc-if>
       <sc-if value="{{isWrong}}" hint-placeholder-val="{{false}}">
-        <div style="display: flex; gap: 10px;">
-          <button onClick="{{override}}" style="flex: 1; height: 50px; border-radius: 14px; border: 1px solid #DDDBD3; background: #FFFFFF; color: #191C24; font: 600 15px Inter, sans-serif;">Đã trả lời đúng?</button>
-          <button onClick="{{next}}" style="flex: 1.4; height: 50px; border-radius: 14px; border: 0; background: #191C24; color: #FFFFFF; font: 600 16px Inter, sans-serif;">Thẻ tiếp</button>
-        </div>
+        <button class="pbtn" onClick="{{override}}" style="flex: 1; background: transparent; border: 1px solid var(--line); color: var(--ink);">Tôi đúng mà</button>
+        <button class="pbtn" onClick="{{next}}" style="flex: 1.3; background: var(--ac); color: var(--on);">Thẻ tiếp</button>
       </sc-if>
       <sc-if value="{{isDone}}" hint-placeholder-val="{{false}}">
-        <button onClick="{{next}}" style="height: 50px; border-radius: 14px; border: 0; background: #191C24; color: #FFFFFF; font: 600 16px Inter, sans-serif;">Thẻ tiếp</button>
+        <button class="pbtn" onClick="{{next}}" style="flex: 1; background: var(--ac); color: var(--on);">Thẻ tiếp
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </button>
       </sc-if>
-    </div>
-  </sc-if>
-
-  <sc-if value="{{isSelf}}" hint-placeholder-val="{{false}}">
-    <div style="display: flex; flex-direction: column; gap: 10px;">
-      <sc-if value="{{selfFront}}" hint-placeholder-val="{{true}}">
-        <button onClick="{{flip}}" style="height: 54px; border-radius: 14px; border: 0; background: #2B54C9; color: #FFFFFF; font: 600 16px Inter, sans-serif;">Lật thẻ</button>
+      <sc-if value="{{selfFront}}" hint-placeholder-val="{{false}}">
+        <button class="pbtn" onClick="{{flip}}" style="flex: 1; background: var(--ac); color: var(--on);">Lật thẻ</button>
       </sc-if>
       <sc-if value="{{selfBack}}" hint-placeholder-val="{{false}}">
-        <div style="display: flex; gap: 10px;">
-          <button onClick="{{forgot}}" style="flex: 1; height: 54px; border-radius: 14px; border: 0; background: #FBE9E6; color: #8E2B22; font: 600 16px Inter, sans-serif;">Chưa nhớ</button>
-          <button onClick="{{remembered}}" style="flex: 1; height: 54px; border-radius: 14px; border: 0; background: #E3F2EA; color: #155A37; font: 600 16px Inter, sans-serif;">Nhớ</button>
-        </div>
+        <button class="pbtn" onClick="{{forgot}}" style="flex: 1; background: color-mix(in srgb, var(--bad) 16%, var(--sf)); color: var(--bad);">Chưa nhớ</button>
+        <button class="pbtn" onClick="{{remembered}}" style="flex: 1; background: color-mix(in srgb, var(--ok) 16%, var(--sf)); color: var(--ok);">Nhớ</button>
       </sc-if>
     </div>
-  </sc-if>
 
-  <div style="display: flex; justify-content: space-between; font-size: 12px; color: #4C5260;">
-    <span>Đúng {{correct}}/{{attempted}}</span>
-    <button onClick="{{masterNow}}" style="border: 0; background: none; padding: 0; min-height: 24px; font: 600 12px Inter, sans-serif; color: #2B54C9;">Đã thuộc thẻ này</button>
-  </div>
+    <sc-if value="{{menu}}" hint-placeholder-val="{{false}}">
+      <div onClick="{{toggleMenu}}" style="position: absolute; inset: 0; z-index: 7;"></div>
+      <div class="glass" role="menu" aria-label="Tuỳ chọn lượt học" style="position: absolute; right: 16px; top: 104px; width: 236px; z-index: 8; border-radius: 22px; padding: 6px; display: flex; flex-direction: column;">
+        <button role="menuitem" onClick="{{masterNow}}" style="height: 44px; padding: 0 12px; border: 0; border-radius: 14px; background: transparent; color: var(--ink); font: 500 15px Inter, sans-serif; text-align: left;">Đã thuộc thẻ này</button>
+        <button role="menuitem" onClick="{{skip}}" style="height: 44px; padding: 0 12px; border: 0; border-radius: 14px; background: transparent; color: var(--ink); font: 500 15px Inter, sans-serif; text-align: left;">Bỏ qua thẻ</button>
+        <div style="height: 1px; margin: 4px 10px; background: var(--line);"></div>
+        <a role="menuitem" href="Phone-Today.dc.html" style="display: flex; align-items: center; text-decoration: none; height: 44px; padding: 0 12px; border-radius: 14px; color: var(--bad); font: 600 15px Inter, sans-serif;">Kết thúc lượt</a>
+      </div>
+    </sc-if>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { idx: 0, answer: '', phase: 'ask', correct: 0, attempted: 0, mastered: 11, starred: {}, hanja: {} };
+    this.state = { theme: 'paper', dark: false, menu: false, idx: 0, answer: '', phase: 'ask', correct: 0, attempted: 0, mastered: 11, starred: {}, hanja: {} };
     this.cards = [
       { id: 'a', front: 'tái chế', back: '재활용하다', hint: '재활…', note: 'Hán Hàn: 再活用 — 플라스틱 병을 재활용하다 (tái chế chai nhựa).', typed: true },
       { id: 'b', front: 'chi phí chế tạo ít tốn kém', back: '제작 비용이 적게 들다', hint: '', note: '', typed: true },
       { id: 'c', front: '플라스틱 병을 재활용하는 방법에는 여러 가지가 있다.', back: 'Có nhiều cách để tái chế chai nhựa.', hint: '', note: 'Một trong số đó là làm đồng phục cho vận động viên.', typed: false }
     ];
+    this.initTheme();
   }
-  norm(s) { return (s || '').normalize('NFC').trim().replace(/\s+/g, ' ').replace(/[.!?]$/, ''); }
+  initTheme() {
+    this.TH = {
+      paper: ['Giấy', { bg: '#F5F4F0', sf: '#FFFFFF', ink: '#191C24', ink2: '#4C5260', ac: '#2B54C9', line: '#DDDBD3', on: '#FFFFFF' }, { bg: '#121418', sf: '#1B1E24', ink: '#ECEEF2', ink2: '#A9AFBC', ac: '#7C9BFF', line: '#343946', on: '#0B1020' }],
+      ink: ['Mực đêm', { bg: '#EEF0F6', sf: '#FFFFFF', ink: '#141826', ink2: '#4A5068', ac: '#5B4BD6', line: '#D7DAE6', on: '#FFFFFF' }, { bg: '#0E1020', sf: '#171A2E', ink: '#E8E9F5', ink2: '#A3A7C4', ac: '#A99BFF', line: '#2B2F4A', on: '#120E2A' }],
+      pine: ['Rừng thông', { bg: '#F1F4EF', sf: '#FFFFFF', ink: '#17201A', ink2: '#475449', ac: '#1F6B4A', line: '#D6DED6', on: '#FFFFFF' }, { bg: '#0F1712', sf: '#17221B', ink: '#E5EEE7', ink2: '#9DB0A3', ac: '#5CCB95', line: '#2A3A2F', on: '#06140C' }],
+      dusk: ['Hoàng hôn', { bg: '#FAF3EE', sf: '#FFFFFF', ink: '#2A1A14', ink2: '#6A4E43', ac: '#B8402A', line: '#EADBD2', on: '#FFFFFF' }, { bg: '#1A1210', sf: '#251A17', ink: '#F5E9E4', ink2: '#C2A79D', ac: '#FF8A66', line: '#3D2C27', on: '#2A0E05' }],
+      contrast: ['Tương phản cao', { bg: '#FFFFFF', sf: '#FFFFFF', ink: '#000000', ink2: '#222222', ac: '#0033CC', line: '#000000', on: '#FFFFFF' }, { bg: '#000000', sf: '#0A0A0A', ink: '#FFFFFF', ink2: '#E6E6E6', ac: '#FFD400', line: '#FFFFFF', on: '#000000' }],
+      system: ['Hệ thống', { bg: '#F2F2F4', sf: '#FFFFFF', ink: '#1D1D1F', ink2: '#55555B', ac: '#0064D2', line: '#DADADF', on: '#FFFFFF' }, { bg: '#161618', sf: '#1F1F22', ink: '#F2F2F4', ink2: '#AAAAB0', ac: '#409CFF', line: '#38383C', on: '#03182E' }]
+    };
+  }
+  themeVals() {
+    const s = this.state; const go = (p) => this.setState(p);
+    const ST = s.dark ? { ok: '#5CC48E', bad: '#F08174', flag: '#F2B54B', glass: 'rgba(30,32,40,0.5)', gb: 'rgba(255,255,255,0.16)', sh: '0 10px 34px rgba(0,0,0,0.5)' } : { ok: '#1C7146', bad: '#B23A2E', flag: '#9A5B00', glass: 'rgba(255,255,255,0.55)', gb: 'rgba(255,255,255,0.75)', sh: '0 10px 34px rgba(20,24,40,0.16)' };
+    const t = Object.assign({}, this.TH[s.theme][s.dark ? 2 : 1], ST);
+    const keys = Object.keys(this.TH);
+    return {
+      vars: `--bg:${t.bg};--sf:${t.sf};--ink:${t.ink};--ink2:${t.ink2};--ac:${t.ac};--line:${t.line};--on:${t.on};--ok:${t.ok};--bad:${t.bad};--flag:${t.flag};--glass:${t.glass};--gb:${t.gb};--sh:${t.sh}`,
+      themeName: this.TH[s.theme][0],
+      nextTheme: () => go({ theme: keys[(keys.indexOf(s.theme) + 1) % keys.length] }),
+      toggleDark: () => go({ dark: !s.dark })
+    };
+  }
+  norm(x) { return (x || '').normalize('NFC').trim().replace(/\s+/g, ' ').replace(/[.!?]$/, ''); }
   renderVals() {
     const s = this.state;
     const card = this.cards[s.idx % this.cards.length];
     const p = s.phase;
     const go = (patch) => this.setState(patch);
-    const next = () => go({ idx: s.idx + 1, answer: '', phase: this.cards[(s.idx + 1) % this.cards.length].typed ? 'ask' : 'front' });
+    const phaseOf = (i) => this.cards[i % this.cards.length].typed ? 'ask' : 'front';
+    const next = () => go({ idx: s.idx + 1, answer: '', phase: phaseOf(s.idx + 1), menu: false });
     const check = () => {
       if (!this.norm(s.answer)) return;
       const ok = this.norm(s.answer) === this.norm(card.back);
       go({ phase: ok ? 'right' : 'wrong', attempted: s.attempted + 1, correct: s.correct + (ok ? 1 : 0) });
     };
-    const isTyped = card.typed;
+    const typed = card.typed;
     const st = !!s.starred[card.id];
     const hj = !!s.hanja[card.id];
-    const fieldMap = {
-      ask: ['Câu trả lời', '#4C5260', '#DDDBD3', '#FFFFFF'],
-      right: ['맞아 — Chính xác', '#155A37', '#1C7146', '#E3F2EA'],
-      over: ['✓ 맞아 — ' + card.back, '#155A37', '#1C7146', '#E3F2EA'],
-      wrong: ['Chưa đúng — đáp án ở trên', '#8E2B22', '#B23A2E', '#FBE9E6'],
-      revealed: ['Đã xem đáp án (tính là sai)', '#7A4800', '#9A5B00', '#FFF7EA']
-    }[isTyped ? p : 'ask'] || ['Câu trả lời', '#4C5260', '#DDDBD3', '#FFFFFF'];
-    const selfBackShown = !isTyped && (p === 'back');
-    return {
-      card,
-      answer: s.answer,
-      correct: s.correct, attempted: s.attempted, mastered: s.mastered,
+    const status = { right: ['맞아 — Chính xác', 'var(--ok)'], over: ['Đã tính là đúng', 'var(--ok)'], wrong: ['Chưa đúng', 'var(--bad)'], revealed: ['Đã xem đáp án — tính là sai', 'var(--flag)'] }[p];
+    const selfBack = !typed && p === 'back';
+    return Object.assign(this.themeVals(), {
+      card, answer: s.answer, correct: s.correct, attempted: s.attempted, mastered: s.mastered,
       progressW: Math.round(s.mastered / 26 * 100) + '%',
-      kindLabel: isTyped ? 'VIỆT → HÀN · GÕ ĐÁP ÁN' : 'HÀN → VIỆT · TỰ CHẤM',
-      frontSize: isTyped ? '28px' : '22px',
-      frontFont: isTyped ? 'Inter, sans-serif' : "'Noto Serif KR', serif",
-      backFont: isTyped ? "'Noto Serif KR', serif" : 'Inter, sans-serif',
-      backSize: isTyped ? '30px' : '19px',
-      backInk: p === 'wrong' || p === 'revealed' ? '#8E2B22' : '#191C24',
-      showBack: isTyped ? p !== 'ask' : selfBackShown,
-      showNote: !!card.note && (isTyped ? p !== 'ask' : selfBackShown),
-      isTyped, isSelf: !isTyped,
-      isAsk: p === 'ask', isWrong: p === 'wrong', isDone: p === 'right' || p === 'over' || p === 'revealed',
-      selfFront: !isTyped && p !== 'back', selfBack: selfBackShown,
-      fieldLabel: fieldMap[0], fieldLabelInk: fieldMap[1], fieldBorder: fieldMap[2], fieldBg: fieldMap[3],
-      starredStr: String(st), starBg: st ? '#FFF1DB' : '#FFFFFF', starInk: st ? '#9A5B00' : '#4C5260', starFill: st ? 'currentColor' : 'none',
-      hanjaStr: String(hj), hanjaBg: hj ? '#191C24' : '#FFFFFF', hanjaInk: hj ? '#FFFFFF' : '#4C5260',
+      kindLabel: typed ? 'VIỆT → HÀN · GÕ ĐÁP ÁN' : 'HÀN → VIỆT · TỰ CHẤM',
+      frontSize: typed ? '30px' : '22px',
+      frontFont: typed ? 'Inter, sans-serif' : "'Noto Serif KR', serif",
+      backFont: typed ? "'Noto Serif KR', serif" : 'Inter, sans-serif',
+      backSize: typed ? (card.back.length > 8 ? '24px' : '30px') : '18px',
+      showHint: !!card.hint && (!typed || p === 'ask'),
+      showBack: typed ? p !== 'ask' : selfBack,
+      showStatus: typed && !!status, statusLabel: status ? status[0] : '', statusInk: status ? status[1] : 'var(--ink2)',
+      showWrongAnswer: typed && p === 'wrong',
+      showNote: !!card.note && (typed ? p !== 'ask' : selfBack),
+      isAsk: typed && p === 'ask', isWrong: typed && p === 'wrong', isDone: typed && (p === 'right' || p === 'over' || p === 'revealed'),
+      selfFront: !typed && p !== 'back', selfBack,
+      starredStr: String(st), starBg: st ? 'color-mix(in srgb, var(--flag) 18%, var(--sf))' : 'transparent', starInk: st ? 'var(--flag)' : 'var(--ink2)', starFill: st ? 'currentColor' : 'none',
+      hanjaStr: String(hj), hanjaBg: hj ? 'var(--ink)' : 'transparent', hanjaInk: hj ? 'var(--sf)' : 'var(--ink2)',
       onType: (e) => { if (p === 'ask') go({ answer: e.target.value }); },
       onKey: (e) => { if (e.key === 'Enter') { if (p === 'ask') check(); else next(); } },
-      check,
+      check, next,
       reveal: () => go({ phase: 'revealed', attempted: s.attempted + 1 }),
       override: () => go({ phase: 'over', correct: s.correct + 1 }),
-      next,
       flip: () => go({ phase: 'back' }),
       remembered: () => { go({ attempted: s.attempted + 1, correct: s.correct + 1 }); setTimeout(next, 0); },
       forgot: () => { go({ attempted: s.attempted + 1 }); setTimeout(next, 0); },
-      masterNow: () => { go({ mastered: Math.min(26, s.mastered + 1) }); setTimeout(next, 0); },
+      menu: s.menu, menuStr: String(s.menu),
+      toggleMenu: () => go({ menu: !s.menu }),
+      masterNow: () => { go({ mastered: Math.min(26, s.mastered + 1), menu: false }); setTimeout(next, 0); },
+      skip: next,
       toggleStar: () => go({ starred: Object.assign({}, s.starred, { [card.id]: !st }) }),
       toggleHanja: () => go({ hanja: Object.assign({}, s.hanja, { [card.id]: !hj }) })
-    };
+    });
   }
 }
 </script>

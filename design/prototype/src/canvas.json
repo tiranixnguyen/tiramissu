@@ -1,27 +1,169 @@
 {
   "v": 3,
-  "createdOnFiles": {"v": 1, "at": "2026-11-13T11:30:00Z"},
-  "title": "Hanstudy prototype",
-  "launch": {"view": "canvas"},
-  "pages": [],
+  "attachments": {},
   "boards": {
-    "Main.dc.html": {"x": 0, "y": 0, "w": 1280, "h": 1400, "title": "Design system · Liquid Glass + theme", "is_interactive": true},
-    "Mac-Today.dc.html": {"x": 0, "y": 1780, "w": 1280, "h": 800, "title": "Mac · Hôm nay", "is_interactive": true},
-    "Mac-Study.dc.html": {"x": 1360, "y": 1780, "w": 1280, "h": 800, "title": "Mac · Học (+ ⌘K)", "is_interactive": true},
-    "Mac-Library.dc.html": {"x": 2720, "y": 1780, "w": 1280, "h": 800, "title": "Mac · Thư viện", "is_interactive": true},
-    "Mac-Import.dc.html": {"x": 0, "y": 2700, "w": 1280, "h": 800, "title": "Mac · Nhập từ AI", "is_interactive": true},
-    "Mac-Audio.dc.html": {"x": 1360, "y": 2700, "w": 1280, "h": 800, "title": "Mac · Cắt clip âm thanh", "is_interactive": true},
-    "Phone-Today.dc.html": {"x": 0, "y": 3880, "w": 390, "h": 844, "title": "iPhone · Hôm nay", "is_interactive": true, "radius": 44},
-    "Phone-Study.dc.html": {"x": 470, "y": 3880, "w": 390, "h": 844, "title": "iPhone · Học", "is_interactive": true, "radius": 44},
-    "Phone-Listen.dc.html": {"x": 940, "y": 3880, "w": 390, "h": 844, "title": "iPhone · Nghe", "is_interactive": true, "radius": 44}
+    "Mac-Audio.dc.html": {
+      "h": 800,
+      "is_interactive": true,
+      "title": "Mac · Cắt clip âm thanh",
+      "w": 1280,
+      "x": 1360,
+      "y": 2700
+    },
+    "Mac-Import.dc.html": {
+      "h": 800,
+      "is_interactive": true,
+      "title": "Mac · Nhập từ AI",
+      "w": 1280,
+      "x": 0,
+      "y": 2700
+    },
+    "Mac-Library.dc.html": {
+      "h": 800,
+      "is_interactive": true,
+      "title": "Mac · Thư viện",
+      "w": 1280,
+      "x": 2720,
+      "y": 1780
+    },
+    "Mac-Study.dc.html": {
+      "h": 800,
+      "is_interactive": true,
+      "title": "Mac · Học (+ ⌘K)",
+      "w": 1280,
+      "x": 1360,
+      "y": 1780
+    },
+    "Mac-Today.dc.html": {
+      "h": 800,
+      "is_interactive": true,
+      "title": "Mac · Hôm nay",
+      "w": 1280,
+      "x": 0,
+      "y": 1780
+    },
+    "Main.dc.html": {
+      "h": 1400,
+      "is_interactive": true,
+      "title": "Design system · Liquid Glass + theme",
+      "w": 1280,
+      "x": 0,
+      "y": 0
+    },
+    "Phone-Listen.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "radius": 44,
+      "title": "iPhone · Nghe",
+      "w": 390,
+      "x": 940,
+      "y": 3880
+    },
+    "Phone-Study.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "radius": 44,
+      "title": "iPhone · Học (mở từ nút giữa, không có thanh điều hướng)",
+      "w": 390,
+      "x": 470,
+      "y": 3880
+    },
+    "Phone-Today.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "radius": 44,
+      "title": "iPhone · Hôm nay",
+      "w": 390,
+      "x": 0,
+      "y": 3880
+    },
+    "Phone-Library.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "radius": 44,
+      "title": "iPhone · Thư viện",
+      "w": 390,
+      "x": 1410,
+      "y": 3880
+    },
+    "Phone-History.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "radius": 44,
+      "title": "iPhone · Lịch sử",
+      "w": 390,
+      "x": 1880,
+      "y": 3880
+    }
   },
-  "order": ["Main.dc.html", "Mac-Today.dc.html", "Mac-Study.dc.html", "Mac-Library.dc.html", "Mac-Import.dc.html", "Mac-Audio.dc.html", "Phone-Today.dc.html", "Phone-Study.dc.html", "Phone-Listen.dc.html"],
+  "createdOnFiles": {
+    "at": "2026-11-13T11:30:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "noteOrder": [
+    "t1",
+    "t3",
+    "t2",
+    "s2",
+    "s1"
+  ],
   "notes": {
-    "t1": {"x": 0, "y": -300, "text": "Hanstudy — design system", "kind": "title1", "maxW": 1280},
-    "t3": {"x": 0, "y": 1520, "text": "Mac — học chính, soạn, nhập, cắt clip", "kind": "title1", "maxW": 4000},
-    "t2": {"x": 0, "y": 3620, "text": "iPhone — chỉ học & ôn (ưu tiên thấp)", "kind": "title1", "maxW": 1330},
-    "s2": {"x": 2720, "y": 2700, "w": 380, "text": "Mỗi màn Mac có nút theme ở góc toolbar (bấm để đổi 6 theme) và nút sáng/tối. Mac · Học: gõ 재활용하다 rồi Enter; bấm ⌘K (hoặc nút ⌘K) để mở Command Palette, gõ \"theme\". Mac · Cắt clip: Space phát, [ ] đặt A/B bằng nút.", "fill": "blue"},
-    "s1": {"x": 1410, "y": 3880, "w": 360, "text": "iPhone làm sau Mac. Màn Nghe chỉ còn âm thanh, không còn khung video.", "fill": "gray"}
+    "s1": {
+      "fill": "gray",
+      "text": "iPhone làm sau Mac, chỉ học & ôn. Thanh điều hướng kính: Hôm nay · Nghe · ● Học · Thư viện · Lịch sử. Nút tròn ở giữa mở thẳng lượt học; màn học ẩn thanh điều hướng, thanh trả lời kính nằm sát đáy, ‹ hoặc ⋯ › Kết thúc lượt để về Hôm nay. Hôm nay từ trên xuống: Hoạt động kiểu GitHub (chuỗi ngày + tóm tắt 30 ngày + lưới mini 5 tuần; bấm mở lưới 12 tuần, bấm một ô → Lịch sử lọc sẵn ngày đó) · Đến hạn ôn gộp danh sách bộ, nút Ôn ngay gọn ở góc phải (màu nhấn chỉ ở nút) · hàng chip Lượt nhanh ★ 漢 đoạn văn, ngẫu nhiên · Luyện nghe. Lịch sử = danh sách lần học, lọc theo ngày / máy / kết quả; dựng từ StudySessionRecord (GET /sessions).",
+      "w": 360,
+      "x": 2350,
+      "y": 3880
+    },
+    "s2": {
+      "fill": "blue",
+      "text": "Mỗi màn Mac có nút theme ở góc toolbar (bấm để đổi 6 theme) và nút sáng/tối. Mac · Học: gõ 재활용하다 rồi Enter; bấm ⌘K (hoặc nút ⌘K) để mở Command Palette, gõ \"theme\". Mac · Cắt clip: Space phát, [ ] đặt A/B bằng nút.",
+      "w": 380,
+      "x": 2720,
+      "y": 2700
+    },
+    "t1": {
+      "kind": "title1",
+      "maxW": 1280,
+      "text": "Hanstudy — design system",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "t2": {
+      "kind": "title1",
+      "maxW": 2720,
+      "text": "iPhone — chỉ học & ôn (ưu tiên thấp)",
+      "w": 240,
+      "x": 0,
+      "y": 3620
+    },
+    "t3": {
+      "kind": "title1",
+      "maxW": 5980,
+      "text": "Mac — học chính, soạn, nhập, cắt clip",
+      "w": 240,
+      "x": 0,
+      "y": 1520
+    }
   },
-  "designSystems": []
+  "order": [
+    "Main.dc.html",
+    "Mac-Today.dc.html",
+    "Mac-Study.dc.html",
+    "Mac-Library.dc.html",
+    "Mac-Import.dc.html",
+    "Mac-Audio.dc.html",
+    "Phone-Today.dc.html",
+    "Phone-Study.dc.html",
+    "Phone-Listen.dc.html",
+    "Phone-Library.dc.html",
+    "Phone-History.dc.html"
+  ],
+  "pages": [],
+  "title": "Hanstudy prototype"
 }

@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Thư viện</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+KR:wght@400;500;700&amp;family=Noto+Serif+KR:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit}
+button{cursor:pointer}
+button,a[style*="height:"]{white-space:nowrap;flex-shrink:0}
+.glass{background:var(--glass);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid var(--gb);box-shadow:var(--sh),inset 0 1px 0 var(--gb)}
+.desk{word-break:keep-all;overflow-wrap:anywhere;background:radial-gradient(circle at 0% 0%,color-mix(in srgb,var(--ac) 30%,transparent),transparent 42%),radial-gradient(circle at 100% 78%,color-mix(in srgb,var(--flag) 22%,transparent),transparent 48%),var(--bg)}
+.card{background:var(--sf);border:1px solid var(--line);border-radius:20px}
+.scroll{position:absolute;inset:0;overflow-y:auto;box-sizing:border-box;padding:58px 20px 120px;display:flex;flex-direction:column;gap:20px;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.h1{margin:0;font-size:32px;font-weight:700;letter-spacing:-0.02em}
+.h2{margin:0;font-size:17px;font-weight:650}
+.sub{font-size:13px;font-weight:500;color:var(--ink2)}
+.sbar{position:absolute;top:0;left:0;right:0;height:50px;z-index:6;display:flex;align-items:center;justify-content:space-between;padding:0 14px 0 32px;font:600 15px Inter,sans-serif}
+.ctl{height:30px;min-width:30px;padding:0 10px;border-radius:999px;color:var(--ink);font:600 11px Inter,sans-serif;display:flex;align-items:center;justify-content:center;gap:6px}
+.tabbar{position:absolute;left:16px;right:16px;bottom:22px;height:62px;box-sizing:border-box;border-radius:999px;padding:5px;display:flex;align-items:center;gap:2px;z-index:5}
+.tab{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-radius:999px;font:500 10px Inter,sans-serif;color:var(--ink);text-decoration:none}
+.tab.on{background:color-mix(in srgb,var(--ac) 16%,transparent);color:var(--ac);font-weight:650}
+.fab{flex:none;width:60px;height:60px;margin:-14px 4px 0;border-radius:999px;background:var(--ac);color:var(--on);display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 8px 22px color-mix(in srgb,var(--ac) 45%,transparent),0 0 0 4px color-mix(in srgb,var(--sf) 70%,transparent)}
+.acc{position:absolute;left:16px;right:16px;z-index:5;box-sizing:border-box;border-radius:32px;padding:8px;display:flex;align-items:center;gap:8px}
+.pbtn{height:48px;border-radius:999px;border:0;font:650 15px Inter,sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 18px}
+.circ{width:44px;height:44px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:var(--ink);border:0;padding:0}
+.row{display:flex;align-items:center;gap:12px;padding:12px 14px;text-decoration:none;color:var(--ink)}
+.tile{width:44px;height:44px;flex:none;border-radius:12px;display:flex;align-items:center;justify-content:center;font:700 14px 'Noto Sans KR',sans-serif}
+.ell{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+</style>
+</helmet>
+<div class="desk" style="{{vars}}; position: relative; width: 390px; height: 844px; overflow: hidden; color: var(--ink); font-family: Inter, 'Noto Sans KR', sans-serif;">
+  <div class="sbar"><span>9:41</span><span style="display: flex; gap: 6px;"><button class="glass ctl" onClick="{{nextTheme}}" aria-label="Đổi theme"><span style="width: 10px; height: 10px; border-radius: 99px; background: var(--ac);"></span>{{themeName}}</button><button class="glass ctl" onClick="{{toggleDark}}" aria-label="Sáng / tối" style="padding: 0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg></button></span></div>
+
+  <sc-if value="{{inList}}" hint-placeholder-val="{{true}}">
+    <div class="scroll" style="gap: 16px;">
+      <header style="display: flex; flex-direction: column; gap: 2px; padding-top: 6px;">
+        <div class="sub">31 bộ · 412 thẻ</div>
+        <h1 class="h1">Thư viện</h1>
+      </header>
+      <label style="position: relative; display: block;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--ink2)" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" style="position: absolute; left: 14px; top: 13px;"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+        <input value="{{query}}" onChange="{{onQuery}}" placeholder="Tìm bộ, từ Hàn hoặc nghĩa" aria-label="Tìm trong thư viện" style="width: 100%; height: 44px; box-sizing: border-box; border-radius: 14px; border: 1px solid var(--line); background: var(--sf); color: var(--ink); padding: 0 14px 0 40px; font: 500 15px Inter, 'Noto Sans KR', sans-serif; outline-color: var(--ac);">
+      </label>
+      <div role="group" aria-label="Nhóm" style="display: flex; gap: 8px; overflow-x: auto; margin: 0 -20px; padding: 0 20px; scrollbar-width: none;">
+        <sc-for list="{{groups}}" as="g" hint-placeholder-count="6">
+          <button onClick="{{g.pick}}" aria-pressed="{{g.on}}" style="height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid {{g.border}}; background: {{g.bg}}; color: {{g.ink}}; font: 600 13px Inter, 'Noto Sans KR', sans-serif;">{{g.name}}</button>
+        </sc-for>
+      </div>
+      <div class="card" style="overflow: hidden;">
+        <sc-for list="{{decks}}" as="d" hint-placeholder-count="6">
+          <button onClick="{{d.open}}" class="row" style="width: 100%; border: 0; border-top: {{d.sep}}; background: transparent; font-family: inherit; text-align: left; white-space: normal;">
+            <div class="tile" style="background: {{d.tint}}; color: {{d.ink}};">{{d.skill}}</div>
+            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px;">
+              <div class="ell" style="font-size: 15px; font-weight: 600;">{{d.name}}</div>
+              <div class="ell" style="font-size: 12px; color: var(--ink2);">{{d.group}} · {{d.n}} thẻ · <span style="color: {{d.dueInk}};">{{d.due}}</span></div>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
+          </button>
+        </sc-for>
+        <sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
+          <div style="padding: 22px; text-align: center; font-size: 14px; color: var(--ink2);">Không có bộ nào khớp “{{query}}”.</div>
+        </sc-if>
+      </div>
+      <div style="font-size: 12px; color: var(--ink2); text-align: center; line-height: 1.5;">Thêm và sửa thẻ trên Mac · iPhone chỉ xem và học</div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{inDeck}}" hint-placeholder-val="{{false}}">
+    <div class="scroll" style="padding-top: 104px; gap: 16px;">
+      <header style="display: flex; flex-direction: column; gap: 6px;">
+        <h1 style="margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2;">{{deck.name}}</h1>
+        <div class="sub">{{deck.group}} · Drive › 01_Giáo trình › SNU 4A › Bài 07</div>
+      </header>
+      <div class="card" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 12px 4px;">
+        <sc-for list="{{stats}}" as="st" hint-placeholder-count="3">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 2px; border-left: {{st.sep}};">
+            <span style="font-size: 20px; font-weight: 700; color: {{st.ink}};">{{st.v}}</span>
+            <span style="font-size: 12px; color: var(--ink2);">{{st.k}}</span>
+          </div>
+        </sc-for>
+      </div>
+      <a href="Phone-Study.dc.html" class="pbtn" style="background: var(--ac); color: var(--on); text-decoration: none; height: 50px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>Học bộ này
+      </a>
+      <div role="group" aria-label="Lọc thẻ" style="display: flex; gap: 2px; padding: 3px; border-radius: 12px; background: color-mix(in srgb, var(--ink) 7%, transparent);">
+        <sc-for list="{{filters}}" as="f" hint-placeholder-count="3">
+          <button onClick="{{f.pick}}" aria-pressed="{{f.on}}" style="flex: 1; height: 34px; border-radius: 10px; border: 0; background: {{f.bg}}; color: var(--ink); font: {{f.weight}} 13px Inter, sans-serif; box-shadow: {{f.sh}};">{{f.label}}</button>
+        </sc-for>
+      </div>
+      <div class="card" style="overflow: hidden;">
+        <sc-for list="{{cards}}" as="c" hint-placeholder-count="6">
+          <div class="row" style="border-top: {{c.sep}}; padding: 10px 8px 10px 14px;">
+            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px;">
+              <div class="ell" style="font: 600 17px 'Noto Sans KR', sans-serif;">{{c.back}}</div>
+              <div class="ell" style="font-size: 13px; color: var(--ink2);">{{c.front}}</div>
+            </div>
+            <button class="circ" onClick="{{c.star}}" aria-label="Khó nhớ" aria-pressed="{{c.starOn}}" style="background: transparent; color: {{c.starInk}};">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="{{c.starFill}}" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"></path></svg>
+            </button>
+            <button class="circ" onClick="{{c.hanja}}" aria-label="Hán Hàn" aria-pressed="{{c.hanjaOn}}" style="width: 36px; height: 36px; margin: 4px; background: {{c.hanjaBg}}; color: {{c.hanjaInk}}; font: 700 15px 'Noto Serif KR', serif;">漢</button>
+          </div>
+        </sc-for>
+        <sc-if value="{{noCards}}" hint-placeholder-val="{{false}}">
+          <div style="padding: 22px; text-align: center; font-size: 14px; color: var(--ink2);">Chưa có thẻ nào trong mục này.</div>
+        </sc-if>
+      </div>
+    </div>
+    <div style="position: absolute; left: 0; right: 0; top: 50px; height: 50px; padding: 0 16px; display: flex; align-items: center; z-index: 4;">
+      <button class="glass" onClick="{{back}}" style="height: 40px; padding: 0 14px 0 8px; border-radius: 999px; color: var(--ink); font: 600 14px Inter, sans-serif; display: flex; align-items: center; gap: 2px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>Thư viện
+      </button>
+    </div>
+  </sc-if>
+  <nav aria-label="Điều hướng chính" class="glass tabbar">
+    <a class="tab" href="Phone-Today.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"></path></svg><span>Hôm nay</span></a>
+    <a class="tab" href="Phone-Listen.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 14v-2a9 9 0 0 1 18 0v2"></path><rect x="3" y="14" width="4" height="7" rx="1.5"></rect><rect x="17" y="14" width="4" height="7" rx="1.5"></rect></svg><span>Nghe</span></a>
+    <a class="fab" href="Phone-Study.dc.html" aria-label="Học — bắt đầu ôn"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="14" height="16" rx="2"></rect><path d="M7 3h12a2 2 0 0 1 2 2v14"></path></svg></a>
+    <a class="tab on" href="Phone-Library.dc.html" aria-current="page"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h4v16H4zM10 4h4v16h-4zM16 5l3.5-.9 3 15.5-3.5.9z"></path></svg><span>Thư viện</span></a>
+    <a class="tab" href="Phone-History.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg><span>Lịch sử</span></a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { theme: 'paper', dark: false, query: '', group: 'Tất cả', deck: null, filter: 'all', starred: { a: true, f: true }, hanja: { e: true } };
+    this.decks = [
+      { name: 'Plastic · tái chế', skill: '읽기', group: 'Oct1', n: 26, due: 'hôm nay', dueInk: 'var(--ac)', tone: '--ac' },
+      { name: 'Rừng & Bảo vệ môi trường', skill: '읽기', group: 'Oct1', n: 26, due: '7 ngày nữa', dueInk: 'var(--ink2)', tone: '--ac' },
+      { name: '듣기 4-8번 > 병원', skill: '듣기', group: '10월 듣기2', n: 11, due: 'trễ 1 ngày', dueInk: 'var(--bad)', tone: '--ok' },
+      { name: 'Tự học ngữ pháp', skill: '문법', group: 'Sep3', n: 9, due: 'ngày mai', dueInk: 'var(--ink2)', tone: '--flag' },
+      { name: 'Lỗi sai · Bài tập 07', skill: '쓰기', group: 'Sep2', n: 5, due: 'mới', dueInk: 'var(--ok)', tone: '--bad' },
+      { name: '-던 vs -었던', skill: '문법', group: 'Phân biệt', n: 3, due: '3 ngày nữa', dueInk: 'var(--ink2)', tone: '--flag' }
+    ];
+    this.cards = [
+      { id: 'a', front: 'tái chế chai nhựa', back: '플라스틱 병을 재활용하다' },
+      { id: 'b', front: 'dùng chai nhựa làm chất liệu chính', back: '플라스틱 병을 소재로 하다' },
+      { id: 'c', front: 'chi phí chế tạo ít tốn kém', back: '제작 비용이 적게 들다' },
+      { id: 'd', front: 'Có nhiều cách để tái chế chai nhựa.', back: '플라스틱 병을 재활용하는 방법에는…' },
+      { id: 'e', front: 'tái chế', back: '재활용하다' },
+      { id: 'f', front: 'nhẹ và mát', back: '가볍고 시원하다' }
+    ];
+    this.initTheme();
+  }
+  initTheme() {
+    this.TH = {
+      paper: ['Giấy', { bg: '#F5F4F0', sf: '#FFFFFF', ink: '#191C24', ink2: '#4C5260', ac: '#2B54C9', line: '#DDDBD3', on: '#FFFFFF' }, { bg: '#121418', sf: '#1B1E24', ink: '#ECEEF2', ink2: '#A9AFBC', ac: '#7C9BFF', line: '#343946', on: '#0B1020' }],
+      ink: ['Mực đêm', { bg: '#EEF0F6', sf: '#FFFFFF', ink: '#141826', ink2: '#4A5068', ac: '#5B4BD6', line: '#D7DAE6', on: '#FFFFFF' }, { bg: '#0E1020', sf: '#171A2E', ink: '#E8E9F5', ink2: '#A3A7C4', ac: '#A99BFF', line: '#2B2F4A', on: '#120E2A' }],
+      pine: ['Rừng thông', { bg: '#F1F4EF', sf: '#FFFFFF', ink: '#17201A', ink2: '#475449', ac: '#1F6B4A', line: '#D6DED6', on: '#FFFFFF' }, { bg: '#0F1712', sf: '#17221B', ink: '#E5EEE7', ink2: '#9DB0A3', ac: '#5CCB95', line: '#2A3A2F', on: '#06140C' }],
+      dusk: ['Hoàng hôn', { bg: '#FAF3EE', sf: '#FFFFFF', ink: '#2A1A14', ink2: '#6A4E43', ac: '#B8402A', line: '#EADBD2', on: '#FFFFFF' }, { bg: '#1A1210', sf: '#251A17', ink: '#F5E9E4', ink2: '#C2A79D', ac: '#FF8A66', line: '#3D2C27', on: '#2A0E05' }],
+      contrast: ['Tương phản cao', { bg: '#FFFFFF', sf: '#FFFFFF', ink: '#000000', ink2: '#222222', ac: '#0033CC', line: '#000000', on: '#FFFFFF' }, { bg: '#000000', sf: '#0A0A0A', ink: '#FFFFFF', ink2: '#E6E6E6', ac: '#FFD400', line: '#FFFFFF', on: '#000000' }],
+      system: ['Hệ thống', { bg: '#F2F2F4', sf: '#FFFFFF', ink: '#1D1D1F', ink2: '#55555B', ac: '#0064D2', line: '#DADADF', on: '#FFFFFF' }, { bg: '#161618', sf: '#1F1F22', ink: '#F2F2F4', ink2: '#AAAAB0', ac: '#409CFF', line: '#38383C', on: '#03182E' }]
+    };
+  }
+  themeVals() {
+    const s = this.state; const go = (p) => this.setState(p);
+    const ST = s.dark ? { ok: '#5CC48E', bad: '#F08174', flag: '#F2B54B', glass: 'rgba(30,32,40,0.5)', gb: 'rgba(255,255,255,0.16)', sh: '0 10px 34px rgba(0,0,0,0.5)' } : { ok: '#1C7146', bad: '#B23A2E', flag: '#9A5B00', glass: 'rgba(255,255,255,0.55)', gb: 'rgba(255,255,255,0.75)', sh: '0 10px 34px rgba(20,24,40,0.16)' };
+    const t = Object.assign({}, this.TH[s.theme][s.dark ? 2 : 1], ST);
+    const keys = Object.keys(this.TH);
+    return {
+      vars: `--bg:${t.bg};--sf:${t.sf};--ink:${t.ink};--ink2:${t.ink2};--ac:${t.ac};--line:${t.line};--on:${t.on};--ok:${t.ok};--bad:${t.bad};--flag:${t.flag};--glass:${t.glass};--gb:${t.gb};--sh:${t.sh}`,
+      themeName: this.TH[s.theme][0],
+      nextTheme: () => go({ theme: keys[(keys.indexOf(s.theme) + 1) % keys.length] }),
+      toggleDark: () => go({ dark: !s.dark })
+    };
+  }
+  renderVals() {
+    const s = this.state; const go = (p) => this.setState(p);
+    const q = s.query.normalize('NFC').trim().toLowerCase();
+    const groupNames = ['Tất cả', 'Oct1', '10월 듣기2', 'Sep3', 'Sep2', 'Phân biệt'];
+    const shown = this.decks.map((d, i) => Object.assign({}, d, { i }))
+      .filter(d => (s.group === 'Tất cả' || d.group === s.group) && (!q || d.name.toLowerCase().includes(q)));
+    const deck = s.deck === null ? this.decks[0] : this.decks[s.deck];
+    const cards = this.cards.filter(c => s.filter === 'all' || (s.filter === 'star' ? s.starred[c.id] : s.hanja[c.id]));
+    const toggle = (key, id) => go({ [key]: Object.assign({}, s[key], { [id]: !s[key][id] }) });
+    const nStar = this.cards.filter(c => s.starred[c.id]).length;
+    const nHanja = this.cards.filter(c => s.hanja[c.id]).length;
+    return Object.assign(this.themeVals(), {
+      inList: s.deck === null, inDeck: s.deck !== null,
+      query: s.query, onQuery: (e) => go({ query: e.target.value }),
+      groups: groupNames.map(name => {
+        const on = s.group === name;
+        return { name, on: String(on), bg: on ? 'var(--ink)' : 'var(--sf)', ink: on ? 'var(--sf)' : 'var(--ink)', border: on ? 'var(--ink)' : 'var(--line)', pick: () => go({ group: name }) };
+      }),
+      decks: shown.map((d, k) => Object.assign(d, {
+        tint: `color-mix(in srgb, var(${d.tone}) 14%, var(--sf))`, ink: `var(${d.tone})`,
+        sep: k ? '1px solid var(--line)' : '0', open: () => go({ deck: d.i, filter: 'all' })
+      })),
+      empty: shown.length === 0,
+      deck,
+      back: () => go({ deck: null }),
+      stats: [
+        { k: 'thẻ', v: deck.n, ink: 'var(--ink)' },
+        { k: 'đã thuộc', v: 11, ink: 'var(--ok)' },
+        { k: 'khó nhớ ★', v: nStar, ink: 'var(--flag)' }
+      ].map((x, i) => Object.assign(x, { sep: i ? '1px solid var(--line)' : '0' })),
+      filters: [['all', 'Tất cả ' + this.cards.length], ['star', '★ ' + nStar], ['hanja', '漢 ' + nHanja]].map(([k, label]) => {
+        const on = s.filter === k;
+        return { label, on: String(on), bg: on ? 'var(--sf)' : 'transparent', weight: on ? '700' : '500', sh: on ? '0 1px 4px rgba(0,0,0,0.12)' : 'none', pick: () => go({ filter: k }) };
+      }),
+      cards: cards.map((c, i) => {
+        const st = !!s.starred[c.id], hj = !!s.hanja[c.id];
+        return Object.assign({}, c, {
+          sep: i ? '1px solid var(--line)' : '0',
+          starOn: String(st), starInk: st ? 'var(--flag)' : 'var(--ink2)', starFill: st ? 'currentColor' : 'none',
+          hanjaOn: String(hj), hanjaBg: hj ? 'var(--ink)' : 'transparent', hanjaInk: hj ? 'var(--sf)' : 'var(--ink2)',
+          star: () => toggle('starred', c.id), hanja: () => toggle('hanja', c.id)
+        });
+      }),
+      noCards: cards.length === 0
+    });
+  }
+}
+</script>
+</body>
+</html>
