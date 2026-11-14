@@ -9,6 +9,7 @@ struct TiramissuiOSApp: App {
     @State private var themes: ThemeStore
     @State private var server = ServerSettings()
     @State private var nav = PhoneNav()
+    @State private var tts = TTS()
 
     init() {
         // Theme có sẵn + theme người dùng đã nhập (Application Support/Tiramissu/Themes).
@@ -22,6 +23,7 @@ struct TiramissuiOSApp: App {
                 .environment(model)
                 .environment(themes)
                 .environment(nav)
+                .environment(tts)
                 .themed(themes)
                 .task {
                     model.configureAPI(baseURL: server.baseURL, token: { ServerSettings.currentToken() })
@@ -53,7 +55,7 @@ struct PhoneRoot: View {
                 PhoneTodayView()
             }
             Tab("Học", systemImage: "rectangle.on.rectangle", value: .study) {
-                placeholder("Học", task: "T4.03")
+                PhoneStudyView()
             }
             Tab("Nghe", systemImage: "headphones", value: .listen) {
                 placeholder("Nghe", task: "T4.04")

@@ -339,6 +339,8 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
     Simulator sạch — chưa chạy thử (chưa có simulator).
 - [ ] **T4.03 · Học (iOS)** — theo artboard "iPhone · Học"; bàn phím Hàn khi focus ô trả lời (`.keyboardType`
   không ép được ngôn ngữ — ghi chú cách thêm bàn phím Hàn).
+  - Trạng thái: code xong (`PhoneStudyView`: gõ đáp án, tự chấm, clip, ⭐/漢, đổi bộ ở tên bộ; ghi chú bàn phím
+    Hàn ở đầu file; `ClipPlayer` chuyển sang `App/Shared`), build iOS + macOS sạch — chưa chạy thử.
 - [ ] **T4.04 · Nghe (iOS)** — theo artboard "iPhone · Nghe": phát clip, lặp, tốc độ, chép chính tả.
 - [ ] **T4.05 · 👤 Cài lên iPhone** bằng Apple ID miễn phí; đặt nhắc mỗi 7 ngày cài lại.
 
