@@ -270,8 +270,16 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
 - [ ] **T2.38 · Màn Thư viện** — nhóm → bộ → `Table` thẻ; sửa tại chỗ (PATCH), thêm thẻ `⌘N`, xoá, đổi
   tên/loại/nguồn/mô tả bộ; cần mạng, offline báo lỗi không mất chữ đang sửa.
   - Phụ thuộc: T2.32
-- [ ] **T2.39 · Màn Nhập từ AI** — theo artboard: chọn loại + công cụ → `⌘⇧C` chép `Prompts.text`; dán JSON
-  → `DeckImport` báo lỗi trực tiếp; xem trước + "Trùng"; chọn nhóm; `⌘↵` tạo bộ (`POST /decks`).
+- [ ] **T2.39 · Màn Nhập từ AI** — theo artboard (thiết kế lại, issue #4): trái 340 pt = bước 1 chọn loại +
+  công cụ → `⌘⇧C` chép `Prompts.text` + bước 2 dán JSON → `DeckImport` báo lỗi trực tiếp; phải = bước 3.
+  - Đọc trước: `design/prototype/screens/Mac-Import-{light,dark}.png`, `design/prototype/src/Mac-Import.dc.html`
+  - Đích: "Bộ có sẵn" (chọn bộ) / "Bộ mới" (tên mặc định = `name` trong JSON) + chọn nhóm.
+  - Bảng xem trước **có ô tick từng từ**: # · trước · sau · "Mới"/"Đã có · ‹bộ›". Bấm cả dòng để tick.
+    Từ trùng (`duplicatesOf`, so qua `AnswerMatcher`, toàn thư viện) **mặc định bỏ tick**. Ô "Đã chọn x/y"
+    chọn/bỏ tất cả từ đang hiện; lọc Tất cả / Mới / Đã có. Sửa JSON → lựa chọn về mặc định.
+  - Phím: `Space` tick dòng focus, `⌘A` chọn tất cả, `⌘↵` thêm (tắt khi 0 từ được chọn).
+  - Chỉ gửi từ đã tick: bộ mới `POST /decks`, bộ có sẵn `POST /decks/:id/cards`. Xong → nhắc tick
+    "Đã đưa vào app" trong Doc. Logic chọn (mặc định, đếm, lọc) để trong `HanCore` + test.
   - Xong khi: 👤 chạy trọn quy trình `docs/drive-setup.md` §3 với một bài thật.
   - Phụ thuộc: T2.38
 - [ ] **T2.40 · Command Palette `⌘K`** — overlay kính, tìm không dấu; lệnh: Theme: <6 theme>, bật/tắt tối,
