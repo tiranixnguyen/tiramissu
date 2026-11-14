@@ -7,6 +7,8 @@ final class ClipPlayer {
     private(set) var isPlaying = false
     private(set) var isLoading = false
     private(set) var failed = false
+    /// Vị trí đang phát, 0…1 (cập nhật ~10 lần/giây khi đang phát).
+    private(set) var position: Double = 0
     var loops = false {
         didSet { player?.numberOfLoops = loops ? -1 : 0 }
     }
@@ -57,6 +59,7 @@ final class ClipPlayer {
         task?.cancel()
         player?.stop()
         isPlaying = false
+        position = 0
     }
 
     func cycleRate() {
@@ -71,7 +74,11 @@ final class ClipPlayer {
             // Theo dõi tới khi hết (AVAudioPlayer không có closure — hỏi nhẹ 10 lần/giây).
             while let self, let player = self.player, player === p, self.isPlaying {
                 try? await Task.sleep(for: .milliseconds(100))
-                if !p.isPlaying { self.isPlaying = false }
+                self.position = p.duration > 0 ? p.currentTime / p.duration : 0
+                if !p.isPlaying {
+                    self.isPlaying = false
+                    self.position = 0
+                }
             }
         }
     }

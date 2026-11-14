@@ -1,3 +1,4 @@
+import AVFoundation
 import DesignSystem
 import HanCore
 import SwiftUI
@@ -15,6 +16,8 @@ struct TiramissuiOSApp: App {
         // Theme có sẵn + theme người dùng đã nhập (Application Support/Tiramissu/Themes).
         let builtIn = (try? ThemeCatalog.allBuiltIn()) ?? []
         _themes = State(initialValue: ThemeStore(themes: builtIn + ThemeLibrary.loadUserThemes().themes))
+        // Clip và TTS vẫn phát khi gạt nút im lặng.
+        try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio)
     }
 
     var body: some Scene {
@@ -58,16 +61,9 @@ struct PhoneRoot: View {
                 PhoneStudyView()
             }
             Tab("Nghe", systemImage: "headphones", value: .listen) {
-                placeholder("Nghe", task: "T4.04")
+                PhoneListenView()
             }
         }
         .tint(theme?.accent)
-    }
-
-    private func placeholder(_ title: String, task: String) -> some View {
-        ContentUnavailableView(title, systemImage: "hammer", description: Text("Làm ở \(task)"))
-            .foregroundStyle(theme?.ink ?? .primary)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(theme?.bg ?? .clear)
     }
 }

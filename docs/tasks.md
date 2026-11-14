@@ -342,6 +342,8 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Trạng thái: code xong (`PhoneStudyView`: gõ đáp án, tự chấm, clip, ⭐/漢, đổi bộ ở tên bộ; ghi chú bàn phím
     Hàn ở đầu file; `ClipPlayer` chuyển sang `App/Shared`), build iOS + macOS sạch — chưa chạy thử.
 - [ ] **T4.04 · Nghe (iOS)** — theo artboard "iPhone · Nghe": phát clip, lặp, tốc độ, chép chính tả.
+  - Trạng thái: code xong (`PhoneListenView`; luyện tại chỗ, không ghi lịch sử để khỏi cắt ngang lượt ở tab Học;
+    sóng chỉ trang trí), build iOS + macOS sạch — chưa chạy thử.
 - [ ] **T4.05 · 👤 Cài lên iPhone** bằng Apple ID miễn phí; đặt nhắc mỗi 7 ngày cài lại.
 
 ---
