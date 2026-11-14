@@ -13,6 +13,10 @@
 body{margin:0}
 a{color:#2B54C9}a:hover{color:#1E3E99}
 button{cursor:pointer}
+/* Chữ trong nút không bao giờ xuống dòng */
+button,.nav,.kbd,a[style*="height:"]{white-space:nowrap}
+button,a[style*="height:"]{flex-shrink:0}
+button>span{min-width:0;overflow:hidden;text-overflow:ellipsis}
 </style>
 </helmet>
 <div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F4F0; color: #191C24; font-family: Inter, 'Noto Sans KR', sans-serif; display: flex; flex-direction: column;">

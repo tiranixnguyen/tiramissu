@@ -16,6 +16,10 @@ button{cursor:pointer}
 .glass{background:var(--glass);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid var(--gb);box-shadow:var(--sh),inset 0 1px 0 var(--gb)}
 .tglass{background:color-mix(in srgb,var(--ac) 62%,transparent);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid color-mix(in srgb,#fff 35%,transparent);box-shadow:var(--sh),inset 0 1px 0 color-mix(in srgb,#fff 45%,transparent);color:var(--on)}
 .desk{background:radial-gradient(circle at 12% 18%,color-mix(in srgb,var(--ac) 55%,transparent),transparent 42%),radial-gradient(circle at 88% 82%,color-mix(in srgb,var(--flag) 45%,transparent),transparent 48%),radial-gradient(circle at 70% 10%,color-mix(in srgb,var(--ok) 35%,transparent),transparent 40%),var(--bg)}
+/* Chữ trong nút không bao giờ xuống dòng */
+button,.nav,.kbd,a[style*="height:"]{white-space:nowrap}
+button,a[style*="height:"]{flex-shrink:0}
+button>span{min-width:0;overflow:hidden;text-overflow:ellipsis}
 </style>
 </helmet>
 <div style="{{vars}}; width: 1280px; height: 1400px; box-sizing: border-box; padding: 48px 56px; background: var(--bg); color: var(--ink); font-family: Inter, 'Noto Sans KR', sans-serif; display: flex; flex-direction: column; gap: 32px;">
