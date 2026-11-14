@@ -15,6 +15,9 @@ https://claude.ai/artifact/VoCymBbC7z1bQRoSRwkvVq — artboard "Design system", 
    đúng/sai/cờ).
 4. **Chữ Hàn rõ.** Mặt thẻ dùng Noto Serif KR (theme có thể đổi sang sans), cỡ lớn; giao diện dùng font hệ
    thống (SF Pro + Apple SD Gothic Neo). Hỗ trợ phóng chữ thẻ `⌘=`/`⌘−`/`⌘0`.
+5. **Chữ trong nút không bao giờ xuống dòng.** Nhãn nút (kể cả mục sidebar, nút toolbar, `Kbd`) luôn một dòng:
+   SwiftUI `.lineLimit(1)` + `.fixedSize(horizontal: true, vertical: false)` cho nút; chỗ hẹp thì phần chữ
+   khác (tiêu đề, mô tả) co lại / cắt "…", hoặc rút gọn nhãn — không để nút gãy chữ.
 
 ## 2. Token
 
