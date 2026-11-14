@@ -27,23 +27,36 @@ struct ImportView: View {
     }
 
     var body: some View {
-        HStack(alignment: .top, spacing: 10) {
-            step(1, "Chép prompt") { promptStep }
-            step(2, "Dán kết quả") { pasteStep }
-            step(3, "Xem trước & tạo bộ") { previewStep }
+        GeometryReader { geo in
+            if geo.size.width >= 1000 {
+                // Rộng: ba cột như prototype.
+                HStack(alignment: .top, spacing: 10) { steps(tall: false) }
+                    .padding(.horizontal, 8).padding(.top, 8).padding(.bottom, 12)
+            } else {
+                // Hẹp: xếp dọc, cuộn được — mỗi bước đủ rộng để đọc.
+                ScrollView {
+                    VStack(spacing: 10) { steps(tall: true) }
+                        .padding(.horizontal, 8).padding(.top, 8).padding(.bottom, 12)
+                }
+            }
         }
-        .padding(.horizontal, 8).padding(.top, 8).padding(.bottom, 12)
         .onAppear { if groupId.isEmpty { groupId = groups.first?.id ?? "" } }
         .onChange(of: json) { if name.isEmpty || name == lastAutoName { name = parsed.name ?? ""; lastAutoName = name } }
     }
 
     @State private var lastAutoName = ""
 
+    @ViewBuilder private func steps(tall: Bool) -> some View {
+        step(1, "Chép prompt", tall: tall) { promptStep }
+        step(2, "Dán kết quả", tall: tall) { pasteStep }
+        step(3, "Xem trước & tạo bộ", tall: tall) { previewStep }
+    }
+
     // MARK: Bước 1
 
     private var promptStep: some View {
         VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 6) {
+            FlowLayout(spacing: 6) {
                 ForEach(PromptKind.allCases, id: \.self) { k in
                     Button(label(k)) { kind = k; copied = false }
                         .buttonStyle(.bordered).tint(k == kind ? theme?.accent : nil)
@@ -75,8 +88,8 @@ struct ImportView: View {
         switch k {
         case .vocab: "Từ vựng"
         case .grammar: "Ngữ pháp"
-        case .fix: "Lỗi sai"
-        case .listen: "Nghe"
+        case .fix: "Chữa bài tập"
+        case .listen: "Câu nghe"
         }
     }
 
@@ -205,7 +218,7 @@ struct ImportView: View {
 
     private var ink2: Color { theme?.ink2 ?? .secondary }
 
-    private func step<C: View>(_ n: Int, _ title: String, @ViewBuilder _ body: () -> C) -> some View {
+    private func step<C: View>(_ n: Int, _ title: String, tall: Bool, @ViewBuilder _ body: () -> C) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 10) {
                 Text("\(n)").font(.system(size: 12, weight: .bold))
@@ -217,7 +230,8 @@ struct ImportView: View {
             body()
         }
         .padding(16)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .frame(maxWidth: .infinity, alignment: .topLeading)
+        .frame(minHeight: tall ? 420 : nil, maxHeight: tall ? nil : .infinity, alignment: .topLeading)
         .background(
             RoundedRectangle(cornerRadius: 18).fill(theme?.surface ?? .clear)
                 .overlay(RoundedRectangle(cornerRadius: 18).stroke(theme?.line ?? .clear)))
@@ -226,4 +240,34 @@ struct ImportView: View {
 
 private extension String {
     var trimmed: String { trimmingCharacters(in: .whitespacesAndNewlines) }
+}
+
+/// Xếp các nút theo hàng, tự xuống dòng khi hết chỗ.
+private struct FlowLayout: Layout {
+    var spacing: CGFloat = 6
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        layout(in: proposal.width ?? .infinity, subviews: subviews).size
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let result = layout(in: bounds.width, subviews: subviews)
+        for (i, origin) in result.origins.enumerated() {
+            subviews[i].place(at: CGPoint(x: bounds.minX + origin.x, y: bounds.minY + origin.y), proposal: .unspecified)
+        }
+    }
+
+    private func layout(in width: CGFloat, subviews: Subviews) -> (size: CGSize, origins: [CGPoint]) {
+        var x: CGFloat = 0, y: CGFloat = 0, rowH: CGFloat = 0, maxX: CGFloat = 0
+        var origins: [CGPoint] = []
+        for sub in subviews {
+            let size = sub.sizeThatFits(.unspecified)
+            if x > 0, x + size.width > width { x = 0; y += rowH + spacing; rowH = 0 }
+            origins.append(CGPoint(x: x, y: y))
+            x += size.width + spacing
+            rowH = max(rowH, size.height)
+            maxX = max(maxX, x - spacing)
+        }
+        return (CGSize(width: maxX, height: y + rowH), origins)
+    }
 }

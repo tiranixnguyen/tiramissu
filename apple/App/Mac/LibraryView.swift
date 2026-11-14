@@ -8,7 +8,6 @@ struct LibraryView: View {
     @Environment(Navigation.self) private var nav
     @Environment(\.theme) private var theme
 
-    @State private var groupId: String?
     @State private var deckId: String?
     @State private var search = ""
     @State private var selection: Set<String> = []
@@ -28,7 +27,7 @@ struct LibraryView: View {
     // MARK: Dữ liệu
 
     private var groups: [ContentGroup] { model.content.groups.sorted { $0.position < $1.position } }
-    private var effectiveGroup: String? { groupId ?? groups.first?.id }
+    private var effectiveGroup: String? { nav.libraryGroupId ?? groups.first?.id }
 
     private var decks: [ContentDeck] {
         let q = search.trimmingCharacters(in: .whitespaces).folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
@@ -75,16 +74,9 @@ struct LibraryView: View {
 
     private var deckColumn: some View {
         VStack(alignment: .leading, spacing: 8) {
-            if search.isEmpty {
-                Picker("Nhóm", selection: Binding(get: { effectiveGroup ?? "" }, set: { groupId = $0 })) {
-                    ForEach(groups) { g in
-                        Text("\(g.name) (\(model.content.decks.filter { $0.groupId == g.id }.count))").tag(g.id)
-                    }
-                }
-                .labelsHidden()
-            } else {
-                Text("Kết quả tìm: \(decks.count) bộ").font(.system(size: 13, weight: .semibold)).foregroundStyle(ink2)
-            }
+            Text(search.isEmpty ? (groups.first { $0.id == effectiveGroup }?.name ?? "") : "Kết quả tìm: \(decks.count) bộ")
+                .font(.system(size: 18, weight: .bold))
+                .padding(.horizontal, 4).padding(.top, 2)
             ScrollView {
                 VStack(spacing: 8) {
                     ForEach(decks) { d in
@@ -170,9 +162,9 @@ struct LibraryView: View {
             TableColumn("Mặt trước") { c in cell(c, .front) }
             TableColumn("Mặt sau") { c in cell(c, .back) }
             TableColumn("Kiểu") { c in
-                Text(c.typeAnswer ? "gõ" : "tự chấm").font(.system(size: 12)).foregroundStyle(ink2)
+                Text((c.typeAnswer ? "Gõ đáp án" : "Tự chấm") + (c.passage ? " · đoạn văn" : "")).font(.system(size: 12)).foregroundStyle(ink2)
             }
-            .width(70)
+            .width(min: 90, ideal: 120)
             TableColumn("Cờ") { c in
                 Text((c.marked ? "★" : "") + (c.hanja ? "漢" : "") + (c.passage ? "📖" : ""))
             }

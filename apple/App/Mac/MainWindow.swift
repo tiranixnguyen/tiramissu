@@ -29,6 +29,8 @@ enum MacScreen: String, CaseIterable, Identifiable {
 final class Navigation {
     var screen: MacScreen = .today
     var showPalette = false
+    /// Nhóm đang chọn ở màn Thư viện (hiện ở sidebar); `nil` = nhóm đầu tiên.
+    var libraryGroupId: String?
 }
 
 /// Bộ ảo hiện ở sidebar, trên cùng nhóm bộ thật.
@@ -77,6 +79,25 @@ struct MainWindow: View {
             Section {
                 ForEach(MacScreen.allCases) { item in
                     Label(item.rawValue, systemImage: item.symbol).tag(item)
+                }
+            }
+            if nav.screen == .library {
+                Section("Nhóm") {
+                    ForEach(model.content.groups.sorted { $0.position < $1.position }) { g in
+                        let current = (nav.libraryGroupId ?? model.content.groups.sorted { $0.position < $1.position }.first?.id) == g.id
+                        Button { nav.libraryGroupId = g.id } label: {
+                            HStack {
+                                Text(g.name).fontWeight(current ? .semibold : .regular)
+                                Spacer()
+                                Text("\(model.content.decks.filter { $0.groupId == g.id }.count)")
+                                    .foregroundStyle(.secondary).monospacedDigit()
+                            }
+                            .padding(.horizontal, 6).padding(.vertical, 3)
+                            .background(RoundedRectangle(cornerRadius: 8).fill(current ? (theme?.accent ?? .accentColor).opacity(0.2) : .clear))
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
             }
             Section("Bộ ảo") {
@@ -130,6 +151,10 @@ struct MainWindow: View {
 
     @ToolbarContentBuilder private var toolbar: some ToolbarContent {
         ToolbarItemGroup(placement: .primaryAction) {
+            if nav.screen == .library {
+                Button { nav.screen = .importAI } label: { Label("Bộ mới từ AI", systemImage: "plus") }
+                    .buttonStyle(.borderedProminent)
+            }
             if nav.screen != .study {
                 Button {
                     themes.cycleTheme()
