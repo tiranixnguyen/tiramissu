@@ -140,8 +140,21 @@ struct TodayView: View {
         card {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Clip nghe hôm nay").font(.system(size: 14, weight: .semibold))
-                Text("Chưa có clip — tính năng cắt clip âm thanh sẽ có ở giai đoạn 3.")
-                    .font(.callout).foregroundStyle(ink2)
+                if model.content.clips.isEmpty {
+                    Text("Chưa có clip — cắt ở màn “Cắt clip âm thanh”.").font(.callout).foregroundStyle(ink2)
+                } else {
+                    ForEach(model.content.clips.prefix(3)) { clip in
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(clip.translation ?? "🎧 Nghe và chép lại").font(.system(size: 13, weight: .medium)).lineLimit(1)
+                            Text(String(format: "%.1fs · %@", Double(clip.durationMs) / 1000, clip.sourceName))
+                                .font(.caption).foregroundStyle(ink2).lineLimit(1)
+                        }
+                    }
+                    Button { open(clipsDeckId) } label: {
+                        Text("Luyện \(model.content.clips.count) clip").fontWeight(.semibold)
+                    }
+                    .buttonStyle(.glass)
+                }
             }
         }
     }

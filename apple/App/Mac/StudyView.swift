@@ -16,6 +16,7 @@ struct StudyView: View {
     var compact = false
 
     @State private var input = ""
+    @State private var clipPlayer = ClipPlayer()
     @FocusState private var fieldFocused: Bool
 
     private var state: StudySessionState { model.state }
@@ -37,8 +38,23 @@ struct StudyView: View {
         .onChange(of: state.cardSerial) {
             input = ""
             focusField()
+            autoPlayClip()
         }
-        .onAppear { focusField() }
+        .onDisappear { clipPlayer.stop() }
+        .onAppear {
+            focusField()
+            autoPlayClip()
+        }
+    }
+
+    private func clipAudioId(_ word: StudyWord?) -> String? {
+        if case .clip(let id) = word?.kind { return id }
+        return nil
+    }
+
+    /// Thẻ clip tự phát khi hiện ra.
+    private func autoPlayClip() {
+        if let id = clipAudioId(state.currentWord) { clipPlayer.play(audioId: id, model: model) } else { clipPlayer.stop() }
     }
 
     private var base: some View {
@@ -149,7 +165,7 @@ struct StudyView: View {
             CardSurface {
                 VStack(spacing: 0) {
                     HStack {
-                        Text(word.typeAnswer ? "VIỆT → HÀN · GÕ ĐÁP ÁN" : "HÀN → VIỆT · TỰ CHẤM")
+                        Text(clipAudioId(word) != nil ? "NGHE → CHÉP CHÍNH TẢ" : word.typeAnswer ? "VIỆT → HÀN · GÕ ĐÁP ÁN" : "HÀN → VIỆT · TỰ CHẤM")
                             .font(.caption.weight(.semibold)).tracking(1)
                             .foregroundStyle(theme?.ink2 ?? .secondary)
                         Spacer()
@@ -158,21 +174,35 @@ struct StudyView: View {
                     }
                     Spacer(minLength: 8)
                     VStack(spacing: 10) {
-                        Text(word.front)
-                            .font(cardFont(size: 56))
-                            .foregroundStyle(theme?.ink ?? .primary)
-                            .multilineTextAlignment(.center)
-                            .textSelection(.enabled)
+                        if let audioId = clipAudioId(word) {
+                            clipControls(audioId)
+                            if showBack, word.front != "🎧 Nghe và chép lại" {
+                                Text(word.front).font(.title3).foregroundStyle(theme?.ink2 ?? .secondary)
+                                    .multilineTextAlignment(.center)
+                            }
+                        } else {
+                            Text(word.front)
+                                .font(cardFont(size: 56))
+                                .foregroundStyle(theme?.ink ?? .primary)
+                                .multilineTextAlignment(.center)
+                                .textSelection(.enabled)
+                        }
                         if let hint = word.hint, !hint.isEmpty {
                             Text(hint).font(.callout).foregroundStyle(theme?.ink2 ?? .secondary)
                         }
                         if showBack {
                             HStack(spacing: 12) {
-                                Text(word.back)
-                                    .font(cardFont(size: 40))
-                                    .foregroundStyle(theme?.accent ?? .accentColor)
-                                    .textSelection(.enabled)
-                                Button { tts.speak(word.back) } label: {
+                                if clipAudioId(word) != nil {
+                                    diffText(word)
+                                } else {
+                                    Text(word.back)
+                                        .font(cardFont(size: 40))
+                                        .foregroundStyle(theme?.accent ?? .accentColor)
+                                        .textSelection(.enabled)
+                                }
+                                Button {
+                                    if let id = clipAudioId(word) { clipPlayer.play(audioId: id, model: model) } else { tts.speak(word.back) }
+                                } label: {
                                     Image(systemName: "play.fill").font(.system(size: 14))
                                         .frame(width: 40, height: 40)
                                         .background(Circle().fill((theme?.accent ?? .accentColor).opacity(0.16)))
@@ -210,6 +240,51 @@ struct StudyView: View {
         }
         .padding(.leading, 6).padding(.trailing, 8)
         .padding(.top, 8)
+    }
+
+    /// Nút nghe thay mặt trước thẻ clip: phát/dừng, lặp, tốc độ.
+    private func clipControls(_ audioId: String) -> some View {
+        HStack(spacing: 14) {
+            Button { clipPlayer.toggle(audioId: audioId, model: model) } label: {
+                Image(systemName: clipPlayer.isPlaying ? "stop.fill" : "play.fill").font(.system(size: 30))
+                    .frame(width: 84, height: 84)
+                    .background(Circle().fill((theme?.accent ?? .accentColor).opacity(0.16)))
+            }
+            .buttonStyle(.plain).help("Nghe lại (⌘.)")
+            VStack(alignment: .leading, spacing: 8) {
+                Button { clipPlayer.loops.toggle() } label: {
+                    Label("Lặp", systemImage: "repeat").foregroundStyle(clipPlayer.loops ? (theme?.accent ?? .accentColor) : (theme?.ink2 ?? .secondary))
+                }
+                .buttonStyle(.plain)
+                Button { clipPlayer.cycleRate() } label: {
+                    Label(String(format: "%g×", clipPlayer.rate), systemImage: "speedometer").foregroundStyle(theme?.ink2 ?? .secondary)
+                }
+                .buttonStyle(.plain)
+                if clipPlayer.isLoading { ProgressView().controlSize(.small) }
+                if clipPlayer.failed {
+                    Text("Không tải được âm thanh (cần mạng lần đầu).").font(.caption).foregroundStyle(theme?.bad ?? .red)
+                }
+            }
+        }
+    }
+
+    /// Câu đúng, tô theo so sánh từng từ với câu đã chép (đúng/sai/thiếu/thừa).
+    private func diffText(_ word: StudyWord) -> some View {
+        let ok = theme?.ok ?? .green, bad = theme?.bad ?? .red
+        let diffs = AnswerMatcher.wordDiff(answer: input, target: word.back)
+        var text = Text("")
+        for (i, d) in diffs.enumerated() {
+            let sep = i == 0 ? "" : " "
+            switch d.kind {
+            case .correct: text = text + Text(sep + d.text).foregroundColor(ok)
+            case .wrong(let expected):
+                text = text + Text(sep + d.text).foregroundColor(bad).strikethrough()
+                    + Text(" " + expected).foregroundColor(ok)
+            case .missing: text = text + Text(sep + d.text).foregroundColor(bad).underline()
+            case .extra: text = text + Text(sep + d.text).foregroundColor(bad).strikethrough()
+            }
+        }
+        return text.font(cardFont(size: 34)).multilineTextAlignment(.center).textSelection(.enabled)
     }
 
     private var showBack: Bool { state.answered || state.flipped }

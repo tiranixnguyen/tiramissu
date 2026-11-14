@@ -316,6 +316,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
 - [ ] **T3.05 · Luyện clip trong màn Học** — thẻ `.clip`: nút phát/lặp/tốc độ thay mặt trước, ô chép chính
   tả, kết quả tô theo `wordDiff`; Hôm nay hiện "Clip nghe hôm nay".
   - Phụ thuộc: T3.04, T2.37
+  - Trạng thái: code xong, build sạch — chưa thử tay (chưa tick). Âm thanh tải từ server, cache ở Caches/Tiramissu/audio.
 
 ---
 

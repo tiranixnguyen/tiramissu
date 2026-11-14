@@ -167,6 +167,18 @@ final class AppModel {
         return clip
     }
 
+    /// File nghe đã tải về đĩa (cache); chưa có thì tải từ server. Cần mạng lần đầu.
+    func audioFile(id: String) async throws -> URL {
+        let dir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("Tiramissu/audio", isDirectory: true)
+        let file = dir.appendingPathComponent("\(id).m4a")
+        if FileManager.default.fileExists(atPath: file.path) { return file }
+        let data = try await online().downloadAudio(id: id)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        try data.write(to: file, options: .atomic)
+        return file
+    }
+
     func deleteClip(id: String) async throws {
         try await online().deleteClip(id: id)
         apply(content.removingClip(id))
