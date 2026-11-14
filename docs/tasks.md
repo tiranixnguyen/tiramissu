@@ -335,6 +335,8 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Trạng thái: code xong (`PhoneRoot`, nạp cache/mẫu + đồng bộ như Mac), build iOS Simulator sạch — chưa chạy
     thử (máy chưa cài simulator iPhone). Chưa có màn nhập URL/token trên iPhone; prototype có thêm tab Thư viện.
 - [ ] **T4.02 · Hôm nay (iOS)** — theo artboard "iPhone · Hôm nay".
+  - Trạng thái: code xong (`PhoneTodayView`, cùng `computeTodayPlan` với Mac; kéo xuống để đồng bộ), build iOS
+    Simulator sạch — chưa chạy thử (chưa có simulator).
 - [ ] **T4.03 · Học (iOS)** — theo artboard "iPhone · Học"; bàn phím Hàn khi focus ô trả lời (`.keyboardType`
   không ép được ngôn ngữ — ghi chú cách thêm bàn phím Hàn).
 - [ ] **T4.04 · Nghe (iOS)** — theo artboard "iPhone · Nghe": phát clip, lặp, tốc độ, chép chính tả.

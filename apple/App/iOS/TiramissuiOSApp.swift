@@ -8,6 +8,7 @@ struct TiramissuiOSApp: App {
     @State private var model = AppModel.live()
     @State private var themes: ThemeStore
     @State private var server = ServerSettings()
+    @State private var nav = PhoneNav()
 
     init() {
         // Theme có sẵn + theme người dùng đã nhập (Application Support/Tiramissu/Themes).
@@ -20,6 +21,7 @@ struct TiramissuiOSApp: App {
             PhoneRoot()
                 .environment(model)
                 .environment(themes)
+                .environment(nav)
                 .themed(themes)
                 .task {
                     model.configureAPI(baseURL: server.baseURL, token: { ServerSettings.currentToken() })
@@ -34,14 +36,21 @@ enum PhoneTab: Hashable {
     case today, study, listen
 }
 
+/// Điều hướng chung để màn này chuyển tab màn kia (vd "Bắt đầu ôn" → tab Học).
+@MainActor @Observable
+final class PhoneNav {
+    var tab: PhoneTab = .today
+}
+
 struct PhoneRoot: View {
     @Environment(\.theme) private var theme
-    @State private var tab: PhoneTab = .today
+    @Environment(PhoneNav.self) private var nav
 
     var body: some View {
-        TabView(selection: $tab) {
+        @Bindable var nav = nav
+        TabView(selection: $nav.tab) {
             Tab("Hôm nay", systemImage: "house", value: .today) {
-                placeholder("Hôm nay", task: "T4.02")
+                PhoneTodayView()
             }
             Tab("Học", systemImage: "rectangle.on.rectangle", value: .study) {
                 placeholder("Học", task: "T4.03")
