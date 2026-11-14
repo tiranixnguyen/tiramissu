@@ -332,6 +332,8 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
 ## G4 · iPhone (ưu tiên thấp)
 
 - [ ] **T4.01 · Khung iOS** — `TabView` (Hôm nay · Học · Nghe) dùng chung `AppModel`, `ThemeStore`; tab bar kính hệ thống.
+  - Trạng thái: code xong (`PhoneRoot`, nạp cache/mẫu + đồng bộ như Mac), build iOS Simulator sạch — chưa chạy
+    thử (máy chưa cài simulator iPhone). Chưa có màn nhập URL/token trên iPhone; prototype có thêm tab Thư viện.
 - [ ] **T4.02 · Hôm nay (iOS)** — theo artboard "iPhone · Hôm nay".
 - [ ] **T4.03 · Học (iOS)** — theo artboard "iPhone · Học"; bàn phím Hàn khi focus ô trả lời (`.keyboardType`
   không ép được ngôn ngữ — ghi chú cách thêm bàn phím Hàn).
