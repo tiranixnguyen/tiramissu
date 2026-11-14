@@ -29,7 +29,7 @@ struct AudioClipView: View {
                 waveCard
                 if doc.waveform != nil { form }
                 Spacer(minLength: 0)
-                if doc.waveform != nil { GlassActionBar(playerActions).padding(.bottom, 4) }
+                if doc.waveform != nil { playerBar.padding(.bottom, 4) }
             }
             .frame(maxWidth: .infinity)
             clipsColumn.frame(width: 260)
@@ -169,30 +169,53 @@ struct AudioClipView: View {
 
     // MARK: Thanh nút
 
-    private var playerActions: [GlassAction] {
+    /// Hai hàng nút kính, mỗi nút giữ nguyên kích thước (không bị nén thành "…").
+    private var playerBar: some View {
         let p = doc.player
-        let plain: Bool = !typing
-        func rateAction(_ r: Float, _ label: String, _ key: String) -> GlassAction {
-            GlassAction(
-                id: "rate\(r)", title: label, shortcut: key, isPrimary: p.rate == r,
-                key: plain ? .init(KeyEquivalent(Character(key)), modifiers: []) : nil
-            ) { p.setRate(r) }
+        let plain = !typing
+        return GlassEffectContainer(spacing: 10) {
+            VStack(spacing: 10) {
+                HStack(spacing: 10) {
+                    barButton("−2s", key: .init(.leftArrow, modifiers: .command)) { p.skip(-2) }
+                    barButton(p.isPlaying ? "Dừng" : "Phát", kbd: "Space", prominent: true,
+                        key: plain ? .init(.space, modifiers: []) : nil) { p.toggle() }
+                    barButton("+2s", key: .init(.rightArrow, modifiers: .command)) { p.skip(2) }
+                    barButton("Lặp", kbd: "L", prominent: p.loops,
+                        key: plain ? .init("l", modifiers: []) : nil) { p.loops.toggle() }
+                    barButton(String(format: "%g×", p.rate), kbd: "R",
+                        key: plain ? .init("r", modifiers: []) : nil) {
+                        p.setRate(p.rate == 1 ? 0.75 : p.rate == 0.75 ? 0.5 : 1)
+                    }
+                }
+                HStack(spacing: 10) {
+                    barButton("Đặt A", kbd: "[", key: plain ? .init("[", modifiers: []) : nil) { p.setA() }
+                    barButton("Đặt B", kbd: "]", key: plain ? .init("]", modifiers: []) : nil) { p.setB() }
+                    barButton("B −0.1s", kbd: "⌥←", enabled: p.pointB != nil,
+                        key: .init(.leftArrow, modifiers: .option)) { p.nudgeB(-0.1) }
+                    barButton("B +0.1s", kbd: "⌥→", enabled: p.pointB != nil,
+                        key: .init(.rightArrow, modifiers: .option)) { p.nudgeB(0.1) }
+                }
+            }
         }
-        return [
-            GlassAction(id: "back", title: "−2s", key: .init(.leftArrow, modifiers: .command)) { p.skip(-2) },
-            GlassAction(id: "play", title: p.isPlaying ? "Dừng" : "Phát", shortcut: "Space", isPrimary: true,
-                key: plain ? .init(.space, modifiers: []) : nil) { p.toggle() },
-            GlassAction(id: "fwd", title: "+2s", key: .init(.rightArrow, modifiers: .command)) { p.skip(2) },
-            GlassAction(id: "a", title: "Đặt A", shortcut: "[", key: plain ? .init("[", modifiers: []) : nil) { p.setA() },
-            GlassAction(id: "b", title: "Đặt B", shortcut: "]", key: plain ? .init("]", modifiers: []) : nil) { p.setB() },
-            GlassAction(id: "bminus", title: "B −0.1s", shortcut: "⌥←", key: .init(.leftArrow, modifiers: .option), isEnabled: p.pointB != nil) { p.nudgeB(-0.1) },
-            GlassAction(id: "bplus", title: "B +0.1s", shortcut: "⌥→", key: .init(.rightArrow, modifiers: .option), isEnabled: p.pointB != nil) { p.nudgeB(0.1) },
-            GlassAction(id: "loop", title: "Lặp", shortcut: "L", isPrimary: p.loops,
-                key: plain ? .init("l", modifiers: []) : nil) { p.loops.toggle() },
-            rateAction(0.5, "0.5×", "5"),
-            rateAction(0.75, "0.75×", "7"),
-            rateAction(1, "1×", "1"),
-        ]
+        .frame(maxWidth: .infinity)
+    }
+
+    private func barButton(
+        _ title: String, kbd: String? = nil, prominent: Bool = false, enabled: Bool = true,
+        key: KeyboardShortcut? = nil, action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+                Text(title).lineLimit(1)
+                if let kbd { Kbd(kbd) }
+            }
+            .fixedSize()
+            .padding(.horizontal, 4)
+        }
+        .buttonStyle(.glass)
+        .tint(prominent ? theme?.accent : nil)
+        .disabled(!enabled)
+        .modifier(OptionalKey(key: key))
     }
 
     // MARK: Form lưu clip
@@ -322,5 +345,12 @@ struct AudioClipView: View {
     private var panel: some View {
         RoundedRectangle(cornerRadius: 18).fill(theme?.surface ?? .clear)
             .overlay(RoundedRectangle(cornerRadius: 18).stroke(line))
+    }
+}
+
+private struct OptionalKey: ViewModifier {
+    let key: KeyboardShortcut?
+    func body(content: Content) -> some View {
+        if let key { content.keyboardShortcut(key) } else { content }
     }
 }
