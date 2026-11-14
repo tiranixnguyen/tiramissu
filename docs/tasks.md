@@ -356,3 +356,4 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
 - [ ] Màn Hôm nay responsive (≥1100 / 900–1100 / <900 pt) — issue tiranixnguyen/tiramissu#3, ảnh `Mac-Today-{1000,820}-*`. Làm cùng T2.37. Trạng thái: code xong, build sạch — còn 👤 soát bố cục.
 - [ ] Màn Học sát prototype + bản hẹp (`Mac-Study`, `Mac-Study-{1000,820}`) — làm cùng T2.34. Trạng thái: code xong, build sạch — còn 👤 soát bố cục.
 - [ ] Thanh trên thống nhất 5 màn Mac theo prototype (`TopBar.swift`: tiêu đề kính + nút riêng màn + theme + sáng/tối) — Trạng thái: code xong, build sạch — còn 👤 soát bố cục.
+- [ ] Màn Thư viện sát prototype (`Mac-Library`): tiêu đề bộ 26pt + nút "Học bộ này ↵"/"Sửa bộ…", bảng SwiftUI thuần (cột Kiểu co giãn, ẩn khi hẹp), ô tìm theo `ink` — làm cùng T2.38. Trạng thái: code xong, build sạch — còn 👤 soát bố cục.

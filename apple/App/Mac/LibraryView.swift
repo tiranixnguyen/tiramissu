@@ -1,5 +1,6 @@
 import DesignSystem
 import HanCore
+import AppKit
 import SwiftUI
 
 /// Màn Thư viện: nhóm → bộ → bảng thẻ. Sửa/thêm/xoá cần mạng; lỗi thì giữ nguyên chữ đang sửa.
@@ -8,6 +9,7 @@ struct LibraryView: View {
     @Environment(Navigation.self) private var nav
     @Environment(\.theme) private var theme
     @FocusState private var searchFocused: Bool
+    @FocusState private var tableFocused: Bool
 
     @State private var deckId: String?
     @State private var search = ""
@@ -16,6 +18,7 @@ struct LibraryView: View {
     @State private var draft = ""
     @State private var showAddCard = false
     @State private var showEditDeck = false
+    @State private var tableWidth: CGFloat = 800
     @State private var pendingDelete: [String] = []
     @State private var error: String?
 
@@ -32,7 +35,6 @@ struct LibraryView: View {
         // .navigation: hệ thống xếp sát bên trái (cạnh nút sidebar), không căn giữa như .principal.
         ToolbarItem(placement: .navigation) {
             HStack(spacing: 8) {
-                Image(systemName: "magnifyingglass").foregroundStyle(ink2)
                 TextField("Tìm bộ, từ Hàn hoặc nghĩa…  ⌘F", text: $search)
                     .textFieldStyle(.plain)
                     .font(.system(size: 13))
@@ -45,9 +47,12 @@ struct LibraryView: View {
                     .keyboardShortcut("f", modifiers: .command).opacity(0).frame(width: 0)
             }
             .padding(.horizontal, 12)
-            .frame(width: 320, height: 34, alignment: .leading)
-            .background(RoundedRectangle(cornerRadius: 10).fill((theme?.surface ?? .clear).opacity(0.6)))
-            .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(theme?.line ?? .secondary))
+            .frame(width: 320, height: 30, alignment: .leading)
+            // Viền/nền giống `TopBarButtonStyle`: ink pha trong suốt, không nền đặc.
+            .background(RoundedRectangle(cornerRadius: 10).fill(ink.opacity(0.05)))
+            .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(ink.opacity(0.2)))
+            // Hệ thống đặt mục .navigation sát mép trái thanh kính → lùi vào để hai viền không chồng nhau.
+            .padding(.leading, 10)
         }
         .sharedBackgroundVisibility(.hidden)
     }
@@ -112,7 +117,11 @@ struct LibraryView: View {
             ScrollView {
                 VStack(spacing: 8) {
                     ForEach(decks) { d in
-                        Button { deckId = d.id; selection = [] } label: { deckRow(d) }.buttonStyle(.plain)
+                        Button { selectDeck(d.id) } label: { deckRow(d) }
+                            .buttonStyle(.plain)
+                            .contextMenu {
+                                Button("Sửa bộ…") { selectDeck(d.id); showEditDeck = true }
+                            }
                     }
                     if decks.isEmpty {
                         Text("Chưa có bộ nào.").font(.callout).foregroundStyle(ink2).padding(.top, 20)
@@ -122,17 +131,27 @@ struct LibraryView: View {
         }
     }
 
+    private func selectDeck(_ id: String) {
+        if deckId != id { selection = []; editing = nil }
+        deckId = id
+    }
+
     private func deckRow(_ d: ContentDeck) -> some View {
         let selected = d.id == deckId
+        let clips = d.cards.filter { $0.audio.front != nil }.count
+        var meta = ["\(d.cards.count) thẻ"]
+        if clips > 0 { meta.append("\(clips) clip") }
+        meta.append(model.reviewStatus(deckId: d.id).shortLabel)
         return VStack(alignment: .leading, spacing: 6) {
-            Text(d.name).font(.system(size: 14, weight: .semibold)).lineLimit(2)
+            Text(d.name).font(.system(size: 15, weight: .semibold)).lineLimit(2)
             HStack(spacing: 6) {
                 if let t = d.type {
                     Text(t.label).font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(ink)
                         .padding(.horizontal, 7).padding(.vertical, 2)
-                        .background(Capsule().fill((theme?.accent ?? .accentColor).opacity(0.14)))
+                        .background(RoundedRectangle(cornerRadius: 6).fill(ink.opacity(0.08)))
                 }
-                Text("\(d.cards.count) thẻ · \(model.reviewStatus(deckId: d.id).shortLabel)")
+                Text(meta.joined(separator: " · "))
                     .font(.system(size: 12)).foregroundStyle(ink2)
             }
         }
@@ -151,29 +170,9 @@ struct LibraryView: View {
     @ViewBuilder private var cardsPanel: some View {
         VStack(alignment: .leading, spacing: 0) {
             if let deck {
-                HStack(alignment: .top, spacing: 12) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(deck.name).font(.system(size: 22, weight: .bold)).lineLimit(2)
-                        Text(subtitle(deck)).font(.system(size: 12)).foregroundStyle(ink2)
-                    }
-                    Spacer()
-                    HStack(spacing: 8) {
-                        Button("Sửa bộ…") { showEditDeck = true }
-                        Button { showAddCard = true } label: { Label("Thêm thẻ", systemImage: "plus") }
-                            .keyboardShortcut("n", modifiers: .command)
-                        Button("Học bộ này ↵") {
-                            model.switchDeck(deck.id)
-                            nav.screen = .study
-                        }
-                        .buttonStyle(.glassProminent)
-                        .keyboardShortcut(.return, modifiers: [])
-                    }
-                    .fixedSize()
-                }
-                .padding(.horizontal, 20).padding(.top, 18).padding(.bottom, 12)
-                table(deck)
-                Text("Bấm đúp một ô để sửa ngay trong bảng · ⌫ xoá thẻ đang chọn")
-                    .font(.system(size: 12)).foregroundStyle(ink2).padding(.horizontal, 20).padding(.vertical, 8)
+                panelHeader(deck)
+                    .padding(.horizontal, 24).padding(.vertical, 20)
+                cardTable(deck)
             } else {
                 ContentUnavailableView("Chọn một bộ", systemImage: "books.vertical")
             }
@@ -184,6 +183,45 @@ struct LibraryView: View {
                 .overlay(RoundedRectangle(cornerRadius: 18).stroke(theme?.line ?? .clear)))
     }
 
+    /// Tên bộ + dòng nguồn, nút bên phải. Panel hẹp (tên không vừa một dòng cạnh nút) → nút xuống dưới,
+    /// tên được cả bề ngang để xuống dòng thay vì bị bóp còn vài chữ.
+    private func panelHeader(_ deck: ContentDeck) -> some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(deck.name).font(.system(size: 26, weight: .bold))
+                        .lineLimit(1).fixedSize(horizontal: true, vertical: false)
+                    Text(subtitle(deck)).font(.system(size: 13)).foregroundStyle(ink2)
+                }
+                Spacer(minLength: 16)
+                panelActions(deck)
+            }
+            VStack(alignment: .leading, spacing: 14) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(deck.name).font(.system(size: 24, weight: .bold)).lineLimit(3)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Text(subtitle(deck)).font(.system(size: 13)).foregroundStyle(ink2)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                panelActions(deck)
+            }
+        }
+    }
+
+    private func panelActions(_ deck: ContentDeck) -> some View {
+        HStack(spacing: 8) {
+            Button("Sửa bộ…") { showEditDeck = true }
+                .buttonStyle(TopBarButtonStyle())
+            Button("Học bộ này ↵") {
+                model.switchDeck(deck.id)
+                nav.screen = .study
+            }
+            .buttonStyle(PanelButtonStyle())
+            .keyboardShortcut(.return, modifiers: [])
+        }
+        .fixedSize()
+    }
+
     private func subtitle(_ d: ContentDeck) -> String {
         var parts: [String] = []
         if let s = d.source, !s.isEmpty { parts.append("Nguồn: \(s)") }
@@ -192,26 +230,102 @@ struct LibraryView: View {
         return parts.joined(separator: " · ")
     }
 
-    private func table(_ deck: ContentDeck) -> some View {
-        Table(deck.cards.sorted { $0.position < $1.position }, selection: $selection) {
-            TableColumn("Mặt trước") { c in cell(c, .front) }
-            TableColumn("Mặt sau") { c in cell(c, .back) }
-            TableColumn("Kiểu") { c in
-                Text((c.typeAnswer ? "Gõ đáp án" : "Tự chấm") + (c.passage ? " · đoạn văn" : "")).font(.system(size: 12)).foregroundStyle(ink2)
+    /// Bảng thẻ tự vẽ (không dùng `Table`: NSTableView tự thêm lề né toolbar và vẽ đè phần tiêu đề panel).
+    private func cardTable(_ deck: ContentDeck) -> some View {
+        let cards = deck.cards.sorted { $0.position < $1.position }
+        return VStack(spacing: 0) {
+            tableRow {
+                Text("Mặt trước")
+            } back: {
+                Text("Mặt sau")
+            } kind: {
+                Text("Kiểu")
+            } flags: {
+                Text("Cờ")
             }
-            .width(min: 90, ideal: 120)
-            TableColumn("Cờ") { c in
-                Text((c.marked ? "★" : "") + (c.hanja ? "漢" : "") + (c.passage ? "📖" : ""))
+            .font(.system(size: 13, weight: .semibold)).foregroundStyle(ink2)
+            .padding(.vertical, 10)
+            .overlay(alignment: .bottom) { separator }
+
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    ForEach(cards) { c in cardRow(c) }
+                    Button { showAddCard = true } label: {
+                        Text("+ Thêm thẻ (⌘N) · bấm đúp một ô để sửa ngay trong bảng")
+                            .font(.system(size: 13)).foregroundStyle(ink2)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 20).padding(.vertical, 12)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .keyboardShortcut("n", modifiers: .command)
+                    .overlay(alignment: .bottom) { separator }
+                }
             }
-            .width(60)
         }
-        .contextMenu(forSelectionType: String.self) { ids in
-            if !ids.isEmpty {
-                Button("Xoá \(ids.count) thẻ", role: .destructive) { pendingDelete = Array(ids) }
-            }
+        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { tableWidth = $0 }
+        .focusable()
+        .focusEffectDisabled()
+        .focused($tableFocused)
+        .onDeleteCommand { if !selection.isEmpty, editing == nil { pendingDelete = Array(selection) } }
+    }
+
+    private func cardRow(_ c: ContentCard) -> some View {
+        let selected = selection.contains(c.id)
+        return tableRow {
+            cell(c, .front)
+        } back: {
+            cell(c, .back)
+        } kind: {
+            Text((c.typeAnswer ? "Gõ đáp án" : "Tự chấm") + (c.passage ? " · đoạn văn" : ""))
+                .font(.system(size: 13)).foregroundStyle(ink2).lineLimit(2)
+        } flags: {
+            Text((c.marked ? "★" : "") + (c.hanja ? "漢" : "") + (c.passage ? "📖" : ""))
+                .font(.system(size: 15))
         }
-        .onDeleteCommand { if !selection.isEmpty { pendingDelete = Array(selection) } }
-        .scrollContentBackground(.hidden)
+        .padding(.vertical, 12)
+        .background((theme?.accent ?? .accentColor).opacity(selected ? 0.12 : 0))
+        .overlay(alignment: .bottom) { separator }
+        .contentShape(Rectangle())
+        // Đồng thời với bấm đúp trong ô: chọn ngay, không chờ xem có phải bấm đúp không.
+        .simultaneousGesture(TapGesture().onEnded { tap(c.id) })
+        .contextMenu {
+            let ids = selection.contains(c.id) ? Array(selection) : [c.id]
+            Button("Xoá \(ids.count) thẻ", role: .destructive) { pendingDelete = ids }
+        }
+    }
+
+    /// Bấm: chọn một thẻ; ⌘-bấm: thêm/bỏ khỏi vùng chọn.
+    private func tap(_ id: String) {
+        tableFocused = true
+        if NSEvent.modifierFlags.contains(.command) {
+            if selection.contains(id) { selection.remove(id) } else { selection.insert(id) }
+        } else {
+            selection = [id]
+        }
+    }
+
+    /// Cột Kiểu: ~18% bề rộng bảng (96…150pt); bảng hẹp thì ẩn để nhường chỗ cho Mặt trước/Mặt sau.
+    private var kindWidth: CGFloat? {
+        tableWidth < 560 ? nil : min(150, max(96, tableWidth * 0.18))
+    }
+
+    /// Một hàng bảng: Mặt trước/Mặt sau chia đều phần còn lại, Kiểu theo `kindWidth`, Cờ 44.
+    private func tableRow<A: View, B: View, C: View, D: View>(
+        @ViewBuilder front: () -> A, @ViewBuilder back: () -> B,
+        @ViewBuilder kind: () -> C, @ViewBuilder flags: () -> D
+    ) -> some View {
+        HStack(alignment: .center, spacing: 16) {
+            front().frame(maxWidth: .infinity, alignment: .leading)
+            back().frame(maxWidth: .infinity, alignment: .leading)
+            if let kindWidth { kind().frame(width: kindWidth, alignment: .leading) }
+            flags().frame(width: 44, alignment: .center)
+        }
+        .padding(.horizontal, 20)
+    }
+
+    private var separator: some View {
+        Rectangle().fill(theme?.line ?? .secondary).frame(height: 1)
     }
 
     @ViewBuilder private func cell(_ c: ContentCard, _ field: CellID.Field) -> some View {
@@ -220,11 +334,14 @@ struct LibraryView: View {
         if editing == id {
             TextField("", text: $draft)
                 .textFieldStyle(.roundedBorder)
+                .font(.system(size: 15))
                 .onSubmit { commit(c, field) }
                 .onExitCommand { editing = nil }
         } else {
-            Text(text)
-                .font(field == .back ? .system(size: 14, weight: .medium) : .system(size: 14))
+            Text((field == .front && c.audio.front != nil ? "▶ " : "") + text)
+                .font(field == .back ? .system(size: 15, weight: .semibold) : .system(size: 15))
+                .foregroundStyle(ink)
+                .lineLimit(2)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .contentShape(Rectangle())
                 .onTapGesture(count: 2) { draft = text; editing = id }
@@ -268,7 +385,27 @@ struct LibraryView: View {
         (error as? APIError)?.message ?? error.localizedDescription
     }
 
+    private var ink: Color { theme?.ink ?? .primary }
     private var ink2: Color { theme?.ink2 ?? .secondary }
+}
+
+/// Nút chính trong panel (như "Học bộ này ↵" ở prototype): nền `ink`, chữ `bg`.
+private struct PanelButtonStyle: ButtonStyle {
+    @Environment(\.theme) private var theme
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.system(size: 13, weight: .semibold))
+            .lineLimit(1)
+            .fixedSize()
+            .foregroundStyle(theme?.bg ?? .white)
+            .padding(.horizontal, 16)
+            .frame(height: 34)
+            .background(RoundedRectangle(cornerRadius: 10).fill(theme?.ink ?? .primary))
+            .contentShape(RoundedRectangle(cornerRadius: 10))
+            .opacity(configuration.isPressed ? 0.75 : isEnabled ? 1 : 0.45)
+    }
 }
 
 // MARK: Thêm thẻ
