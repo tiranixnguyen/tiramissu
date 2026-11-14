@@ -12,12 +12,33 @@ struct TodayView: View {
         computeTodayPlan(decks: model.content.decks, history: model.history, now: Date())
     }
 
+    /// Độ rộng vùng nội dung — để chia cột 1.35 : 1 ở bản vừa.
+    @State private var contentWidth: CGFloat = 0
+
     var body: some View {
         let plan = plan
+        Group {
+            switch nav.widthClass {
+            case .wide: wideLayout(plan)
+            case .medium: mediumLayout(plan)
+            case .narrow: narrowLayout(plan)
+            }
+        }
+        .screenTopBar {
+            TopBarTitle(main: dayTitle, detail: plan.streakDays > 0 ? "chuỗi \(plan.streakDays) ngày" : nil)
+        } actions: {
+            PaletteButton()
+        }
+    }
+
+    // MARK: Bố cục theo độ rộng cửa sổ
+
+    /// ≥ 1100 pt: hai cột — (tóm tắt + bộ cần ôn) | (clip + 14 ngày).
+    private func wideLayout(_ plan: TodayPlan) -> some View {
         HStack(alignment: .top, spacing: 10) {
             VStack(spacing: 10) {
                 summary(plan)
-                dueList(plan)
+                dueList(plan, scrolls: true)
             }
             .frame(maxWidth: .infinity)
             VStack(spacing: 10) {
@@ -27,17 +48,50 @@ struct TodayView: View {
             .frame(maxWidth: .infinity)
         }
         .padding(.horizontal, 8).padding(.top, 8).padding(.bottom, 12)
-        .navigationTitle(dateTitle(plan))
+    }
+
+    /// 900–1100 pt: tóm tắt trải ngang; dưới là bộ cần ôn : (clip + 14 ngày) = 1.35 : 1.
+    private func mediumLayout(_ plan: TodayPlan) -> some View {
+        let spacing: CGFloat = 10
+        let leftWidth = max(0, (contentWidth - spacing) * 1.35 / 2.35)
+        return VStack(spacing: spacing) {
+            summary(plan)
+            HStack(alignment: .top, spacing: spacing) {
+                dueList(plan, scrolls: true).frame(width: leftWidth)
+                VStack(spacing: spacing) {
+                    clips
+                    heatmap(plan)
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { contentWidth = $0 }
+        }
+        .padding(.horizontal, 8).padding(.top, 8).padding(.bottom, 12)
+    }
+
+    /// < 900 pt: một cột cuộn dọc — tóm tắt → bộ cần ôn → (clip · 14 ngày).
+    private func narrowLayout(_ plan: TodayPlan) -> some View {
+        ScrollView {
+            VStack(spacing: 10) {
+                summary(plan)
+                dueList(plan, scrolls: false)
+                HStack(alignment: .top, spacing: 10) {
+                    clips
+                    heatmap(plan, fills: false)
+                }
+            }
+            .padding(.horizontal, 8).padding(.top, 8).padding(.bottom, 12)
+        }
     }
 
     // MARK: Tóm tắt
 
-    private func dateTitle(_ plan: TodayPlan) -> String {
+    /// "Thứ Sáu, 13/11".
+    private var dayTitle: String {
         let f = DateFormatter()
         f.locale = Locale(identifier: "vi_VN")
         f.dateFormat = "EEEE, dd/MM"
-        let day = f.string(from: Date()).capitalized
-        return plan.streakDays > 0 ? "\(day) · chuỗi \(plan.streakDays) ngày" : day
+        return f.string(from: Date()).capitalized
     }
 
     private func summary(_ plan: TodayPlan) -> some View {
@@ -47,11 +101,11 @@ struct TodayView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Đến hạn ôn hôm nay").font(.system(size: 13)).foregroundStyle(ink2)
                     Text("\(plan.dueDecks.count) bộ · \(plan.dueCardCount) thẻ")
-                        .font(.system(size: 26, weight: .bold))
+                        .font(.system(size: 26, weight: .bold)).lineLimit(1).minimumScaleFactor(0.8)
                     Text(plan.dueDecks.isEmpty
                         ? "Hôm nay không còn gì để ôn 🎉"
                         : "Ước tính \(plan.estimatedMinutes) phút · đã xong \(plan.doneTodayCount)/\(plan.doneTodayCount + plan.dueDecks.count)")
-                        .font(.system(size: 13)).foregroundStyle(ink2)
+                        .font(.system(size: 13)).foregroundStyle(ink2).lineLimit(1).truncationMode(.tail)
                 }
                 Spacer(minLength: 8)
                 if let first = plan.firstDue {
@@ -60,6 +114,8 @@ struct TodayView: View {
                             Text("Bắt đầu ôn").fontWeight(.semibold)
                             Text("↵").font(.system(size: 11, design: .monospaced)).opacity(0.8)
                         }
+                        .lineLimit(1)
+                        .fixedSize()
                         .padding(.horizontal, 6)
                     }
                     .buttonStyle(.glassProminent)
@@ -72,25 +128,30 @@ struct TodayView: View {
 
     // MARK: Bộ cần ôn
 
-    private func dueList(_ plan: TodayPlan) -> some View {
+    /// `scrolls == false` (bản hẹp): liệt kê thẳng, để `ScrollView` ngoài cuộn — không lồng hai lớp cuộn.
+    private func dueList(_ plan: TodayPlan, scrolls: Bool) -> some View {
         card(padding: 6) {
             VStack(alignment: .leading, spacing: 0) {
                 Text("Bộ cần ôn").font(.system(size: 14, weight: .semibold)).padding(.horizontal, 10).padding(.vertical, 8)
                 if plan.dueDecks.isEmpty {
                     Text("Chưa có bộ nào đến hạn.").font(.callout).foregroundStyle(ink2).padding(10)
+                } else if scrolls {
+                    ScrollView { dueRows(plan) }
                 } else {
-                    ScrollView {
-                        VStack(spacing: 0) {
-                            ForEach(plan.dueDecks) { d in
-                                Button { open(d.id) } label: { row(d) }.buttonStyle(.plain)
-                            }
-                        }
-                    }
+                    dueRows(plan)
                 }
-                Spacer(minLength: 0)
+                if scrolls { Spacer(minLength: 0) }
             }
         }
-        .frame(maxHeight: .infinity)
+        .frame(maxHeight: scrolls ? .infinity : nil)
+    }
+
+    private func dueRows(_ plan: TodayPlan) -> some View {
+        VStack(spacing: 0) {
+            ForEach(plan.dueDecks) { d in
+                Button { open(d.id) } label: { row(d) }.buttonStyle(.plain)
+            }
+        }
     }
 
     private func row(_ d: DueDeck) -> some View {
@@ -159,7 +220,8 @@ struct TodayView: View {
         }
     }
 
-    private func heatmap(_ plan: TodayPlan) -> some View {
+    /// `fills == false` (bản hẹp, trong ScrollView): cao vừa nội dung thay vì giãn hết chiều cao.
+    private func heatmap(_ plan: TodayPlan, fills: Bool = true) -> some View {
         let peak = max(plan.heat.map(\.attempted).max() ?? 0, 1)
         return card {
             VStack(alignment: .leading, spacing: 10) {
@@ -174,10 +236,10 @@ struct TodayView: View {
                             .help("\(h.day.formatted(.dateTime.day().month())): \(h.attempted) thẻ")
                     }
                 }
-                Spacer(minLength: 0)
+                if fills { Spacer(minLength: 0) }
             }
         }
-        .frame(maxHeight: .infinity)
+        .frame(maxHeight: fills ? .infinity : nil)
     }
 
     // MARK: Chung

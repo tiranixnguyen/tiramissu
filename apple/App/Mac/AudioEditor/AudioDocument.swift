@@ -23,6 +23,8 @@ final class AudioDocument {
     private(set) var isLoading = false
     private(set) var error: String?
     private(set) var recent: [RecentAudio] = []
+    /// Bật để mở hộp chọn file (sidebar / nút header đặt, `AudioClipView` giữ `.fileImporter`).
+    var requestImport = false
 
     @ObservationIgnored private var scopedURL: URL?
     @ObservationIgnored private var loadTask: Task<Void, Never>?

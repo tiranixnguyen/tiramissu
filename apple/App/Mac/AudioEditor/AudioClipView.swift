@@ -8,7 +8,6 @@ struct AudioClipView: View {
     @Environment(AudioDocument.self) private var doc
     @Environment(AppModel.self) private var model
     @Environment(\.theme) private var theme
-    @State private var importing = false
     @State private var windowStart: TimeInterval = 0
     @State private var windowLength: TimeInterval = 30
     @State private var dropTargeted = false
@@ -22,10 +21,9 @@ struct AudioClipView: View {
     private static let minWindow: TimeInterval = 4
 
     var body: some View {
+        @Bindable var doc = doc
         HStack(alignment: .top, spacing: 10) {
-            filesColumn.frame(width: 240)
             VStack(spacing: 10) {
-                header
                 waveCard
                 if doc.waveform != nil { form }
                 Spacer(minLength: 0)
@@ -35,7 +33,7 @@ struct AudioClipView: View {
             clipsColumn.frame(width: 260)
         }
         .padding(.horizontal, 8).padding(.top, 8).padding(.bottom, 12)
-        .fileImporter(isPresented: $importing, allowedContentTypes: Self.contentTypes) { result in
+        .fileImporter(isPresented: $doc.requestImport, allowedContentTypes: Self.contentTypes) { result in
             if case .success(let url) = result { doc.open(url) }
         }
         .dropDestination(for: URL.self) { urls, _ in
@@ -54,61 +52,46 @@ struct AudioClipView: View {
             windowLength = d > 0 ? min(30, d) : 30
         }
         .overlay { dropOverlay }
-        .navigationTitle("Cắt clip âm thanh")
+        .background {
+            // ⌘O luôn dùng được, kể cả khi sidebar ẩn và đã mở file (nút trên thanh trên chỉ hiện lúc chưa mở).
+            Button("") { doc.requestImport = true }
+                .keyboardShortcut("o", modifiers: .command).opacity(0).frame(width: 0, height: 0)
+        }
+        .screenTopBar { topBarTitle } actions: {
+            if doc.url == nil {
+                Button { doc.requestImport = true } label: {
+                    HStack(spacing: 6) {
+                        Text("Mở file…")
+                        Kbd("⌘O")
+                    }
+                }
+                .buttonStyle(TopBarButtonStyle())
+                .help("Mở file âm thanh (⌘O)")
+            }
+        }
     }
 
     private static let contentTypes: [UTType] =
         AudioDocument.allowedExtensions.compactMap { UTType(filenameExtension: $0) }
 
-    // MARK: Cột file
-
-    private var filesColumn: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Button { importing = true } label: {
-                Label("Mở file…", systemImage: "folder").frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.glass)
-            .keyboardShortcut("o", modifiers: .command)
-
-            Text("FILE GẦN ĐÂY").font(.system(size: 11, weight: .semibold)).foregroundStyle(ink2)
-            if doc.recent.isEmpty {
-                Text("Chưa có file nào.").font(.callout).foregroundStyle(ink2)
-            }
-            ForEach(doc.recent) { item in
-                Button { doc.open(item) } label: {
-                    Text(item.name).lineLimit(1).truncationMode(.middle)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, 10).padding(.vertical, 7)
-                        .background(RoundedRectangle(cornerRadius: 10)
-                            .fill(item.name == doc.name ? (theme?.accent ?? .accentColor).opacity(0.18) : .clear))
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-            }
-            Text("Kéo thả file âm thanh vào cửa sổ\nmp3 · m4a · wav")
-                .font(.caption).foregroundStyle(ink2).multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity).padding(14)
-                .overlay(RoundedRectangle(cornerRadius: 12)
-                    .strokeBorder(style: StrokeStyle(lineWidth: 1, dash: [4, 3])).foregroundStyle(line))
-            Spacer(minLength: 0)
-        }
-        .padding(12)
-        .background(panel)
-    }
-
     // MARK: Phần chính
 
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(doc.url == nil ? "Chưa mở file" : doc.name).font(.system(size: 17, weight: .semibold)).lineLimit(1)
-            Text(doc.url == nil
-                ? "Mở hoặc kéo thả file để bắt đầu cắt clip"
-                : "\(timeText(doc.duration)) · file gốc ở yên trên Mac, chỉ đoạn cắt được đồng bộ")
-                .font(.system(size: 13)).foregroundStyle(ink2)
+    /// Tiêu đề thanh trên: tên file + độ dài · thư mục · ghi chú (file gần đây nằm ở sidebar).
+    private var topBarTitle: some View {
+        VStack(alignment: .leading, spacing: 1) {
+            Text(doc.url == nil ? "Cắt clip âm thanh" : doc.name)
+                .font(.system(size: 14, weight: .semibold))
+            Text(topBarDetail).font(.system(size: 12)).foregroundStyle(ink2)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(14)
-        .background(panel)
+        .lineLimit(1).truncationMode(.tail)
+    }
+
+    private var topBarDetail: String {
+        guard let url = doc.url else { return "Mở hoặc kéo thả file (mp3 · m4a · wav) để bắt đầu cắt clip" }
+        let folder = (url.deletingLastPathComponent().path as NSString).abbreviatingWithTildeInPath
+        let total = Int(doc.duration.rounded())
+        let length = doc.duration > 0 ? String(format: "%d:%02d · ", total / 60, total % 60) : ""
+        return "\(length)\(folder) · file gốc ở yên trên Mac, chỉ đoạn cắt được đồng bộ"
     }
 
     @ViewBuilder private var waveCard: some View {

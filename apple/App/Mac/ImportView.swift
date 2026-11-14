@@ -40,6 +40,12 @@ struct ImportView: View {
                 }
             }
         }
+        .screenTopBar {
+            TopBarTitle(
+                main: "Nhập từ AI",
+                detail: "Doc → chép prompt → Gemini / NotebookLM → dán JSON → tick “Đã đưa vào app”",
+                detailSize: 13)
+        }
         .onAppear { if groupId.isEmpty { groupId = groups.first?.id ?? "" } }
         .onChange(of: json) { if name.isEmpty || name == lastAutoName { name = parsed.name ?? ""; lastAutoName = name } }
     }

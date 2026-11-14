@@ -8,8 +8,8 @@ import SwiftUI
 /// Cài đặt hệ thống › Bàn phím › Nguồn nhập, rồi chuyển bằng phím Caps Lock hoặc ⌃Space.
 struct StudyView: View {
     @Environment(AppModel.self) private var model
-    @Environment(ThemeStore.self) private var themes
     @Environment(TTS.self) private var tts
+    @Environment(Navigation.self) private var nav
     @Environment(\.theme) private var theme
 
     /// Cửa sổ học gọn (`⌥⌘L`): chỉ thẻ + ô trả lời, không thanh trên, không cột phải.
@@ -26,13 +26,7 @@ struct StudyView: View {
             if compact {
                 base
             } else {
-                base
-                    .navigationTitle("")
-                    .toolbar(removing: .title)
-                    .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
-                    // Thanh trên nằm TRONG toolbar hệ thống → hệ điều hành tự lo đèn giao thông,
-                    // nút sidebar và hoạt ảnh ẩn/hiện sidebar (không tự tính lề).
-                    .toolbar { studyToolbar }
+                base.screenTopBar { header } actions: { PaletteButton() }
             }
         }
         .onChange(of: state.cardSerial) {
@@ -63,28 +57,6 @@ struct StudyView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    @ToolbarContentBuilder private var studyToolbar: some ToolbarContent {
-        // Phải: theme rồi sáng/tối ở ngoài cùng (kính mặc định của toolbar).
-        ToolbarItemGroup(placement: .primaryAction) {
-            Button { themes.cycleTheme() } label: {
-                HStack(spacing: 6) {
-                    Circle().fill(theme?.accent ?? .accentColor).frame(width: 10, height: 10)
-                    Text(themes.current?.name ?? "")
-                }
-            }
-            .help("Đổi theme")
-            Button { themes.cycleAppearance() } label: {
-                Image(systemName: themes.appearance.symbol)
-            }
-            .help("Giao diện: \(themes.appearance.label) (⌥⌘D)")
-        }
-        // Trái: tên bộ + tiến độ + thống kê.
-        ToolbarItem(placement: .principal) {
-            header.frame(minWidth: 280, maxWidth: .infinity, alignment: .leading)
-        }
-        .sharedBackgroundVisibility(.hidden)
-    }
-
     @ViewBuilder private var content: some View {
         Group {
             if state.currentDeckId == nil {
@@ -96,7 +68,11 @@ struct StudyView: View {
             } else if let word = state.currentWord {
                 HStack(alignment: .top, spacing: 0) {
                     card(word)
-                    if !compact { sidebarColumn.padding(.top, 8).padding(.bottom, 12) }
+                    // Cột "Lượt học" chỉ ở cửa sổ ≥ 1100 pt; hẹp hơn thì thống kê nằm trên thanh trên.
+                    if !compact && nav.widthClass == .wide {
+                        sidebarColumn.padding(.top, 8).padding(.bottom, 12)
+                            .transition(.move(edge: .trailing).combined(with: .opacity))
+                    }
                 }
             } else {
                 ContentUnavailableView("Bộ này chưa có thẻ", systemImage: "tray")
@@ -113,24 +89,31 @@ struct StudyView: View {
         return group.map { "\(name) · \($0)" } ?? name
     }
 
-    /// Thanh trên cùng như prototype: kính bo 16 — tên bộ + tiến độ + thống kê (theme/sáng-tối nằm riêng bên phải toolbar).
+    /// Phần tiêu đề thanh trên: tên bộ + tiến độ + thống kê (khung kính do `screenTopBar` lo).
     private var header: some View {
+        // Đủ chỗ: thống kê đầy đủ → rút gọn (bản 820) → ẩn hẳn; chữ không bao giờ xuống dòng.
         ViewThatFits(in: .horizontal) {
-            headerRow(showStats: true)
-            headerRow(showStats: false)
+            headerRow(stats: fullStats)
+            headerRow(stats: shortStats)
+            headerRow(stats: nil)
         }
-        .padding(.leading, 16).padding(.trailing, 10)
-        .frame(height: 44)
-        .glassEffect(.regular, in: .rect(cornerRadius: 16))
     }
 
-    private func headerRow(showStats: Bool) -> some View {
+    private var fullStats: String {
+        "\(state.masteredCount)/\(state.totalCount) thuộc · đúng \(state.correctCount)/\(state.attemptedCount)"
+    }
+
+    private var shortStats: String {
+        "\(state.masteredCount)/\(state.totalCount) · \(state.correctCount)/\(state.attemptedCount) đúng"
+    }
+
+    private func headerRow(stats: String?) -> some View {
         HStack(spacing: 14) {
             VStack(alignment: .leading, spacing: 3) {
                 (Text(deckTitleMain).fontWeight(.semibold)
                     + Text(deckTitleGroup).fontWeight(.medium).foregroundColor(theme?.ink2 ?? .secondary))
                     .font(.system(size: 14))
-                    .lineLimit(1)
+                    .lineLimit(1).truncationMode(.tail)
                 Capsule().fill((theme?.ink ?? .primary).opacity(0.12))
                     .frame(height: 5).frame(maxWidth: 360)
                     .overlay(alignment: .leading) {
@@ -140,10 +123,10 @@ struct StudyView: View {
                         }
                     }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            if showStats {
-                Text("\(state.masteredCount)/\(state.totalCount) thuộc · đúng \(state.correctCount)/\(state.attemptedCount)")
-                    .font(.system(size: 12)).monospacedDigit()
+            .frame(minWidth: 140, maxWidth: .infinity, alignment: .leading)
+            if let stats {
+                Text(stats)
+                    .font(.system(size: 12)).monospacedDigit().lineLimit(1)
                     .foregroundStyle(theme?.ink2 ?? .secondary)
                     .fixedSize()
             }
@@ -181,10 +164,13 @@ struct StudyView: View {
                                     .multilineTextAlignment(.center)
                             }
                         } else {
+                            // Thẻ gõ: mặt trước tiếng Việt (sans 40); thẻ tự chấm: mặt trước tiếng Hàn (phông thẻ 28).
                             Text(word.front)
-                                .font(cardFont(size: 56))
+                                .font(word.typeAnswer ? latinFont(size: 40, weight: .semibold) : cardFont(size: 28))
                                 .foregroundStyle(theme?.ink ?? .primary)
                                 .multilineTextAlignment(.center)
+                                .lineSpacing(4)
+                                .frame(maxWidth: 620)
                                 .textSelection(.enabled)
                         }
                         if let hint = word.hint, !hint.isEmpty {
@@ -196,8 +182,9 @@ struct StudyView: View {
                                     diffText(word)
                                 } else {
                                     Text(word.back)
-                                        .font(cardFont(size: 40))
-                                        .foregroundStyle(theme?.accent ?? .accentColor)
+                                        .font(word.typeAnswer ? cardFont(size: 44, weight: .bold) : latinFont(size: 22, weight: .bold))
+                                        .foregroundStyle(state.outcome == .wrong ? (theme?.bad ?? .red) : (theme?.ink ?? .primary))
+                                        .multilineTextAlignment(.center)
                                         .textSelection(.enabled)
                                 }
                                 Button {
@@ -309,51 +296,63 @@ struct StudyView: View {
 
     // MARK: Cột phải
 
+    /// Cột phải (chỉ cửa sổ ≥ 1100 pt): "Lượt học này" + "Sắp hỏi" + gợi ý cửa sổ học gọn.
     private var sidebarColumn: some View {
-        VStack(spacing: 10) {
-            panel {
+        VStack(spacing: 12) {
+            panel(spacing: 10) {
                 Text("Lượt học này").font(.system(size: 13, weight: .semibold))
-                HStack(spacing: 20) {
+                HStack(spacing: 8) {
                     stat(state.masteredCount, "đã thuộc")
                     stat(state.correctCount, "đúng")
                     stat(max(state.attemptedCount - state.correctCount, 0), "sai")
                 }
             }
-            panel {
+            panel(spacing: 8) {
                 Text("Sắp hỏi").font(.system(size: 13, weight: .semibold))
-                ForEach(state.upcoming) { q in
-                    HStack(spacing: 8) {
-                        Text(q.title).lineLimit(1)
-                        Spacer(minLength: 4)
-                        Text(q.isNew ? "mới" : "hộp \(q.box + 1)")
-                            .font(.system(size: 12)).foregroundStyle(theme?.ink2 ?? .secondary)
+                VStack(spacing: 0) {
+                    ForEach(state.upcoming) { q in
+                        HStack(spacing: 8) {
+                            Text(q.title).lineLimit(1).truncationMode(.tail)
+                            Spacer(minLength: 4)
+                            Text(q.isNew ? "mới" : "hộp \(q.box + 1)")
+                                .font(.system(size: 12)).foregroundStyle(theme?.ink2 ?? .secondary)
+                                .lineLimit(1).fixedSize()
+                        }
+                        .font(.system(size: 13))
+                        .padding(.vertical, 6)
+                        .overlay(alignment: .bottom) {
+                            Rectangle().fill(theme?.line ?? .secondary.opacity(0.2)).frame(height: 1)
+                        }
                     }
-                    .font(.system(size: 13))
-                    .padding(.vertical, 4)
-                    Divider()
                 }
-                Spacer(minLength: 0)
+                Spacer(minLength: 8)
+                (Text("Cửa sổ học gọn: ") + Text("⌥⌘L").font(.system(size: 11, weight: .semibold, design: .monospaced))
+                    + Text(" — nổi trên mọi cửa sổ để vừa học vừa làm việc khác."))
+                    .font(.system(size: 12)).foregroundStyle(theme?.ink2 ?? .secondary)
+                    .lineSpacing(3)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxHeight: .infinity, alignment: .top)
         }
-        .frame(width: 224)
+        .frame(width: 268)
         .padding(.trailing, 2)
     }
 
     private func stat(_ n: Int, _ label: String) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(spacing: 0) {
             Text("\(n)").font(.system(size: 22, weight: .bold)).monospacedDigit()
-            Text(label).font(.system(size: 11)).foregroundStyle(theme?.ink2 ?? .secondary)
+            Text(label).font(.system(size: 11)).foregroundStyle(theme?.ink2 ?? .secondary).lineLimit(1)
         }
+        .frame(maxWidth: .infinity)
     }
 
-    private func panel<C: View>(@ViewBuilder _ body: () -> C) -> some View {
-        VStack(alignment: .leading, spacing: 8) { body() }
-            .padding(12)
+    private func panel<C: View>(spacing: CGFloat, @ViewBuilder _ body: () -> C) -> some View {
+        VStack(alignment: .leading, spacing: spacing) { body() }
+            .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: 18).fill(theme?.surface ?? Color.clear)
-                    .overlay(RoundedRectangle(cornerRadius: 18).stroke((theme?.ink ?? .primary).opacity(0.1))))
+                    .overlay(RoundedRectangle(cornerRadius: 18).stroke(theme?.line ?? .clear)))
     }
 
     private var completed: some View {
@@ -428,9 +427,15 @@ struct StudyView: View {
         DispatchQueue.main.async { fieldFocused = true }
     }
 
-    private func cardFont(size: CGFloat) -> Font {
+    /// Phông chữ Hàn trên thẻ — theo theme (serif/sans, hệ số cỡ).
+    private func cardFont(size: CGFloat, weight: Font.Weight = .semibold) -> Font {
         let scale = theme?.typography.cardScale ?? 1
         let isSerif = theme?.typography.cardKoreanFont != "sans"
-        return .system(size: size * scale, weight: .semibold, design: isSerif ? .serif : .default)
+        return .system(size: size * scale, weight: weight, design: isSerif ? .serif : .default)
+    }
+
+    /// Phông chữ Việt trên thẻ — luôn sans, vẫn theo hệ số cỡ của theme.
+    private func latinFont(size: CGFloat, weight: Font.Weight) -> Font {
+        .system(size: size * (theme?.typography.cardScale ?? 1), weight: weight)
     }
 }

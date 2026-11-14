@@ -54,6 +54,7 @@ struct TiramissuMacApp: App {
         Window("Học gọn", id: "compact") {
             StudyView(compact: true)
                 .environment(model)
+                .environment(nav)
                 .environment(themes)
                 .environment(tts)
                 .themed(themes)

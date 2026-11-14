@@ -343,5 +343,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
 ## Phát sinh
 
 <!-- Agent/bạn ghi việc mới phát hiện ở đây: - [ ] mô tả — ngữ cảnh -->
-- [ ] Sidebar Mac dạng cây (bộ ảo lồng dưới Học, nhóm dưới Thư viện, file dưới Cắt clip) — issue tiranixnguyen/tiramissu#2, ảnh `design/prototype/screens/Mac-*`. Làm cùng T2.32.
-- [ ] Màn Hôm nay responsive (≥1100 / 900–1100 / <900 pt) — issue tiranixnguyen/tiramissu#3, ảnh `Mac-Today-{1000,820}-*`. Làm cùng T2.37.
+- [ ] Sidebar Mac dạng cây (bộ ảo lồng dưới Học, nhóm dưới Thư viện, file dưới Cắt clip) — issue tiranixnguyen/tiramissu#2, ảnh `design/prototype/screens/Mac-*`. Làm cùng T2.32. Trạng thái: code xong, build sạch — còn 👤 soát bố cục.
+- [ ] Màn Hôm nay responsive (≥1100 / 900–1100 / <900 pt) — issue tiranixnguyen/tiramissu#3, ảnh `Mac-Today-{1000,820}-*`. Làm cùng T2.37. Trạng thái: code xong, build sạch — còn 👤 soát bố cục.
+- [ ] Màn Học sát prototype + bản hẹp (`Mac-Study`, `Mac-Study-{1000,820}`) — làm cùng T2.34. Trạng thái: code xong, build sạch — còn 👤 soát bố cục.
+- [ ] Thanh trên thống nhất 5 màn Mac theo prototype (`TopBar.swift`: tiêu đề kính + nút riêng màn + theme + sáng/tối) — Trạng thái: code xong, build sạch — còn 👤 soát bố cục.
