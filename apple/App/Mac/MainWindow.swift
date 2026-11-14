@@ -57,6 +57,8 @@ struct MainWindow: View {
     @Environment(Navigation.self) private var nav
     @Environment(AudioDocument.self) private var audioDoc
     @Environment(\.theme) private var theme
+    /// Bộ thật học gần nhất — giữ ở sidebar kể cả khi đang mở bộ ảo.
+    @State private var lastRealDeckId: String?
 
     var body: some View {
         @Bindable var nav = nav
@@ -73,6 +75,9 @@ struct MainWindow: View {
             let next = WindowWidthClass.from(width)
             guard next != nav.widthClass else { return }
             withAnimation(.smooth) { nav.widthClass = next }
+        }
+        .onChange(of: model.state.currentDeckId, initial: true) { _, id in
+            if let id, !isVirtualDeckId(id) { lastRealDeckId = id }
         }
         .onChange(of: nav.widthClass) { old, new in
             // Chỉ đổi lúc chuyển lớp — giữa chừng người dùng tự bật/tắt bằng ⌃⌘S / nút toolbar.
@@ -96,9 +101,11 @@ struct MainWindow: View {
     private var sortedGroups: [ContentGroup] { model.content.groups.sorted { $0.position < $1.position } }
 
     private func sidebar(selection: Binding<MacScreen>) -> some View {
-        List(selection: Binding<MacScreen?>(get: { selection.wrappedValue }, set: { if let v = $0 { selection.wrappedValue = v } })) {
+        // Không dùng selection gốc của List: màn Học chuyển focus bàn phím sang ô trả lời,
+        // List mất focus thì highlight chuyển xám. Tự vẽ nền xanh để không phụ thuộc focus.
+        List {
             ForEach(MacScreen.allCases) { item in
-                mainRow(item)
+                mainRow(item, selection: selection)
                 switch item {
                 case .study: studyChildren
                 case .library where nav.screen == .library: libraryChildren
@@ -110,28 +117,38 @@ struct MainWindow: View {
         .safeAreaInset(edge: .bottom) { SyncFooter(status: model.syncStatus) }
     }
 
-    @ViewBuilder private func mainRow(_ item: MacScreen) -> some View {
+    @ViewBuilder private func mainRow(_ item: MacScreen, selection: Binding<MacScreen>) -> some View {
+        let selected = selection.wrappedValue == item
         let chevron: String? = switch item {
         case .study: "chevron.down"
-        case .library, .audioClip: nav.screen == item ? "chevron.down" : "chevron.right"
+        case .library, .audioClip: selected ? "chevron.down" : "chevron.right"
         default: nil
         }
-        let label = Label {
-            HStack(spacing: 4) {
+        Button { selection.wrappedValue = item } label: {
+            HStack(spacing: 8) {
+                Image(systemName: item.symbol).frame(width: 18)
+                    .foregroundStyle(selected ? AnyShapeStyle(.white) : AnyShapeStyle(.tint))
                 Text(item.rawValue).lineLimit(1).truncationMode(.tail)
+                    .fontWeight(selected ? .semibold : .regular)
+                Spacer(minLength: 4)
+                if item == .today {
+                    Text("\(dueCardCount)").monospacedDigit().lineLimit(1)
+                        .foregroundStyle(selected ? Color.white.opacity(0.85) : .secondary)
+                }
                 if let chevron {
-                    Spacer(minLength: 4)
-                    Image(systemName: chevron).font(.system(size: 10, weight: .semibold)).foregroundStyle(.secondary)
+                    Image(systemName: chevron).font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(selected ? Color.white.opacity(0.85) : .secondary)
                 }
             }
-        } icon: {
-            Image(systemName: item.symbol)
+            .foregroundStyle(selected ? Color.white : .primary)
+            .padding(.horizontal, 8).padding(.vertical, 5)
+            .background(RoundedRectangle(cornerRadius: 8).fill(selected ? Color.accentColor : .clear))
+            .contentShape(Rectangle())
         }
-        if item == .today {
-            label.badge(dueCardCount).tag(item)
-        } else {
-            label.tag(item)
-        }
+        .buttonStyle(.plain)
+        .listRowInsets(EdgeInsets(top: 1, leading: 6, bottom: 1, trailing: 6))
+        .listRowSeparator(.hidden)
+        .selectionDisabled()
     }
 
     // MARK: Mục con
@@ -139,12 +156,13 @@ struct MainWindow: View {
     /// Học — luôn mở: bộ thật đang học (nếu có) + các bộ ảo.
     @ViewBuilder private var studyChildren: some View {
         let state = model.state
-        if let id = state.currentDeckId, !isVirtualDeckId(id),
-           let deck = model.content.decks.first(where: { $0.id == id }) {
-            subButton(.dot, deck.name, count: "\(state.masteredCount)/\(state.totalCount)",
-                selected: nav.screen == .study) { openDeck(id) }
-        }
         let current = nav.screen == .study ? state.currentDeckId : nil
+        if let id = lastRealDeckId,
+           let deck = model.content.decks.first(where: { $0.id == id }) {
+            let isCurrent = current == id
+            subButton(.dot, deck.name, count: isCurrent ? "\(state.masteredCount)/\(state.totalCount)" : nil,
+                selected: isCurrent) { openDeck(id) }
+        }
         subButton(.symbol("star.fill"), "Từ khó nhớ", count: "\(state.markedCount)",
             selected: current == markedDeckId) { openDeck(markedDeckId) }
         subButton(.text("漢"), "Hán Hàn", count: "\(state.hanjaCount)",
@@ -163,7 +181,7 @@ struct MainWindow: View {
         let groups = sortedGroups
         let currentId = nav.libraryGroupId ?? groups.first?.id
         ForEach(groups) { g in
-            subButton(.symbol("folder"), g.name,
+            subButton(.dot, g.name,
                 count: "\(model.content.decks.filter { $0.groupId == g.id }.count)",
                 selected: currentId == g.id) { nav.libraryGroupId = g.id }
         }
@@ -188,6 +206,8 @@ struct MainWindow: View {
             SidebarSubRow(glyph: glyph, title: title, count: count, selected: selected)
         }
         .buttonStyle(.plain)
+        // Mục con không phải đích chọn của List — bấm vào không được làm mất highlight của mục cha.
+        .selectionDisabled()
         .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
         .listRowSeparator(.hidden)
     }
