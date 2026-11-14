@@ -103,6 +103,8 @@ struct MainWindow: View {
     @ViewBuilder private var detail: some View {
         if nav.screen == .study {
             StudyView()
+        } else if nav.screen == .today {
+            TodayView()
         } else {
             placeholder
         }

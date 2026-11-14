@@ -269,6 +269,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Phụ thuộc: T2.35
 - [ ] **T2.37 · Màn Hôm nay** — theo artboard: vòng tiến độ, danh sách bộ đến hạn (`ReviewSchedule`), clip
   hôm nay (rỗng tới G3), heatmap 14 ngày, nút "Bắt đầu ôn ↵" mở bộ đến hạn đầu tiên.
+  - Trạng thái: code xong (logic `computeTodayPlan` có test; `TodayView`) — còn thử tay (chưa tick). Bỏ ô "Hộp thư Drive" (thuộc T1.09).
   - Phụ thuộc: T2.35
 - [ ] **T2.38 · Màn Thư viện** — nhóm → bộ → `Table` thẻ; sửa tại chỗ (PATCH), thêm thẻ `⌘N`, xoá, đổi
   tên/loại/nguồn/mô tả bộ; cần mạng, offline báo lỗi không mất chữ đang sửa.
