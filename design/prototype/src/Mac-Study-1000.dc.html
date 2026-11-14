@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Mac · Học — 1000 pt</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+KR:wght@400;500;700&amp;family=Noto+Serif+KR:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit}
+button{cursor:pointer}
+.glass{background:var(--glass);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid var(--gb);box-shadow:var(--sh),inset 0 1px 0 var(--gb)}
+.tglass{background:color-mix(in srgb,var(--ac) 70%,transparent);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid color-mix(in srgb,#fff 35%,transparent);box-shadow:inset 0 1px 0 color-mix(in srgb,#fff 45%,transparent);color:var(--on)}
+.desk{background:radial-gradient(circle at 8% 12%,color-mix(in srgb,var(--ac) 50%,transparent),transparent 38%),radial-gradient(circle at 92% 88%,color-mix(in srgb,var(--flag) 40%,transparent),transparent 45%),var(--bg)}
+.kbd{font:600 11px ui-monospace,Menlo,monospace;padding:2px 6px;border-radius:6px;border:1px solid var(--line);color:var(--ink2)}
+.nav{position:relative;display:flex;align-items:center;gap:10px;width:100%;box-sizing:border-box;height:32px;padding:0 10px;border:0;border-radius:10px;background:transparent;font:500 13px Inter,'Noto Sans KR',sans-serif;color:var(--ink2);text-decoration:none;text-align:left}
+.nav svg{flex:none}
+.nav .l{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav .n{font-size:12px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--ink2)}
+.nav .chev{display:flex;color:var(--ink2);opacity:.7}
+.nav.on{background:color-mix(in srgb,var(--ac) 18%,transparent);color:var(--ink);font-weight:600}
+.sub{display:flex;flex-direction:column;gap:1px;margin:2px 0 6px 18px;padding-left:9px;border-left:1px solid color-mix(in srgb,var(--ink) 14%,transparent)}
+.sub .nav{height:28px;padding:0 8px;gap:8px;font-size:12.5px}
+.sub .g{width:14px;flex:none;display:flex;justify-content:center;font-size:12px;line-height:1}
+.sub .nav.on{background:color-mix(in srgb,var(--ink) 6%,transparent);color:var(--ink);font-weight:600}
+.sub .nav.on::before{content:"";position:absolute;left:-10px;top:7px;width:2px;height:14px;border-radius:2px;background:var(--ac)}
+/* Chữ trong nút không bao giờ xuống dòng */
+button,.nav,.kbd,a[style*="height:"]{white-space:nowrap}
+button,a[style*="height:"]{flex-shrink:0}
+button>span{min-width:0;overflow:hidden;text-overflow:ellipsis}
+</style>
+</helmet>
+<div class="desk" style="{{vars}}; position: relative; width: 1000px; height: 700px; box-sizing: border-box; color: var(--ink); font-family: Inter, 'Noto Sans KR', sans-serif; overflow: hidden;">
+
+  <div style="position: absolute; left: 240px; right: 0; top: 0; bottom: 0; background: var(--bg);"></div>
+
+  <nav aria-label="Điều hướng" class="glass" style="position: absolute; left: 10px; top: 10px; bottom: 10px; width: 216px; box-sizing: border-box; border-radius: 20px; padding: 14px 10px; display: flex; flex-direction: column; gap: 2px; overflow: hidden;">
+    <div style="display: flex; gap: 7px; padding: 2px 8px 16px;"><span style="width: 12px; height: 12px; border-radius: 99px; background: #FF5F57;"></span><span style="width: 12px; height: 12px; border-radius: 99px; background: #FEBC2E;"></span><span style="width: 12px; height: 12px; border-radius: 99px; background: #28C840;"></span></div>
+    <a class="nav" href="Mac-Today.dc.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2.5v2M12 19.5v2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M2.5 12h2M19.5 12h2M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"></path></svg><span class="l">Hôm nay</span><span class="n">46</span></a>
+    <a class="nav on" href="Mac-Study.dc.html" aria-current="page"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="14" height="14" rx="2.5"></rect><path d="M7 3.5h11a2.5 2.5 0 0 1 2.5 2.5v11"></path></svg><span class="l">Học</span><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10l5 5 5-5"></path></svg></span></a>
+    <div class="sub" role="group" aria-label="Bộ đang học và bộ ảo">
+      <a class="nav on" href="Mac-Study.dc.html"><span class="g"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.5" fill="currentColor"></circle></svg></span><span class="l">Plastic · tái chế</span><span class="n">11/26</span></a>
+      <a class="nav" href="Mac-Study.dc.html"><span class="g">★</span><span class="l">Từ khó nhớ</span><span class="n">18</span></a>
+      <a class="nav" href="Mac-Study.dc.html"><span class="g"><span style="font-family: 'Noto Serif KR', serif;">漢</span></span><span class="l">Hán Hàn</span><span class="n">42</span></a>
+      <a class="nav" href="Mac-Study.dc.html"><span class="g"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 10.5h16M4 15h16M4 19.5h9"></path></svg></span><span class="l">Đoạn văn</span><span class="n">7</span></a>
+      <a class="nav" href="Mac-Study.dc.html"><span class="g"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h4v4M4 20L20 4M20 16v4h-4M14.5 14.5L20 20M4 4l5 5"></path></svg></span><span class="l">Ngẫu nhiên</span><span class="n">20</span></a>
+      <a class="nav" href="Mac-Study.dc.html"><span class="g"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17v-5a8 8 0 0 1 16 0v5"></path><path d="M20 18a2 2 0 0 1-2 2h-1v-6h3zM4 18a2 2 0 0 0 2 2h1v-6H4z"></path></svg></span><span class="l">Clip nghe</span><span class="n">5</span></a>
+    </div>
+    <a class="nav" href="Mac-Library.dc.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="4.5" height="16" rx="1"></rect><rect x="9.5" y="4" width="4.5" height="16" rx="1"></rect><path d="M16 5.6l3.6-1 3.2 14.4-3.6 1z"></path></svg><span class="l">Thư viện</span><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 7l5 5-5 5"></path></svg></span></a>
+    <a class="nav" href="Mac-Import.dc.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 3l1.9 5.1L18 10l-5.1 1.9L11 17l-1.9-5.1L4 10l5.1-1.9z"></path><path d="M18.5 14.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"></path></svg><span class="l">Nhập từ AI</span></a>
+    <a class="nav" href="Mac-Audio.dc.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10v4M7 7v10M11 4v16M15 8v8M19 6v12"></path></svg><span class="l">Cắt clip âm thanh</span><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 7l5 5-5 5"></path></svg></span></a>
+    <div style="margin-top: auto; padding: 10px 10px 2px; border-top: 1px solid color-mix(in srgb, var(--ink) 10%, transparent); font-size: 12px; color: var(--ink2); display: flex; align-items: center; gap: 8px;"><span style="width: 8px; height: 8px; border-radius: 99px; background: var(--ok);"></span><span style="flex: 1;">Đã đồng bộ</span><span style="font-variant-numeric: tabular-nums;">2 phút</span></div>
+  </nav>
+
+  <header class="glass" style="position: absolute; left: 252px; right: 12px; top: 10px; height: 52px; box-sizing: border-box; border-radius: 16px; padding: 0 10px 0 16px; display: flex; align-items: center; gap: 14px;">
+    <div style="display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0;">
+      <div style="font-size: 14px; font-weight: 600;">Plastic · tái chế <span style="font-weight: 500; color: var(--ink2);">· Oct1</span></div>
+      <div style="height: 5px; border-radius: 99px; background: color-mix(in srgb, var(--ink) 12%, transparent); overflow: hidden; max-width: 360px;"><div style="height: 5px; width: {{progressW}}; background: var(--ac); border-radius: 99px;"></div></div>
+    </div>
+    <span style="font-size: 12px; color: var(--ink2); white-space: nowrap;" title="Lượt học này — cột phải ẩn khi cửa sổ < 1100 pt">{{mastered}}/26 thuộc · đúng {{correct}}/{{attempted}}</span>
+    <button onClick="{{openPalette}}" style="height: 34px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--ink); font: 600 12px Inter, sans-serif; display: flex; align-items: center; gap: 8px;">Lệnh <span class="kbd">⌘K</span></button>
+    <button onClick="{{nextTheme}}" aria-label="Đổi theme" style="height: 34px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--ink); font: 600 12px Inter, sans-serif; display: flex; align-items: center; gap: 8px; justify-content: flex-start; text-align: center"><span style="width: 12px; height: 12px; border-radius: 99px; background: var(--ac)"></span>{{themeName}}</button>
+    <button onClick="{{toggleDark}}" aria-label="Sáng / tối" style="width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--ink); display: flex; align-items: center; justify-content: center;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"></path></svg>
+    </button>
+  </header>
+
+  <main style="position: absolute; left: 252px; right: 12px; top: 78px; bottom: 96px; display: flex; flex-direction: column; gap: 14px;">
+    <section style="flex: 1; min-height: 0; background: var(--sf); border: 1px solid var(--line); border-radius: 22px; padding: 22px 28px; display: flex; flex-direction: column; gap: 14px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.05em; color: var(--ink2);">{{kindLabel}}</span>
+        <div style="display: flex; gap: 6px;">
+          <button onClick="{{toggleStar}}" aria-pressed="{{starStr}}" aria-label="Khó nhớ" style="width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--line); background: {{starBg}}; color: var(--ink); font-size: 16px;">★</button>
+          <button aria-label="Hán Hàn" style="width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--ink); font-family: 'Noto Serif KR', serif; font-weight: 700;">漢</button>
+        </div>
+      </div>
+      <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14px; text-align: center;">
+        <div style="font-size: {{frontSize}}; font-family: {{frontFont}}; font-weight: 600; line-height: 1.35; max-width: 620px;">{{card.front}}</div>
+        <sc-if value="{{showBack}}" hint-placeholder-val="{{false}}">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="font-family: {{backFont}}; font-size: {{backSize}}; font-weight: 700; color: {{backInk}};">{{card.back}}</div>
+            <button aria-label="Nghe phát âm" style="width: 40px; height: 40px; border-radius: 99px; border: 0; background: color-mix(in srgb, var(--ac) 16%, var(--sf)); color: var(--ink); font-size: 15px;">▶︎</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{showNote}}" hint-placeholder-val="{{false}}">
+          <div style="font-size: 14px; line-height: 1.55; color: var(--ink2); background: color-mix(in srgb, var(--ink) 5%, var(--sf)); border-radius: 12px; padding: 10px 14px; max-width: 560px;">{{card.note}}</div>
+        </sc-if>
+      </div>
+      <sc-if value="{{isTyped}}" hint-placeholder-val="{{true}}">
+        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: var(--ink2);">{{fieldLabel}}
+          <input value="{{answer}}" onChange="{{onType}}" onKeyDown="{{onKey}}" lang="ko" autocomplete="off" placeholder="Gõ tiếng Hàn rồi Enter…" style="height: 56px; box-sizing: border-box; border-radius: 14px; border: 1.5px solid {{fieldBorder}}; background: {{fieldBg}}; color: var(--ink); padding: 0 18px; font: 500 22px 'Noto Sans KR', sans-serif; outline-color: var(--ac);">
+        </label>
+      </sc-if>
+    </section>
+  </main>
+
+  <div class="glass" style="position: absolute; left: 620px; transform: translateX(-50%); bottom: 24px; display: flex; gap: 6px; padding: 6px; border-radius: 999px;">
+    <sc-for list="{{actions}}" as="a" hint-placeholder-count="3">
+      <button onClick="{{a.run}}" class="{{a.cls}}" style="height: 44px; padding: 0 18px; border-radius: 999px; border: 0; background: {{a.bg}}; color: {{a.ink}}; font: 600 14px Inter, sans-serif; display: flex; align-items: center; gap: 8px;">{{a.label}} <span style="font: 600 11px ui-monospace, Menlo, monospace; opacity: 0.75;">{{a.key}}</span></button>
+    </sc-for>
+  </div>
+
+
+  <sc-if value="{{palette}}" hint-placeholder-val="{{false}}">
+    <div style="position: absolute; inset: 0; background: color-mix(in srgb, #000 22%, transparent); display: flex; justify-content: center; align-items: flex-start; padding-top: 120px;">
+      <div class="glass" role="dialog" aria-label="Command Palette" style="width: 560px; border-radius: 20px; padding: 10px; display: flex; flex-direction: column; gap: 6px;">
+        <input value="{{query}}" onChange="{{onQuery}}" onKeyDown="{{onPaletteKey}}" placeholder="Gõ lệnh… (vd: theme, học, cắt clip)" aria-label="Tìm lệnh" style="height: 46px; box-sizing: border-box; border-radius: 12px; border: 0; background: color-mix(in srgb, var(--sf) 70%, transparent); color: var(--ink); padding: 0 14px; font: 500 16px Inter, sans-serif; outline-color: var(--ac);">
+        <sc-for list="{{commands}}" as="c" hint-placeholder-count="6">
+          <button onClick="{{c.run}}" style="display: flex; justify-content: space-between; align-items: center; height: 40px; padding: 0 12px; border-radius: 10px; border: 0; background: {{c.bg}}; color: var(--ink); font: 500 14px Inter, sans-serif; text-align: left;">
+            <span>{{c.label}}</span><span style="font-size: 12px; color: var(--ink2);">{{c.hint}}</span>
+          </button>
+        </sc-for>
+        <div style="display: flex; justify-content: space-between; padding: 4px 6px; font-size: 11px; color: var(--ink2);"><span>↵ chọn · esc đóng</span><button onClick="{{closePalette}}" style="border: 0; background: none; color: var(--ink2); font: 600 11px Inter, sans-serif;">Đóng</button></div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1000,"height":700}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { theme: 'paper', dark: false, idx: 0, answer: '', phase: 'ask', correct: 0, attempted: 0, mastered: 11, star: {}, palette: false, query: '' };
+    this.cards = [
+      { id: 'a', front: 'tái chế', back: '재활용하다', note: 'Hán Hàn: 再活用 · 플라스틱 병을 재활용하다 — tái chế chai nhựa.', typed: true },
+      { id: 'b', front: 'chi phí chế tạo ít tốn kém', back: '제작 비용이 적게 들다', note: '', typed: true },
+      { id: 'c', front: '플라스틱 병을 재활용하는 방법에는 여러 가지가 있다.', back: 'Có nhiều cách để tái chế chai nhựa.', note: 'Một trong số đó là làm đồng phục cho vận động viên.', typed: false }
+    ];
+    this.TH = {
+      paper: ['Giấy', { bg: '#F5F4F0', sf: '#FFFFFF', ink: '#191C24', ink2: '#4C5260', ac: '#2B54C9', line: '#DDDBD3', on: '#FFFFFF' }, { bg: '#121418', sf: '#1B1E24', ink: '#ECEEF2', ink2: '#A9AFBC', ac: '#7C9BFF', line: '#343946', on: '#0B1020' }],
+      ink: ['Mực đêm', { bg: '#EEF0F6', sf: '#FFFFFF', ink: '#141826', ink2: '#4A5068', ac: '#5B4BD6', line: '#D7DAE6', on: '#FFFFFF' }, { bg: '#0E1020', sf: '#171A2E', ink: '#E8E9F5', ink2: '#A3A7C4', ac: '#A99BFF', line: '#2B2F4A', on: '#120E2A' }],
+      pine: ['Rừng thông', { bg: '#F1F4EF', sf: '#FFFFFF', ink: '#17201A', ink2: '#475449', ac: '#1F6B4A', line: '#D6DED6', on: '#FFFFFF' }, { bg: '#0F1712', sf: '#17221B', ink: '#E5EEE7', ink2: '#9DB0A3', ac: '#5CCB95', line: '#2A3A2F', on: '#06140C' }],
+      dusk: ['Hoàng hôn', { bg: '#FAF3EE', sf: '#FFFFFF', ink: '#2A1A14', ink2: '#6A4E43', ac: '#B8402A', line: '#EADBD2', on: '#FFFFFF' }, { bg: '#1A1210', sf: '#251A17', ink: '#F5E9E4', ink2: '#C2A79D', ac: '#FF8A66', line: '#3D2C27', on: '#2A0E05' }],
+      contrast: ['Tương phản cao', { bg: '#FFFFFF', sf: '#FFFFFF', ink: '#000000', ink2: '#222222', ac: '#0033CC', line: '#000000', on: '#FFFFFF' }, { bg: '#000000', sf: '#0A0A0A', ink: '#FFFFFF', ink2: '#E6E6E6', ac: '#FFD400', line: '#FFFFFF', on: '#000000' }],
+      system: ['Hệ thống', { bg: '#F2F2F4', sf: '#FFFFFF', ink: '#1D1D1F', ink2: '#55555B', ac: '#0064D2', line: '#DADADF', on: '#FFFFFF' }, { bg: '#161618', sf: '#1F1F22', ink: '#F2F2F4', ink2: '#AAAAB0', ac: '#409CFF', line: '#38383C', on: '#03182E' }]
+    };
+  }
+  norm(x) { return (x || '').normalize('NFC').trim().replace(/\s+/g, ' ').replace(/[.!?]$/, ''); }
+  renderVals() {
+    const s = this.state; const go = (p) => this.setState(p);
+    const ST = s.dark ? { ok: '#5CC48E', bad: '#F08174', flag: '#F2B54B', glass: 'rgba(30,32,40,0.5)', gb: 'rgba(255,255,255,0.16)', sh: '0 10px 34px rgba(0,0,0,0.5)' } : { ok: '#1C7146', bad: '#B23A2E', flag: '#9A5B00', glass: 'rgba(255,255,255,0.55)', gb: 'rgba(255,255,255,0.75)', sh: '0 10px 34px rgba(20,24,40,0.16)' };
+    const t = Object.assign({}, this.TH[s.theme][s.dark ? 2 : 1], ST);
+    const vars = `--bg:${t.bg};--sf:${t.sf};--ink:${t.ink};--ink2:${t.ink2};--ac:${t.ac};--line:${t.line};--on:${t.on};--ok:${t.ok};--bad:${t.bad};--flag:${t.flag};--glass:${t.glass};--gb:${t.gb};--sh:${t.sh}`;
+    const keys = Object.keys(this.TH);
+    const card = this.cards[s.idx % 3]; const p = s.phase; const typed = card.typed;
+    const next = () => go({ idx: s.idx + 1, answer: '', phase: this.cards[(s.idx + 1) % 3].typed ? 'ask' : 'front' });
+    const check = () => { if (!this.norm(s.answer)) return; const ok = this.norm(s.answer) === this.norm(card.back); go({ phase: ok ? 'right' : 'wrong', attempted: s.attempted + 1, correct: s.correct + (ok ? 1 : 0) }); };
+    const reveal = () => go({ phase: 'revealed', attempted: s.attempted + 1 });
+    const master = () => { go({ mastered: Math.min(26, s.mastered + 1) }); setTimeout(next, 0); };
+    const grade = (ok) => { go({ attempted: s.attempted + 1, correct: s.correct + (ok ? 1 : 0) }); setTimeout(next, 0); };
+    const plain = { cls: '', bg: 'transparent', ink: 'var(--ink)' };
+    const main = { cls: 'tglass', bg: '', ink: 'var(--on)' };
+    let actions;
+    if (typed && p === 'ask') actions = [Object.assign({ label: 'Xem đáp án', key: '⌘/', run: reveal }, plain), Object.assign({ label: 'Đã thuộc', key: '⌘↵', run: master }, plain), Object.assign({ label: 'Chấm bài', key: '↵', run: check }, main)];
+    else if (typed && p === 'wrong') actions = [Object.assign({ label: 'Đã trả lời đúng?', key: '⌘Z', run: () => go({ phase: 'over', correct: s.correct + 1 }) }, plain), Object.assign({ label: 'Thẻ tiếp', key: '↵', run: next }, main)];
+    else if (typed) actions = [Object.assign({ label: 'Thẻ tiếp', key: '↵', run: next }, main)];
+    else if (p !== 'back') actions = [Object.assign({ label: 'Đã thuộc', key: '⌘↵', run: master }, plain), Object.assign({ label: 'Lật thẻ', key: 'Space', run: () => go({ phase: 'back' }) }, main)];
+    else actions = [Object.assign({ label: 'Chưa nhớ', key: '1', run: () => grade(false) }, plain), Object.assign({ label: 'Nhớ', key: '2', run: () => grade(true) }, main)];
+    const fm = { right: ['맞아 — chính xác', t.ok], over: ['✓ 맞아 — ' + card.back, t.ok], wrong: ['Chưa đúng — đáp án ở trên', t.bad], revealed: ['Đã xem đáp án (tính là sai)', t.flag] }[p] || ['Câu trả lời', t.line];
+    const allCmds = keys.map(k => ({ label: 'Theme: ' + this.TH[k][0], hint: s.theme === k ? 'đang dùng' : '', run: () => go({ theme: k, palette: false, query: '' }) }))
+      .concat([
+        { label: 'Theme: Bật/tắt chế độ tối', hint: '⌥⌘D', run: () => go({ dark: !s.dark, palette: false, query: '' }) },
+        { label: 'Theme: Nhập file theme .json…', hint: '', run: () => go({ palette: false }) },
+        { label: 'Học: Từ khó nhớ ★', hint: '18 thẻ', run: () => go({ palette: false }) },
+        { label: 'Học: Rừng & Bảo vệ môi trường', hint: 'đến hạn', run: () => go({ palette: false }) },
+        { label: 'Đi tới: Cắt clip âm thanh', hint: '⌘4', run: () => go({ palette: false }) },
+        { label: 'Đi tới: Nhập từ AI', hint: '⌘3', run: () => go({ palette: false }) }
+      ]);
+    const q = s.query.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const cmds = allCmds.filter(c => c.label.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').includes(q)).slice(0, 7);
+    return {
+      vars, themeName: this.TH[s.theme][0],
+      nextTheme: () => go({ theme: keys[(keys.indexOf(s.theme) + 1) % keys.length] }),
+      toggleDark: () => go({ dark: !s.dark }),
+      card, answer: s.answer, correct: s.correct, attempted: s.attempted, wrong: s.attempted - s.correct, mastered: s.mastered,
+      progressW: Math.round(s.mastered / 26 * 100) + '%',
+      kindLabel: typed ? 'VIỆT → HÀN · GÕ ĐÁP ÁN' : 'HÀN → VIỆT · TỰ CHẤM',
+      frontSize: typed ? '40px' : '28px', frontFont: typed ? 'Inter, sans-serif' : "'Noto Serif KR', serif",
+      backFont: typed ? "'Noto Serif KR', serif" : 'Inter, sans-serif', backSize: typed ? '44px' : '22px',
+      backInk: p === 'wrong' || p === 'revealed' ? t.bad : t.ink,
+      showBack: typed ? p !== 'ask' : p === 'back', showNote: !!card.note && (typed ? p !== 'ask' : p === 'back'),
+      isTyped: typed, fieldLabel: fm[0], fieldBorder: fm[1], fieldBg: p === 'ask' ? t.sf : `color-mix(in srgb, ${fm[1]} 12%, ${t.sf})`,
+      onType: (e) => { if (p === 'ask') go({ answer: e.target.value }); },
+      onKey: (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); go({ palette: true }); return; }
+        if (e.key === 'Enter') { e.preventDefault(); if (p === 'ask') check(); else next(); }
+      },
+      actions,
+      starStr: String(!!s.star[card.id]), starBg: s.star[card.id] ? `color-mix(in srgb, ${t.flag} 25%, ${t.sf})` : 'transparent',
+      toggleStar: () => go({ star: Object.assign({}, s.star, { [card.id]: !s.star[card.id] }) }),
+      queue: [{ t: 'chi phí chế tạo ít tốn kém', b: 'hộp 1' }, { t: '플라스틱 병을 재활용하는…', b: 'mới' }, { t: 'nhẹ và mát', b: 'hộp 2' }, { t: 'dùng làm chất liệu chính', b: 'sai 1 lần' }, { t: 'tái chế chai nhựa', b: 'hộp 3' }],
+      palette: s.palette, query: s.query,
+      openPalette: () => go({ palette: true }), closePalette: () => go({ palette: false, query: '' }),
+      onQuery: (e) => go({ query: e.target.value }),
+      onPaletteKey: (e) => { if (e.key === 'Escape') go({ palette: false, query: '' }); if (e.key === 'Enter' && cmds[0]) cmds[0].run(); },
+      commands: cmds.map((c, i) => Object.assign({}, c, { bg: i === 0 ? `color-mix(in srgb, ${t.ac} 18%, transparent)` : 'transparent' }))
+    };
+  }
+}
+</script>
+</body>
+</html>
