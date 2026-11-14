@@ -42,7 +42,8 @@ struct LibraryView: View {
             Button { themes.cycleAppearance() } label: { Image(systemName: themes.appearance.symbol) }
                 .help("Giao diện: \(themes.appearance.label) (⌥⌘D)")
         }
-        ToolbarItem(placement: .principal) {
+        // .navigation: hệ thống xếp sát bên trái (cạnh nút sidebar), không căn giữa như .principal.
+        ToolbarItem(placement: .navigation) {
             HStack(spacing: 8) {
                 Image(systemName: "magnifyingglass").foregroundStyle(ink2)
                 TextField("Tìm bộ, từ Hàn hoặc nghĩa…  ⌘F", text: $search)
@@ -55,13 +56,9 @@ struct LibraryView: View {
                 Button("") { searchFocused = true }
                     .keyboardShortcut("f", modifiers: .command).opacity(0).frame(width: 0)
             }
-            .frame(maxWidth: 320, alignment: .leading)
             .padding(.horizontal, 12)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .frame(height: 44)
+            .frame(width: 320, height: 44, alignment: .leading)
             .glassEffect(.regular, in: .rect(cornerRadius: 16))
-            // Giống thanh trên màn Học: khung ngoài giãn hết chỗ trống, căn trái.
-            .frame(minWidth: 280, maxWidth: .infinity, alignment: .leading)
         }
         .sharedBackgroundVisibility(.hidden)
     }
