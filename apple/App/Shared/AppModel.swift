@@ -80,7 +80,8 @@ final class AppModel {
         let catalog = content.buildStudyCatalog()
         engine = StudyEngine(
             decks: catalog.decks, vocabGroups: catalog.vocabGroups, markedIds: catalog.markedIds,
-            hanjaIds: catalog.hanjaIds, passageIds: catalog.passageIds)
+            hanjaIds: catalog.hanjaIds, passageIds: catalog.passageIds,
+            clipWords: catalog.clipWords)
         engine.bootstrap()
         publish()
     }

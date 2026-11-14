@@ -290,7 +290,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
 
 ## G3 · Clip âm thanh
 
-- [ ] **T3.01 · `Clip` trong HanCore**
+- [x] **T3.01 · `Clip` trong HanCore**
   - Làm: model `Clip` + decode `clips` trong `/content`; `APIClient` cho `/clips` + upload M4A;
     `StudyWord.kind = .card | .clip(audioId:)`; deck ảo `clips` (🎧); `AnswerMatcher.wordDiff(answer:target:)`
     trả từng từ đúng/sai.

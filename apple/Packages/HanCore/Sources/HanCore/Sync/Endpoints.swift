@@ -103,4 +103,7 @@ public protocol ContentAPI: Sendable {
     func sessions() async throws -> [StudySessionRecord]
     func uploadAudio(_ bytes: Data, contentType: String) async throws -> AudioUpload
     func downloadAudio(id: String) async throws -> Data
+    func createClip(_ clip: NewClip) async throws -> Clip
+    func updateClip(id: String, patch: ClipPatch) async throws -> Clip
+    func deleteClip(id: String) async throws
 }

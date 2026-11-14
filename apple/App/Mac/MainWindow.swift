@@ -71,6 +71,7 @@ struct MainWindow: View {
             .init(id: hanjaDeckId, title: "漢 Hán Hàn", count: model.state.hanjaCount),
             .init(id: passageDeckId, title: "📖 Đoạn văn", count: model.state.passageCount),
             .init(id: randomDeckId, title: "🔀 Ngẫu nhiên 20", count: nil),
+            .init(id: clipsDeckId, title: "🎧 Clip nghe", count: model.content.clips.count),
         ]
     }
 
@@ -114,9 +115,6 @@ struct MainWindow: View {
                     }
                     .buttonStyle(.plain)
                 }
-                Label("🎧 Clip nghe", systemImage: "headphones")
-                    .foregroundStyle(.tertiary)
-                    .help("Có ở giai đoạn 3")
             }
         }
         .safeAreaInset(edge: .bottom) { SyncFooter(status: model.syncStatus) }

@@ -4,10 +4,39 @@ import Foundation
 public struct ContentSnapshot: Codable, Sendable, Hashable {
     public var groups: [ContentGroup]
     public var decks: [ContentDeck]
+    public var clips: [Clip]
 
-    public init(groups: [ContentGroup] = [], decks: [ContentDeck] = []) {
+    public init(groups: [ContentGroup] = [], decks: [ContentDeck] = [], clips: [Clip] = []) {
         self.groups = groups
         self.decks = decks
+        self.clips = clips
+    }
+
+    private enum CodingKeys: String, CodingKey { case groups, decks, clips }
+
+    /// Cache/server cũ chưa có `clips` → rỗng.
+    public init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        groups = try c.decode([ContentGroup].self, forKey: .groups)
+        decks = try c.decode([ContentDeck].self, forKey: .decks)
+        clips = try c.decodeIfPresent([Clip].self, forKey: .clips) ?? []
+    }
+
+    /// Thay (hoặc thêm) một clip theo id.
+    public func upsertingClip(_ clip: Clip) -> ContentSnapshot {
+        var copy = self
+        if let i = copy.clips.firstIndex(where: { $0.id == clip.id }) {
+            copy.clips[i] = clip
+        } else {
+            copy.clips.append(clip)
+        }
+        return copy
+    }
+
+    public func removingClip(_ clipId: String) -> ContentSnapshot {
+        var copy = self
+        copy.clips.removeAll { $0.id == clipId }
+        return copy
     }
 
     /// Thay (hoặc thêm) một nhóm theo id.

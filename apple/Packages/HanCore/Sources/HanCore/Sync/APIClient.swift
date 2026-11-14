@@ -91,6 +91,33 @@ public struct URLSessionContentAPI: ContentAPI {
         try await send("GET", "audio/\(id)")
     }
 
+    public func createClip(_ clip: NewClip) async throws -> Clip {
+        var body: [String: Any] = [
+            "audioId": clip.audioId, "sourceName": clip.sourceName, "startMs": clip.startMs,
+            "endMs": clip.endMs, "transcript": clip.transcript,
+        ]
+        if let t = clip.translation { body["translation"] = t }
+        if let n = clip.note { body["note"] = n }
+        if let d = clip.deckId { body["deckId"] = d }
+        return try decode(try await send("POST", "clips", json: body))
+    }
+
+    public func updateClip(id: String, patch: ClipPatch) async throws -> Clip {
+        var body: [String: Any] = [:]
+        if let v = patch.startMs { body["startMs"] = v }
+        if let v = patch.endMs { body["endMs"] = v }
+        if let v = patch.transcript { body["transcript"] = v }
+        if let v = patch.marked { body["marked"] = v }
+        apply(patch.translation, to: &body, key: "translation")
+        apply(patch.note, to: &body, key: "note")
+        apply(patch.deckId, to: &body, key: "deckId")
+        return try decode(try await send("PATCH", "clips/\(id)", json: body))
+    }
+
+    public func deleteClip(id: String) async throws {
+        _ = try await send("DELETE", "clips/\(id)")
+    }
+
     // MARK: Hạ tầng
 
     private func send(

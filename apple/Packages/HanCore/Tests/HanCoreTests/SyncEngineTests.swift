@@ -51,6 +51,9 @@ actor FakeAPI: ContentAPI {
     func deleteCard(id: String) async throws { throw APIError.offline }
     func uploadAudio(_ bytes: Data, contentType: String) async throws -> AudioUpload { throw APIError.offline }
     func downloadAudio(id: String) async throws -> Data { throw APIError.offline }
+    func createClip(_ clip: NewClip) async throws -> Clip { throw APIError.offline }
+    func updateClip(id: String, patch: ClipPatch) async throws -> Clip { throw APIError.offline }
+    func deleteClip(id: String) async throws { throw APIError.offline }
 }
 
 final class Events: @unchecked Sendable {

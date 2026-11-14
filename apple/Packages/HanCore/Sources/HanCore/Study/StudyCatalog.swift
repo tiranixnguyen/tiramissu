@@ -46,11 +46,14 @@ public struct StudyCatalog: Sendable, Hashable {
     public var markedIds: Set<String>
     public var hanjaIds: Set<String>
     public var passageIds: Set<String>
+    /// Mọi clip nghe, dựng sẵn thành thẻ — nguồn của bộ ảo 🎧.
+    public var clipWords: [StudyWord]
 
     public init(
         decks: [StudyDeck] = [], vocabGroups: [VocabGroup] = [], markedIds: Set<String> = [],
-        hanjaIds: Set<String> = [], passageIds: Set<String> = []
+        hanjaIds: Set<String> = [], passageIds: Set<String> = [], clipWords: [StudyWord] = []
     ) {
+        self.clipWords = clipWords
         self.decks = decks
         self.vocabGroups = vocabGroups
         self.markedIds = markedIds
@@ -59,11 +62,26 @@ public struct StudyCatalog: Sendable, Hashable {
     }
 }
 
+extension Clip {
+    /// Thẻ nghe: mặt trước là nghĩa (hoặc lời nhắc), mặt sau là câu Hàn cần chép lại.
+    public var studyWord: StudyWord {
+        StudyWord(
+            id: id, front: translation ?? "🎧 Nghe và chép lại", back: transcript, note: note,
+            typeAnswer: true, kind: .clip(audioId: audioId))
+    }
+}
+
 extension ContentSnapshot {
     /// Dựng dữ liệu cho engine: sắp nhóm/bộ/thẻ theo `position` (ổn định khi trùng).
     public func buildStudyCatalog() -> StudyCatalog {
         var catalog = StudyCatalog()
         catalog.vocabGroups = sortedStable(groups, by: \.position).map { VocabGroup(id: $0.id, name: $0.name) }
+
+        let sortedClips = clips.enumerated()
+            .sorted { ($0.element.createdAt, $0.offset) < ($1.element.createdAt, $1.offset) }
+            .map(\.element)
+        catalog.clipWords = sortedClips.map(\.studyWord)
+        for c in sortedClips where c.marked { catalog.markedIds.insert(c.id) }
 
         for d in sortedStable(decks, by: \.position) {
             var words: [StudyWord] = []
@@ -77,6 +95,7 @@ extension ContentSnapshot {
                         altAnswers: c.altAnswers.isEmpty ? nil : c.altAnswers,
                         typeAnswer: c.typeAnswer, audio: c.audio))
             }
+            words.append(contentsOf: sortedClips.filter { $0.deckId == d.id }.map(\.studyWord))
             catalog.decks.append(
                 StudyDeck(
                     id: d.id, name: d.name, words: words, group: d.groupId, type: d.type,

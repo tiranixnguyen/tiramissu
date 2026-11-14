@@ -17,6 +17,7 @@ public final class StudyEngine {
     private var hanjaIds: Set<String>
     private var passageIds: Set<String>
     private var virtualDecks: [String: StudyDeck] = [:]
+    private var clipWords: [StudyWord]
 
     private var runtime: DeckRuntime?
     public private(set) var currentVocabGroup: String
@@ -32,9 +33,10 @@ public final class StudyEngine {
 
     public init(
         decks: [StudyDeck], vocabGroups: [VocabGroup], markedIds: Set<String> = [],
-        hanjaIds: Set<String> = [], passageIds: Set<String> = [],
+        hanjaIds: Set<String> = [], passageIds: Set<String> = [], clipWords: [StudyWord] = [],
         random: any RandomNumberGenerator = SystemRandomNumberGenerator()
     ) {
+        self.clipWords = clipWords
         self.decks = decks
         self.vocabGroups = vocabGroups
         self.markedIds = markedIds
@@ -325,6 +327,8 @@ public final class StudyEngine {
         if deckId == currentDeckId { return }
         if deckId == randomDeckId {
             buildRandomDeck()
+        } else if deckId == clipsDeckId {
+            buildClipsDeck()
         } else if flagKeyPath(deckId) != nil {
             buildFlaggedDeck(deckId)
         }
@@ -359,6 +363,11 @@ public final class StudyEngine {
             id: id, name: name, words: flaggedWords(self[keyPath: kp]), isVirtual: true)
     }
 
+    private func buildClipsDeck() {
+        virtualDecks[clipsDeckId] = StudyDeck(
+            id: clipsDeckId, name: "🎧 Clip nghe", words: clipWords, isVirtual: true)
+    }
+
     /// 20 thẻ ngẫu nhiên rút từ mọi bộ đang hiển thị.
     private func buildRandomDeck() {
         let pool = visibleDecks.flatMap(\.words)
@@ -385,6 +394,7 @@ public final class StudyEngine {
         markedIds = catalog.markedIds
         hanjaIds = catalog.hanjaIds
         passageIds = catalog.passageIds
+        clipWords = catalog.clipWords
 
         if !vocabGroups.contains(where: { $0.id == currentVocabGroup }) {
             currentVocabGroup = vocabGroups.first?.id ?? ""
@@ -397,6 +407,8 @@ public final class StudyEngine {
         for d in decks { for w in d.words { byId[w.id] = w } }
         if currentDeckId == randomDeckId {
             setRandomDeck((oldDeck?.words ?? []).compactMap { byId[$0.id] })
+        } else if currentDeckId == clipsDeckId {
+            buildClipsDeck()
         } else if let id = currentDeckId, flagKeyPath(id) != nil {
             buildFlaggedDeck(id)
         }
@@ -440,9 +452,10 @@ public let markedDeckId = "marked"
 public let hanjaDeckId = "hanja"
 public let passageDeckId = "passage"
 public let randomDeckId = "random20"
+public let clipsDeckId = "clips"
 
 public func isVirtualDeckId(_ id: String?) -> Bool {
-    id == markedDeckId || id == hanjaDeckId || id == passageDeckId || id == randomDeckId
+    id == markedDeckId || id == hanjaDeckId || id == passageDeckId || id == randomDeckId || id == clipsDeckId
 }
 
 private let flaggedDeckNames = [
