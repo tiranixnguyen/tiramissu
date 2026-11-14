@@ -131,6 +131,8 @@ struct MainWindow: View {
             LibraryView()
         } else if nav.screen == .importAI {
             ImportView()
+        } else if nav.screen == .audioClip {
+            AudioClipView()
         } else {
             placeholder
         }

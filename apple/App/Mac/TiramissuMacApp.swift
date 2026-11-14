@@ -10,6 +10,7 @@ struct TiramissuMacApp: App {
     @State private var themes: ThemeStore
     @State private var server = ServerSettings()
     @State private var tts = TTS()
+    @State private var audioDoc = AudioDocument()
     @Environment(\.openWindow) private var openWindow
 
     init() {
@@ -25,6 +26,7 @@ struct TiramissuMacApp: App {
                 .environment(nav)
                 .environment(themes)
                 .environment(tts)
+                .environment(audioDoc)
                 .themed(themes)
                 .task {
                     model.configureAPI(baseURL: server.baseURL, token: { ServerSettings.currentToken() })

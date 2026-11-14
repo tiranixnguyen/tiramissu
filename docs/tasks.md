@@ -301,6 +301,8 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Làm: kéo thả / mở file (mp3, m4a, wav), lưu security-scoped bookmark + danh sách "File gần đây"; tách
     biên độ (RMS theo cột) trên luồng nền; `WaveformView` vẽ bằng `Canvas`, zoom `⌘+/⌘−`.
   - Xong khi: 👤 file 15 phút hiện dạng sóng < 2 s.
+  - Trạng thái: code xong, build sạch — còn 👤 thử file 15 phút (chưa tick). Cần `cd apple && xcodegen` (thêm
+    file entitlements cho bookmark).
   - Phụ thuộc: T2.32
 - [ ] **T3.03 · Phát A–B, lặp, tốc độ, phím tắt** — `AVAudioEngine` + `AVAudioUnitTimePitch`; `Space`,
   `[`, `]`, `⌥←/⌥→`, `L`, 0.5/0.75/1×; `GlassActionBar` như artboard.
