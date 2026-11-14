@@ -57,9 +57,11 @@ struct LibraryView: View {
             }
             .frame(maxWidth: 320, alignment: .leading)
             .padding(.horizontal, 12)
-            .frame(minWidth: 280, maxWidth: .infinity, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .frame(height: 44)
             .glassEffect(.regular, in: .rect(cornerRadius: 16))
+            // Giống thanh trên màn Học: khung ngoài giãn hết chỗ trống, căn trái.
+            .frame(minWidth: 280, maxWidth: .infinity, alignment: .leading)
         }
         .sharedBackgroundVisibility(.hidden)
     }
