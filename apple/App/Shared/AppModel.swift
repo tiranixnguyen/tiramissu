@@ -132,6 +132,13 @@ final class AppModel {
         Task { await persistence.saveContent(snapshot) }
     }
 
+    @discardableResult
+    func createDeck(_ new: NewDeck) async throws -> ContentDeck {
+        let deck = try await online().createDeck(new)
+        apply(content.upsertingDeck(deck))
+        return deck
+    }
+
     func updateCard(id: String, edit: CardEdit) async throws {
         let card = try await online().updateCard(id: id, edit: edit)
         apply(content.updatingCard(id) { $0 = card })

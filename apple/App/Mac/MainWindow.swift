@@ -107,6 +107,8 @@ struct MainWindow: View {
             TodayView()
         } else if nav.screen == .library {
             LibraryView()
+        } else if nav.screen == .importAI {
+            ImportView()
         } else {
             placeholder
         }

@@ -278,6 +278,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
 - [ ] **T2.39 · Màn Nhập từ AI** — theo artboard: chọn loại + công cụ → `⌘⇧C` chép `Prompts.text`; dán JSON
   → `DeckImport` báo lỗi trực tiếp; xem trước + "Trùng"; chọn nhóm; `⌘↵` tạo bộ (`POST /decks`).
   - Xong khi: 👤 chạy trọn quy trình `docs/drive-setup.md` §3 với một bài thật.
+  - Trạng thái: code xong (`ImportView`, `AppModel.createDeck`; parse/prompt dùng HanCore đã có test) — còn bước 👤 (chưa tick).
   - Phụ thuộc: T2.38
 - [ ] **T2.40 · Command Palette `⌘K`** — overlay kính, tìm không dấu; lệnh: Theme: <6 theme>, bật/tắt tối,
   nhập theme, Học: <bộ>, Đi tới: <màn>; ↑↓ chọn, ↵ chạy, esc đóng.
