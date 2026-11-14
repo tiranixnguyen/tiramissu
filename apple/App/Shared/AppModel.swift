@@ -151,7 +151,12 @@ final class AppModel {
     }
 
     func addCard(deckId: String, word: ImportedWord) async throws {
-        let deck = try await online().appendCards(deckId: deckId, words: [word])
+        try await addCards(deckId: deckId, words: [word])
+    }
+
+    /// Thêm nhiều thẻ vào bộ có sẵn (`POST /decks/:id/cards`). Cần mạng.
+    func addCards(deckId: String, words: [ImportedWord]) async throws {
+        let deck = try await online().appendCards(deckId: deckId, words: words)
         apply(content.upsertingDeck(deck))
     }
 

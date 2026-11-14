@@ -286,7 +286,8 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Chỉ gửi từ đã tick: bộ mới `POST /decks`, bộ có sẵn `POST /decks/:id/cards`. Xong → nhắc tick
     "Đã đưa vào app" trong Doc. Logic chọn (mặc định, đếm, lọc) để trong `HanCore` + test.
   - Xong khi: 👤 chạy trọn quy trình `docs/drive-setup.md` §3 với một bài thật.
-  - Trạng thái: code xong (`ImportView`, `AppModel.createDeck`; parse/prompt dùng HanCore đã có test) — còn bước 👤 (chưa tick).
+  - Trạng thái: code xong theo thiết kế mới (`ImportView`, `ImportSelection` trong HanCore có test,
+    `AppModel.addCards`/`createDeck`) — còn bước 👤 (chưa tick).
   - Phụ thuộc: T2.38
 - [ ] **T2.40 · Command Palette `⌘K`** — overlay kính, tìm không dấu; lệnh: Theme: <6 theme>, bật/tắt tối,
   nhập theme, Học: <bộ>, Đi tới: <màn>; ↑↓ chọn, ↵ chạy, esc đóng.
