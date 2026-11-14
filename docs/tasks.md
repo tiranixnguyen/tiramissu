@@ -307,6 +307,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
 - [ ] **T3.03 · Phát A–B, lặp, tốc độ, phím tắt** — `AVAudioEngine` + `AVAudioUnitTimePitch`; `Space`,
   `[`, `]`, `⌥←/⌥→`, `L`, 0.5/0.75/1×; `GlassActionBar` như artboard.
   - Phụ thuộc: T3.02
+  - Trạng thái: code xong, build sạch — chưa thử nghe thật (chưa tick). Phím: Space, `[` `]`, ⌥←/⌥→, L, 5/7/1 (0.5/0.75/1×), ⌘←/⌘→ = ∓2s.
 - [ ] **T3.04 · Lưu clip** — form câu Hàn/nghĩa/bộ; `⌘S`: xuất A–B ra M4A (`AVAssetExportSession`,
   `timeRange`) → `POST /audio` (`audio/mp4`) → `POST /clips`; danh sách clip bên phải.
   - Xong khi: 👤 clip mới xuất hiện ở cột phải và trong `/content`.

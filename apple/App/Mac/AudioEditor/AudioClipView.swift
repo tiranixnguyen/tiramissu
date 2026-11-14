@@ -20,6 +20,7 @@ struct AudioClipView: View {
                 header
                 waveCard
                 Spacer(minLength: 0)
+                if doc.waveform != nil { GlassActionBar(playerActions).padding(.bottom, 4) }
             }
             .frame(maxWidth: .infinity)
         }
@@ -32,6 +33,12 @@ struct AudioClipView: View {
             doc.open(url)
             return true
         } isTargeted: { dropTargeted = $0 }
+        .onChange(of: doc.player.position) { _, p in
+            // Đầu phát chạy ra ngoài khung đang xem → cuộn theo.
+            guard doc.player.isPlaying, p < windowStart || p > windowStart + windowLength else { return }
+            windowStart = min(max(0, p - windowLength * 0.1), max(0, doc.duration - windowLength))
+        }
+        .onDisappear { doc.player.pause() }
         .onChange(of: doc.duration) { _, d in
             windowStart = 0
             windowLength = d > 0 ? min(30, d) : 30
@@ -109,13 +116,27 @@ struct AudioClipView: View {
                     Text(timeText(min(wave.duration, windowStart + windowLength))).monospacedDigit()
                 }
                 .font(.system(size: 12, design: .monospaced)).buttonStyle(.plain)
-                WaveformView(waveform: wave, windowStart: $windowStart, windowLength: windowLength)
+                WaveformView(
+                    waveform: wave, windowStart: $windowStart, windowLength: windowLength,
+                    pointA: doc.player.pointA, pointB: doc.player.pointB, playhead: doc.player.position,
+                    onSeek: { doc.player.seek(to: $0) }
+                )
                     .frame(height: 220)
                     .background(RoundedRectangle(cornerRadius: 10).fill(theme?.bg ?? .clear))
                 if wave.duration > windowLength {
                     Slider(value: $windowStart, in: 0...max(0.1, wave.duration - windowLength))
                         .controlSize(.small)
                 }
+                HStack {
+                    Text("Đầu \(timeText(doc.player.position))")
+                    Spacer()
+                    if doc.player.hasRange, let a = doc.player.pointA, let b = doc.player.pointB {
+                        Text("A \(timeText(a)) → B \(timeText(b)) · dài \(String(format: "%.1f", b - a))s")
+                    } else {
+                        Text("Đặt A bằng [ và B bằng ]")
+                    }
+                }
+                .font(.system(size: 12, design: .monospaced)).foregroundStyle(ink2)
             } else if doc.isLoading {
                 HStack(spacing: 8) { ProgressView().controlSize(.small); Text("Đang đọc dạng sóng…") }
                     .foregroundStyle(ink2).frame(maxWidth: .infinity, minHeight: 220)
@@ -134,6 +155,33 @@ struct AudioClipView: View {
             RoundedRectangle(cornerRadius: 18)
                 .strokeBorder(theme?.accent ?? .accentColor, lineWidth: 2).padding(4).allowsHitTesting(false)
         }
+    }
+
+    // MARK: Thanh nút
+
+    private var playerActions: [GlassAction] {
+        let p = doc.player
+        func rateAction(_ r: Float, _ label: String, _ key: String) -> GlassAction {
+            GlassAction(
+                id: "rate\(r)", title: label, shortcut: key, isPrimary: p.rate == r,
+                key: .init(KeyEquivalent(Character(key)), modifiers: [])
+            ) { p.setRate(r) }
+        }
+        return [
+            GlassAction(id: "back", title: "−2s", key: .init(.leftArrow, modifiers: .command)) { p.skip(-2) },
+            GlassAction(id: "play", title: p.isPlaying ? "Dừng" : "Phát", shortcut: "Space", isPrimary: true,
+                key: .init(.space, modifiers: [])) { p.toggle() },
+            GlassAction(id: "fwd", title: "+2s", key: .init(.rightArrow, modifiers: .command)) { p.skip(2) },
+            GlassAction(id: "a", title: "Đặt A", shortcut: "[", key: .init("[", modifiers: [])) { p.setA() },
+            GlassAction(id: "b", title: "Đặt B", shortcut: "]", key: .init("]", modifiers: [])) { p.setB() },
+            GlassAction(id: "bminus", title: "B −0.1s", shortcut: "⌥←", key: .init(.leftArrow, modifiers: .option), isEnabled: p.pointB != nil) { p.nudgeB(-0.1) },
+            GlassAction(id: "bplus", title: "B +0.1s", shortcut: "⌥→", key: .init(.rightArrow, modifiers: .option), isEnabled: p.pointB != nil) { p.nudgeB(0.1) },
+            GlassAction(id: "loop", title: "Lặp", shortcut: "L", isPrimary: p.loops,
+                key: .init("l", modifiers: [])) { p.loops.toggle() },
+            rateAction(0.5, "0.5×", "5"),
+            rateAction(0.75, "0.75×", "7"),
+            rateAction(1, "1×", "1"),
+        ]
     }
 
     // MARK: Hỗ trợ

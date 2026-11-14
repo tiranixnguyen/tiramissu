@@ -7,6 +7,11 @@ struct WaveformView: View {
     let waveform: Waveform
     @Binding var windowStart: TimeInterval
     let windowLength: TimeInterval
+    var pointA: TimeInterval?
+    var pointB: TimeInterval?
+    var playhead: TimeInterval?
+    /// Nhấp lên dạng sóng → đặt vị trí phát.
+    var onSeek: (TimeInterval) -> Void = { _ in }
     @Environment(\.theme) private var theme
 
     var body: some View {
@@ -34,7 +39,12 @@ struct WaveformView: View {
                 context.fill(Path(roundedRect: rect, cornerRadius: 1.5), with: .color(colour.opacity(0.85)))
             }
         }
+        .overlay { markers }
         .contentShape(Rectangle())
+        .onTapGesture(coordinateSpace: .local) { point in
+            guard width > 0 else { return }
+            onSeek(windowStart + Double(point.x / width) * windowLength)
+        }
         .gesture(
             DragGesture(minimumDistance: 2)
                 .onChanged { drag in
@@ -48,6 +58,40 @@ struct WaveformView: View {
         .background(GeometryReader { geo in Color.clear.onAppear { width = geo.size.width }
             .onChange(of: geo.size.width) { _, w in width = w } })
         .accessibilityLabel("Dạng sóng âm thanh")
+    }
+
+    /// Vùng A–B, đầu phát (vẽ bằng Shape để không phải vẽ lại cả dạng sóng mỗi khung hình).
+    private var markers: some View {
+        GeometryReader { geo in
+            let w = geo.size.width
+            ZStack(alignment: .topLeading) {
+                if let a = pointA, let b = pointB, b > a {
+                    let x0 = max(0, x(a, w)), x1 = min(w, x(b, w))
+                    if x1 > x0 {
+                        Rectangle().fill((theme?.ok ?? .green).opacity(0.22))
+                            .frame(width: x1 - x0).offset(x: x0)
+                    }
+                }
+                if let a = pointA, (0...w).contains(x(a, w)) { pin("A", at: x(a, w), height: geo.size.height) }
+                if let b = pointB, (0...w).contains(x(b, w)) { pin("B", at: x(b, w), height: geo.size.height) }
+                if let p = playhead, (0...w).contains(x(p, w)) {
+                    Rectangle().fill(theme?.bad ?? .red).frame(width: 2).offset(x: x(p, w) - 1)
+                }
+            }
+        }
+        .allowsHitTesting(false)
+    }
+
+    private func x(_ t: TimeInterval, _ w: CGFloat) -> CGFloat { CGFloat((t - windowStart) / windowLength) * w }
+
+    private func pin(_ label: String, at x: CGFloat, height: CGFloat) -> some View {
+        ZStack(alignment: .top) {
+            Rectangle().fill(theme?.ok ?? .green).frame(width: 2, height: height)
+            Text(label).font(.system(size: 11, weight: .bold)).foregroundStyle(theme?.onAccent ?? .white)
+                .frame(width: 20, height: 18)
+                .background(RoundedRectangle(cornerRadius: 5).fill(theme?.ok ?? .green))
+        }
+        .offset(x: x - 10)
     }
 
     @State private var panOrigin: TimeInterval?

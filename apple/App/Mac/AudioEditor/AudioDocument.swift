@@ -16,6 +16,7 @@ final class AudioDocument {
     private static let recentKey = "audio.recent"
     private static let maxRecent = 8
 
+    let player = AudioPlayer()
     private(set) var url: URL?
     var name: String { url?.lastPathComponent ?? "" }
     private(set) var waveform: Waveform?
@@ -67,6 +68,7 @@ final class AudioDocument {
         url = nil
         waveform = nil
         isLoading = false
+        player.unload()
     }
 
     private func load(_ url: URL, scoped: Bool) {
@@ -76,6 +78,7 @@ final class AudioDocument {
         self.url = url
         waveform = nil
         error = nil
+        player.load(url)
         isLoading = true
         loadTask = Task { [weak self] in
             do {
