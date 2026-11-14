@@ -43,3 +43,19 @@ struct UtilTests {
         #expect(start == Date(timeIntervalSince1970: 1_794_679_200 - 3_600))
     }
 }
+
+@Suite("searchKey / filterBySearch")
+struct SearchKeyTests {
+    @Test func boDauVaDongChu() {
+        #expect(searchKey("  Hoàng  Hôn ") == "hoang hon")
+        #expect(searchKey("Đổi Đêm") == "doi dem")
+    }
+
+    @Test func locMoiTuPhaiCoVaKhopDauLenTruoc() {
+        let items = ["Đi tới: Thư viện", "Theme: Hoàng hôn", "Theme: Giấy", "Học: Thư viện từ"]
+        #expect(filterBySearch(items, query: "thu vien", key: { $0 }) == ["Đi tới: Thư viện", "Học: Thư viện từ"])
+        #expect(filterBySearch(items, query: "theme hoang", key: { $0 }) == ["Theme: Hoàng hôn"])
+        #expect(filterBySearch(items, query: "hoc", key: { $0 }) == ["Học: Thư viện từ"])
+        #expect(filterBySearch(items, query: "", key: { $0 }).count == 4)
+    }
+}

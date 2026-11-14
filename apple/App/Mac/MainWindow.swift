@@ -56,6 +56,9 @@ struct MainWindow: View {
                 .navigationTitle(nav.screen.rawValue)
         }
         .toolbar { toolbar }
+        .overlay {
+            if nav.showPalette { CommandPalette() }
+        }
     }
 
     // MARK: Sidebar

@@ -40,6 +40,8 @@ struct TiramissuMacApp: App {
                 }
             }
             CommandGroup(after: .toolbar) {
+                Button("Bảng lệnh") { nav.showPalette.toggle() }
+                    .keyboardShortcut("k", modifiers: .command)
                 Button("Cửa sổ học gọn") { openWindow(id: "compact") }
                     .keyboardShortcut("l", modifiers: [.command, .option])
                 Button("Đổi sáng/tối") { themes.cycleAppearance() }

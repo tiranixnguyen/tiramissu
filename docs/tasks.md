@@ -282,6 +282,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Phụ thuộc: T2.38
 - [ ] **T2.40 · Command Palette `⌘K`** — overlay kính, tìm không dấu; lệnh: Theme: <6 theme>, bật/tắt tối,
   nhập theme, Học: <bộ>, Đi tới: <màn>; ↑↓ chọn, ↵ chạy, esc đóng.
+  - Trạng thái: code xong (`CommandPalette`, `filterBySearch` có test) — còn thử tay (chưa tick).
   - Phụ thuộc: T2.33, T2.37
 - [ ] **T2.41 · 👤 Dùng thật 1 tuần** trên Mac thay app Flutter; ghi lỗi/ý vào mục "Phát sinh".
 
