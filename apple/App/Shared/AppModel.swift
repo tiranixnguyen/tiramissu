@@ -16,6 +16,7 @@ final class AppModel {
     @ObservationIgnored private let recorder: SessionRecorder
     @ObservationIgnored private let persistence: Persistence
     @ObservationIgnored private var sync: SyncEngine?
+    @ObservationIgnored private var api: (any ContentAPI)?
 
     static var deviceName: String {
         #if os(macOS)
@@ -92,9 +93,11 @@ final class AppModel {
     func configureAPI(baseURL: URL?, token: @escaping @Sendable () -> String?) {
         guard let baseURL else {
             sync = nil
+            api = nil
             return
         }
         let api = URLSessionContentAPI(baseURL: baseURL, token: token)
+        self.api = api
         sync = SyncEngine(
             api: api, store: persistence,
             observer: { [weak self] update in Task { @MainActor in self?.handle(update) } })
@@ -111,6 +114,45 @@ final class AppModel {
             engine.replaceContent(c.buildStudyCatalog())
             publish()
         }
+    }
+
+    // MARK: Sửa thư viện (cần mạng — ghi thẳng lên server rồi cập nhật bản sao trên máy)
+
+    /// Ném `APIError.offline` khi chưa cấu hình server; lỗi mạng cũng ném ra để UI giữ nguyên chữ đang sửa.
+    private func online() throws -> any ContentAPI {
+        guard let api else { throw APIError.offline }
+        return api
+    }
+
+    private func apply(_ new: ContentSnapshot) {
+        content = new
+        engine.replaceContent(new.buildStudyCatalog())
+        publish()
+        let snapshot = new
+        Task { await persistence.saveContent(snapshot) }
+    }
+
+    func updateCard(id: String, edit: CardEdit) async throws {
+        let card = try await online().updateCard(id: id, edit: edit)
+        apply(content.updatingCard(id) { $0 = card })
+    }
+
+    func deleteCard(id: String) async throws {
+        try await online().deleteCard(id: id)
+        apply(content.removingCard(id))
+    }
+
+    func addCard(deckId: String, word: ImportedWord) async throws {
+        let deck = try await online().appendCards(deckId: deckId, words: [word])
+        apply(content.upsertingDeck(deck))
+    }
+
+    func updateDeck(id: String, patch: DeckPatch) async throws {
+        let deck = try await online().updateDeck(id: id, patch: patch)
+        // Server có thể trả bộ không kèm thẻ → giữ thẻ đang có nếu rỗng.
+        var merged = deck
+        if merged.cards.isEmpty, let old = content.decks.first(where: { $0.id == id }) { merged.cards = old.cards }
+        apply(content.upsertingDeck(merged))
     }
 
     // MARK: Hành động học

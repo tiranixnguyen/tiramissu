@@ -273,6 +273,7 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
   - Phụ thuộc: T2.35
 - [ ] **T2.38 · Màn Thư viện** — nhóm → bộ → `Table` thẻ; sửa tại chỗ (PATCH), thêm thẻ `⌘N`, xoá, đổi
   tên/loại/nguồn/mô tả bộ; cần mạng, offline báo lỗi không mất chữ đang sửa.
+  - Trạng thái: code xong (`LibraryView` + `AppModel.updateCard/addCard/deleteCard/updateDeck`, ghi qua `ContentAPI` đã có test) — còn thử tay (chưa tick). Server chưa có route xoá bộ nên chỉ xoá được thẻ.
   - Phụ thuộc: T2.32
 - [ ] **T2.39 · Màn Nhập từ AI** — theo artboard: chọn loại + công cụ → `⌘⇧C` chép `Prompts.text`; dán JSON
   → `DeckImport` báo lỗi trực tiếp; xem trước + "Trùng"; chọn nhóm; `⌘↵` tạo bộ (`POST /decks`).

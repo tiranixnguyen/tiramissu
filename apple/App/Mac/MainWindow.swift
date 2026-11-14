@@ -105,6 +105,8 @@ struct MainWindow: View {
             StudyView()
         } else if nav.screen == .today {
             TodayView()
+        } else if nav.screen == .library {
+            LibraryView()
         } else {
             placeholder
         }
