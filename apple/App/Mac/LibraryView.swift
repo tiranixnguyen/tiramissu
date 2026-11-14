@@ -29,6 +29,8 @@ struct LibraryView: View {
     // MARK: Thanh trên (như prototype: ô tìm bên trái; "+ Bộ mới từ AI", theme, sáng/tối bên phải)
 
     @ToolbarContentBuilder private var libraryToolbar: some ToolbarContent {
+        // Khoảng giãn: đẩy cụm nút sang sát mép phải, ô tìm ở lại bên trái.
+        ToolbarSpacer(.flexible, placement: .primaryAction)
         ToolbarItemGroup(placement: .primaryAction) {
             Button { nav.screen = .importAI } label: { Label("Bộ mới từ AI", systemImage: "plus") }
                 .buttonStyle(.borderedProminent)
