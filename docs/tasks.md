@@ -331,20 +331,39 @@ Ký hiệu đường dẫn: `HC/` = `apple/Packages/HanCore/`, `DS/` = `apple/Pa
 
 ## G4 · iPhone (ưu tiên thấp)
 
-- [ ] **T4.01 · Khung iOS** — `TabView` (Hôm nay · Học · Nghe) dùng chung `AppModel`, `ThemeStore`; tab bar kính hệ thống.
-  - Trạng thái: code xong (`PhoneRoot`, nạp cache/mẫu + đồng bộ như Mac), build iOS Simulator sạch — chưa chạy
-    thử (máy chưa cài simulator iPhone). Chưa có màn nhập URL/token trên iPhone; prototype có thêm tab Thư viện.
-- [ ] **T4.02 · Hôm nay (iOS)** — theo artboard "iPhone · Hôm nay".
-  - Trạng thái: code xong (`PhoneTodayView`, cùng `computeTodayPlan` với Mac; kéo xuống để đồng bộ), build iOS
-    Simulator sạch — chưa chạy thử (chưa có simulator).
-- [ ] **T4.03 · Học (iOS)** — theo artboard "iPhone · Học"; bàn phím Hàn khi focus ô trả lời (`.keyboardType`
-  không ép được ngôn ngữ — ghi chú cách thêm bàn phím Hàn).
-  - Trạng thái: code xong (`PhoneStudyView`: gõ đáp án, tự chấm, clip, ⭐/漢, đổi bộ ở tên bộ; ghi chú bàn phím
-    Hàn ở đầu file; `ClipPlayer` chuyển sang `App/Shared`), build iOS + macOS sạch — chưa chạy thử.
-- [ ] **T4.04 · Nghe (iOS)** — theo artboard "iPhone · Nghe": phát clip, lặp, tốc độ, chép chính tả.
-  - Trạng thái: code xong (`PhoneListenView`; luyện tại chỗ, không ghi lịch sử để khỏi cắt ngang lượt ở tab Học;
-    sóng chỉ trang trí), build iOS + macOS sạch — chưa chạy thử.
-- [ ] **T4.05 · 👤 Cài lên iPhone** bằng Apple ID miễn phí; đặt nhắc mỗi 7 ngày cài lại.
+Thiết kế: issue #5, `design/prototype/screens/Phone-*-{light,dark}.png` + `src/Phone-*.dc.html` (đọc ảnh trước mỗi task).
+Logic (lọc lần học, mức độ đậm theo ngày, chuỗi ngày, kết quả lịch ôn) đặt trong `HanCore`, có test; view chỉ hiển thị.
+Đã có bản theo thiết kế cũ (`App/iOS/Phone{Today,Study,Listen}View.swift`, 3 tab) — sửa theo thiết kế mới, không viết từ đầu.
+
+- [ ] **T4.01 · Khung iOS** — thanh điều hướng kính: **Hôm nay · Nghe · ● Học · Thư viện · Lịch sử**; dùng chung
+  `AppModel`, `ThemeStore`.
+  - "Học" là nút tròn `theme.accent` ở giữa (không phải tab): mở thẳng lượt ôn các bộ đến hạn.
+  - Màn học trình bày toàn màn, **ẩn thanh điều hướng**; ra bằng `‹` hoặc `⋯ › Kết thúc lượt`.
+- [ ] **T4.02 · Hôm nay (iOS)** — theo `Phone-Today`, từ trên xuống:
+  - **Hoạt động**: chuỗi ngày liên tiếp + "n lượt · x% đúng · 30 ngày". Thu gọn = lưới mini 5 tuần (cột = tuần,
+    hàng = thứ, nhãn tháng + T3/T5/T7); bấm → lưới 12 tuần; bấm ô → Lịch sử lọc sẵn ngày đó. 5 mức đậm theo số câu
+    trả lời/ngày, từ `StudySessionRecord`.
+  - **Đến hạn ôn** một khối nền `theme.surface`: "~phút / n bộ · m thẻ" + nút "▶ Ôn ngay"; danh sách bộ đến hạn
+    ("Hôm nay" / "Trễ n ngày").
+  - **Lượt nhanh**: hàng chip cuộn ngang ★ · 漢 · 📖 · 🔀 20 (deck ảo) kèm số thẻ.
+  - Dòng **Luyện nghe · n clip** → tab Nghe.
+- [ ] **T4.03 · Học (iOS)** — theo `Phone-Study`; dùng `StudySessionState` như Mac.
+  - Header `‹` · tên bộ · tiến độ · `⋯` (Đã thuộc thẻ này / Bỏ qua thẻ / Kết thúc lượt).
+  - Thẻ nền đặc; **thanh trả lời kính sát đáy** đổi theo trạng thái: hỏi (ô gõ + Xem đáp án + Chấm) → sai
+    ("Tôi đúng mà" / "Thẻ tiếp") → đúng ("Thẻ tiếp"); thẻ tự chấm: "Lật thẻ" → "Chưa nhớ / Nhớ".
+  - Bàn phím Hàn khi focus ô trả lời (`.keyboardType` không ép được ngôn ngữ — ghi chú cách thêm bàn phím Hàn).
+- [ ] **T4.04 · Nghe (iOS)** — theo `Phone-Listen`: sóng âm + đầu phát, chép chính tả (Chấm / Xem câu gốc, tô từng
+  từ đúng/sai), clip tiếp theo; thanh kính: phát, tốc độ 0.5/0.75/1×, lặp A-B.
+- [ ] **T4.05 · Thư viện (iOS)** — theo `Phone-Library`: **chỉ xem + học**. Tìm kiếm, chip nhóm, danh sách bộ →
+  chi tiết bộ (số thẻ / đã thuộc / ★, "Học bộ này", lọc Tất cả/★/漢, bật tắt ★ 漢 từng thẻ → `FlagChange`).
+  Không thêm/sửa thẻ trên iPhone.
+- [ ] **T4.06 · Lịch sử (iOS)** — theo `Phone-History`: danh sách lần học nhóm theo ngày từ `GET /sessions`.
+  - Dải chọn ngày ("Tất cả" 30 ngày + 14 ngày gần nhất, chấm nếu có học); lọc máy (Mac/iPhone) và Hết bộ/Dở.
+  - Mỗi dòng: bộ, giờ, Hết bộ/Dở, đúng/đã làm · %, máy, kết quả lịch ("Lên bậc · hẹn ôn sau n ngày" / "Dưới 80%
+    · về bậc 1, ôn lại mai" / "Học trước hẹn · giữ lịch" — đúng `docs/study-algorithm.md`). Mở rộng: thanh đúng/sai,
+    thuộc x/y, giờ, "Học lại bộ này".
+  - Nhận tham số ngày (từ ô lưới ở Hôm nay) để chọn sẵn.
+- [ ] **T4.07 · 👤 Cài lên iPhone** bằng Apple ID miễn phí; đặt nhắc mỗi 7 ngày cài lại.
 
 ---
 

@@ -11,106 +11,255 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+KR:wght@400;500;700&amp;family=Noto+Serif+KR:wght@500;700&amp;display=swap" rel="stylesheet">
 <style>
 body{margin:0}
-a{color:#2B54C9}a:hover{color:#1E3E99}
-/* Chữ trong nút không bao giờ xuống dòng */
-button,.nav,.kbd,a[style*="height:"]{white-space:nowrap}
-button,a[style*="height:"]{flex-shrink:0}
-button>span{min-width:0;overflow:hidden;text-overflow:ellipsis}
+a{color:inherit}
+button{cursor:pointer}
+button,a[style*="height:"]{white-space:nowrap;flex-shrink:0}
+.glass{background:var(--glass);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid var(--gb);box-shadow:var(--sh),inset 0 1px 0 var(--gb)}
+.desk{word-break:keep-all;overflow-wrap:anywhere;background:radial-gradient(circle at 0% 0%,color-mix(in srgb,var(--ac) 30%,transparent),transparent 42%),radial-gradient(circle at 100% 78%,color-mix(in srgb,var(--flag) 22%,transparent),transparent 48%),var(--bg)}
+.card{background:var(--sf);border:1px solid var(--line);border-radius:20px}
+.scroll{position:absolute;inset:0;overflow-y:auto;box-sizing:border-box;padding:58px 20px 120px;display:flex;flex-direction:column;gap:20px;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.h1{margin:0;font-size:32px;font-weight:700;letter-spacing:-0.02em}
+.h2{margin:0;font-size:17px;font-weight:650}
+.sub{font-size:13px;font-weight:500;color:var(--ink2)}
+.sbar{position:absolute;top:0;left:0;right:0;height:50px;z-index:6;display:flex;align-items:center;justify-content:space-between;padding:0 14px 0 32px;font:600 15px Inter,sans-serif}
+.ctl{height:30px;min-width:30px;padding:0 10px;border-radius:999px;color:var(--ink);font:600 11px Inter,sans-serif;display:flex;align-items:center;justify-content:center;gap:6px}
+.tabbar{position:absolute;left:16px;right:16px;bottom:22px;height:62px;box-sizing:border-box;border-radius:999px;padding:5px;display:flex;align-items:center;gap:2px;z-index:5}
+.tab{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-radius:999px;font:500 10px Inter,sans-serif;color:var(--ink);text-decoration:none}
+.tab.on{background:color-mix(in srgb,var(--ac) 16%,transparent);color:var(--ac);font-weight:650}
+.fab{flex:none;width:60px;height:60px;margin:-14px 4px 0;border-radius:999px;background:var(--ac);color:var(--on);display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 8px 22px color-mix(in srgb,var(--ac) 45%,transparent),0 0 0 4px color-mix(in srgb,var(--sf) 70%,transparent)}
+.acc{position:absolute;left:16px;right:16px;z-index:5;box-sizing:border-box;border-radius:32px;padding:8px;display:flex;align-items:center;gap:8px}
+.pbtn{height:48px;border-radius:999px;border:0;font:650 15px Inter,sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 18px}
+.circ{width:44px;height:44px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:var(--ink);border:0;padding:0}
+.row{display:flex;align-items:center;gap:12px;padding:12px 14px;text-decoration:none;color:var(--ink)}
+.tile{width:44px;height:44px;flex:none;border-radius:12px;display:flex;align-items:center;justify-content:center;font:700 14px 'Noto Sans KR',sans-serif}
+.ell{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 </style>
 </helmet>
-<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F4F0; color: #191C24; font-family: Inter, 'Noto Sans KR', sans-serif; display: flex; flex-direction: column;">
-  <div style="flex: 1; min-height: 0; overflow-y: auto; padding: 60px 20px 20px; display: flex; flex-direction: column; gap: 22px;">
-    <header style="display: flex; justify-content: space-between; align-items: flex-start;">
-      <div style="display: flex; flex-direction: column; gap: 4px;">
-        <div style="font-size: 13px; color: #4C5260; font-weight: 500;">Thứ Sáu, 13/11</div>
-        <h1 style="margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -0.02em;">Hôm nay</h1>
-      </div>
-      <div style="display: flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 999px; background: #FFFFFF; border: 1px solid #DDDBD3; font-size: 13px; font-weight: 600;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9A5B00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-3 2-4 2-7 2 1 3 3 3 5"></path></svg>
-        12 ngày
-      </div>
+<div class="desk" style="{{vars}}; position: relative; width: 390px; height: 844px; overflow: hidden; color: var(--ink); font-family: Inter, 'Noto Sans KR', sans-serif;">
+  <div class="sbar"><span>9:41</span><span style="display: flex; gap: 6px;"><button class="glass ctl" onClick="{{nextTheme}}" aria-label="Đổi theme"><span style="width: 10px; height: 10px; border-radius: 99px; background: var(--ac);"></span>{{themeName}}</button><button class="glass ctl" onClick="{{toggleDark}}" aria-label="Sáng / tối" style="padding: 0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg></button></span></div>
+  <div class="scroll" style="gap: 18px;">
+    <header style="display: flex; flex-direction: column; gap: 2px; padding-top: 6px;">
+      <div class="sub">Thứ Sáu, 13/11</div>
+      <h1 class="h1">Hôm nay</h1>
     </header>
 
-    <section style="background: #191C24; color: #FFFFFF; border-radius: 22px; padding: 20px; display: flex; flex-direction: column; gap: 16px;">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div style="display: flex; flex-direction: column; gap: 4px;">
-          <div style="font-size: 13px; color: #B9BFCC;">Đến hạn ôn</div>
-          <div style="font-size: 26px; font-weight: 700;">3 bộ · 70 thẻ</div>
+    <section class="card" aria-label="Hoạt động" style="padding: {{actPad}}; display: flex; flex-direction: column; gap: 10px;">
+      <button onClick="{{toggleAct}}" aria-expanded="{{actStr}}" style="all: unset; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0;">
+          <span style="display: flex; align-items: center; gap: 5px; font-size: 15px; font-weight: 700;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--flag)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-3 2-4 2-7 2 1 3 3 3 5"></path></svg>
+            12 ngày liên tiếp
+          </span>
+          <span class="ell" style="font-size: 12px; color: var(--ink2);">{{summary}}</span>
+          <span style="display: flex; align-items: center; gap: 3px; font-size: 12px; font-weight: 600; color: var(--ac);">{{actHint}}
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{actRot}});"><path d="M6 9l6 6 6-6"></path></svg>
+          </span>
         </div>
-        <svg width="56" height="56" viewBox="0 0 56 56" role="img" aria-label="Đã ôn 1 trên 4 bộ"><circle cx="28" cy="28" r="23" fill="none" stroke="#343946" stroke-width="6"></circle><circle cx="28" cy="28" r="23" fill="none" stroke="#7C9BFF" stroke-width="6" stroke-linecap="round" stroke-dasharray="36 145" transform="rotate(-90 28 28)"></circle></svg>
-      </div>
-      <a href="Phone-Study.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 50px; border-radius: 14px; background: #FFFFFF; color: #191C24; font-weight: 600; font-size: 16px; text-decoration: none;">
-        Bắt đầu ôn
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
-      </a>
+        <sc-if value="{{actClosed}}" hint-placeholder-val="{{true}}">
+          <div aria-hidden="true" style="flex: none; display: grid; grid-template-columns: 14px auto; column-gap: 3px; row-gap: 3px; font-size: 9px; line-height: 10px; color: var(--ink2);">
+            <span></span>
+            <div style="display: grid; grid-template-columns: repeat(5, 10px); gap: 3px; height: 10px;">
+              <sc-for list="{{miniMonths}}" as="m" hint-placeholder-count="5"><span style="white-space: nowrap; overflow: visible;">{{m}}</span></sc-for>
+            </div>
+            <div style="display: grid; grid-template-rows: repeat(7, 10px); gap: 3px;">
+              <span></span><span>T3</span><span></span><span>T5</span><span></span><span>T7</span><span></span>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(5, 10px); grid-template-rows: repeat(7, 10px); grid-auto-flow: column; gap: 3px;">
+              <sc-for list="{{mini}}" as="c" hint-placeholder-count="35"><span style="box-sizing: border-box; border-radius: 2.5px; background: {{c.bg}}; border: {{c.ring}}; visibility: {{c.vis}};"></span></sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </button>
+      <sc-if value="{{actOpen}}" hint-placeholder-val="{{false}}">
+        <div style="display: grid; grid-template-columns: 16px minmax(0, 1fr); column-gap: 5px; row-gap: 3px;">
+          <span></span>
+          <div aria-hidden="true" style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 4px; font-size: 10px; color: var(--ink2); height: 12px;">
+            <sc-for list="{{months}}" as="m" hint-placeholder-count="12"><span style="white-space: nowrap; overflow: visible;">{{m}}</span></sc-for>
+          </div>
+          <div aria-hidden="true" style="display: grid; grid-template-rows: repeat(7, minmax(0, 1fr)); gap: 4px; font-size: 10px; color: var(--ink2);">
+            <span></span><span style="align-self: center;">T3</span><span></span><span style="align-self: center;">T5</span><span></span><span style="align-self: center;">T7</span><span></span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-template-rows: repeat(7, auto); grid-auto-flow: column; gap: 4px;">
+            <sc-for list="{{cells}}" as="c" hint-placeholder-count="84">
+              <a href="{{c.href}}" aria-label="{{c.aria}}" title="{{c.aria}}" style="aspect-ratio: 1; box-sizing: border-box; border-radius: 5px; background: {{c.bg}}; outline: {{c.ring}}; outline-offset: 1px; visibility: {{c.vis}};"></a>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--ink2);">
+          <span style="display: flex; gap: 3px; align-items: center; white-space: nowrap;">Ít<sc-for list="{{legend}}" as="l" hint-placeholder-count="5"><span style="width: 10px; height: 10px; border-radius: 3px; background: {{l}};"></span></sc-for>Nhiều</span>
+          <a href="Phone-History.dc.html" style="font-size: 13px; font-weight: 600; color: var(--ac); text-decoration: none;">Lịch sử ›</a>
+        </div>
+      </sc-if>
     </section>
 
-    <section style="display: flex; flex-direction: column; gap: 10px;">
-      <h2 style="margin: 0; font-size: 17px; font-weight: 600;">Bộ cần ôn</h2>
-      <sc-for list="{{due}}" as="d" hint-placeholder-count="3">
-        <a href="Phone-Study.dc.html" style="display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 16px; background: #FFFFFF; border: 1px solid #DDDBD3; text-decoration: none; color: #191C24;">
-          <div style="width: 44px; height: 44px; border-radius: 12px; background: {{d.tint}}; color: {{d.ink}}; display: flex; align-items: center; justify-content: center; font-family: 'Noto Sans KR', sans-serif; font-weight: 700; font-size: 14px;">{{d.skill}}</div>
-          <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px;">
-            <div style="font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{d.name}}</div>
-            <div style="font-size: 12px; color: #4C5260;">{{d.meta}}</div>
-          </div>
-          <span style="font-size: 12px; font-weight: 600; color: {{d.dueInk}};">{{d.due}}</span>
+    <section class="card" aria-label="Đến hạn ôn" style="padding: 16px 16px 4px; display: flex; flex-direction: column; gap: 4px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+          <span style="font-size: 13px; font-weight: 600; color: var(--ink2);">Đến hạn ôn · ~18 phút</span>
+          <span style="font-size: 24px; font-weight: 750;">3 bộ · 70 thẻ</span>
+        </div>
+        <a href="Phone-Study.dc.html" aria-label="Ôn cả 3 bộ" style="flex: none; display: flex; align-items: center; gap: 6px; height: 44px; padding: 0 18px 0 14px; border-radius: 999px; background: var(--ac); color: var(--on); font-weight: 650; font-size: 15px; text-decoration: none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
+          Ôn ngay
         </a>
-      </sc-for>
-    </section>
-
-    <section style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;">
-      <a href="Phone-Listen.dc.html" style="display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 16px; background: #E3F2EA; color: #155A37; text-decoration: none;">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 14v-2a9 9 0 0 1 18 0v2"></path><rect x="3" y="14" width="4" height="7" rx="1.5"></rect><rect x="17" y="14" width="4" height="7" rx="1.5"></rect></svg>
-        <div style="font-size: 22px; font-weight: 700;">5 clip</div>
-        <div style="font-size: 13px; font-weight: 500;">Luyện nghe hôm nay</div>
-      </a>
-      <div style="display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 16px; background: #FFF1DB; color: #7A4800;">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"></path></svg>
-        <div style="font-size: 22px; font-weight: 700;">18 thẻ</div>
-        <div style="font-size: 13px; font-weight: 500;">Từ khó nhớ</div>
       </div>
-    </section>
-
-    <section style="display: flex; flex-direction: column; gap: 10px;">
-      <h2 style="margin: 0; font-size: 17px; font-weight: 600;">7 ngày qua</h2>
-      <div style="display: flex; justify-content: space-between; align-items: flex-end; height: 84px; padding: 14px 16px; background: #FFFFFF; border: 1px solid #DDDBD3; border-radius: 16px;">
-        <sc-for list="{{week}}" as="w" hint-placeholder-count="7">
-          <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
-            <div style="width: 22px; height: {{w.h}}; border-radius: 6px; background: {{w.c}};"></div>
-            <div style="font-size: 11px; color: #4C5260;">{{w.d}}</div>
-          </div>
+      <div style="margin: 8px -16px 0; border-top: 1px solid var(--line);">
+        <sc-for list="{{due}}" as="d" hint-placeholder-count="3">
+          <a href="Phone-Study.dc.html" class="row" style="border-top: {{d.sep}}; padding: 10px 16px;">
+            <div class="tile" style="width: 38px; height: 38px; border-radius: 11px; font-size: 12px; background: {{d.tint}}; color: {{d.ink}};">{{d.skill}}</div>
+            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+              <div class="ell" style="font-size: 15px; font-weight: 600;">{{d.name}}</div>
+              <div style="font-size: 12px; color: var(--ink2);">{{d.meta}}</div>
+            </div>
+            <span style="flex: none; font-size: 12px; font-weight: 650; color: {{d.dueInk}};">{{d.due}}</span>
+          </a>
         </sc-for>
       </div>
     </section>
-  </div>
 
-  <nav aria-label="Điều hướng chính" style="display: flex; justify-content: space-around; padding: 10px 8px 30px; background: #FFFFFF; border-top: 1px solid #DDDBD3;">
-    <a href="Phone-Today.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 64px; font-size: 11px; font-weight: 600; color: #2B54C9; text-decoration: none;">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"></path></svg>Hôm nay</a>
-    <a href="Phone-Study.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 64px; font-size: 11px; font-weight: 500; color: #4C5260; text-decoration: none;">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="14" height="16" rx="2"></rect><path d="M7 3h12a2 2 0 0 1 2 2v14"></path></svg>Học</a>
-    <a href="Phone-Listen.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 64px; font-size: 11px; font-weight: 500; color: #4C5260; text-decoration: none;">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 14v-2a9 9 0 0 1 18 0v2"></path><rect x="3" y="14" width="4" height="7" rx="1.5"></rect><rect x="17" y="14" width="4" height="7" rx="1.5"></rect></svg>Nghe</a>
-    <a href="Mac-Library.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 64px; font-size: 11px; font-weight: 500; color: #4C5260; text-decoration: none;">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h4v16H4zM10 4h4v16h-4zM16 5l3.5-.9 3 15.5-3.5.9z"></path></svg>Thư viện</a>
+    <section style="display: flex; flex-direction: column; gap: 8px;">
+      <h2 class="h2" style="font-size: 15px;">Lượt nhanh</h2>
+      <div style="display: flex; gap: 8px; overflow-x: auto; margin: 0 -20px; padding: 2px 20px; scrollbar-width: none;">
+        <sc-for list="{{chips}}" as="q" hint-placeholder-count="4">
+          <a href="Phone-Study.dc.html" style="flex: none; display: flex; align-items: center; gap: 7px; height: 40px; padding: 0 14px 0 12px; border-radius: 999px; background: var(--sf); border: 1px solid var(--line); color: var(--ink); text-decoration: none; font-size: 14px; font-weight: 600; white-space: nowrap;">
+            <sc-if value="{{q.isText}}" hint-placeholder-val="{{true}}"><span aria-hidden="true" style="width: 18px; text-align: center; font: 700 15px 'Noto Serif KR', serif; color: var(--ink2);">{{q.glyph}}</span></sc-if>
+            <sc-if value="{{q.isBook}}" hint-placeholder-val="{{false}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ink2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5h6a4 4 0 0 1 4 4v11a3 3 0 0 0-3-3H2z"></path><path d="M22 5h-6a4 4 0 0 0-4 4v11a3 3 0 0 1 3-3h7z"></path></svg></sc-if>
+            <sc-if value="{{q.isShuffle}}" hint-placeholder-val="{{false}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ink2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg></sc-if>
+            {{q.label}}
+            <span style="font-weight: 500; color: var(--ink2);">{{q.n}}</span>
+          </a>
+        </sc-for>
+      </div>
+    </section>
+
+    <a href="Phone-Listen.dc.html" class="row card" style="padding: 12px 14px;">
+      <div class="tile" style="width: 38px; height: 38px; border-radius: 11px; background: color-mix(in srgb, var(--ok) 14%, var(--sf)); color: var(--ok);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 14v-2a9 9 0 0 1 18 0v2"></path><rect x="3" y="14" width="4" height="7" rx="1.5"></rect><rect x="17" y="14" width="4" height="7" rx="1.5"></rect></svg></div>
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 15px; font-weight: 600;">Luyện nghe · 5 clip</span><span style="font-size: 12px; color: var(--ink2);">Chép chính tả từ file nghe</span></div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
+    </a>
+  </div>
+  <nav aria-label="Điều hướng chính" class="glass tabbar">
+    <a class="tab on" href="Phone-Today.dc.html" aria-current="page"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"></path></svg><span>Hôm nay</span></a>
+    <a class="tab" href="Phone-Listen.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 14v-2a9 9 0 0 1 18 0v2"></path><rect x="3" y="14" width="4" height="7" rx="1.5"></rect><rect x="17" y="14" width="4" height="7" rx="1.5"></rect></svg><span>Nghe</span></a>
+    <a class="fab" href="Phone-Study.dc.html" aria-label="Học — bắt đầu ôn"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="14" height="16" rx="2"></rect><path d="M7 3h12a2 2 0 0 1 2 2v14"></path></svg></a>
+    <a class="tab" href="Phone-Library.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h4v16H4zM10 4h4v16h-4zM16 5l3.5-.9 3 15.5-3.5.9z"></path></svg><span>Thư viện</span></a>
+    <a class="tab" href="Phone-History.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg><span>Lịch sử</span></a>
   </nav>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
-  renderVals() {
-    return {
-      due: [
-        { skill: '읽기', tint: '#E6ECFB', ink: '#1E3E99', name: 'Rừng & Bảo vệ môi trường', meta: '26 thẻ · bậc 3 (7 ngày)', due: 'Hôm nay', dueInk: '#2B54C9' },
-        { skill: '듣기', tint: '#E3F2EA', ink: '#155A37', name: '듣기 4-8번 > 병원', meta: '11 thẻ · lần trước 74% đúng', due: 'Trễ 1 ngày', dueInk: '#B23A2E' },
-        { skill: '문법', tint: '#FFF1DB', ink: '#7A4800', name: 'Tự học ngữ pháp', meta: '9 thẻ · bậc 1 (1 ngày)', due: 'Hôm nay', dueInk: '#2B54C9' }
-      ],
-      week: [
-        { d: 'T7', h: '30px', c: '#C9D5F5' }, { d: 'CN', h: '12px', c: '#C9D5F5' }, { d: 'T2', h: '44px', c: '#C9D5F5' }, { d: 'T3', h: '26px', c: '#C9D5F5' },
-        { d: 'T4', h: '50px', c: '#C9D5F5' }, { d: 'T5', h: '38px', c: '#C9D5F5' }, { d: 'T6', h: '18px', c: '#2B54C9' }
-      ]
+  constructor(props) {
+    super(props);
+    this.state = { theme: 'paper', dark: false, actOpen: false };
+    this.initTheme();
+    this.initRecords();
+  }
+  initTheme() {
+    this.TH = {
+      paper: ['Giấy', { bg: '#F5F4F0', sf: '#FFFFFF', ink: '#191C24', ink2: '#4C5260', ac: '#2B54C9', line: '#DDDBD3', on: '#FFFFFF' }, { bg: '#121418', sf: '#1B1E24', ink: '#ECEEF2', ink2: '#A9AFBC', ac: '#7C9BFF', line: '#343946', on: '#0B1020' }],
+      ink: ['Mực đêm', { bg: '#EEF0F6', sf: '#FFFFFF', ink: '#141826', ink2: '#4A5068', ac: '#5B4BD6', line: '#D7DAE6', on: '#FFFFFF' }, { bg: '#0E1020', sf: '#171A2E', ink: '#E8E9F5', ink2: '#A3A7C4', ac: '#A99BFF', line: '#2B2F4A', on: '#120E2A' }],
+      pine: ['Rừng thông', { bg: '#F1F4EF', sf: '#FFFFFF', ink: '#17201A', ink2: '#475449', ac: '#1F6B4A', line: '#D6DED6', on: '#FFFFFF' }, { bg: '#0F1712', sf: '#17221B', ink: '#E5EEE7', ink2: '#9DB0A3', ac: '#5CCB95', line: '#2A3A2F', on: '#06140C' }],
+      dusk: ['Hoàng hôn', { bg: '#FAF3EE', sf: '#FFFFFF', ink: '#2A1A14', ink2: '#6A4E43', ac: '#B8402A', line: '#EADBD2', on: '#FFFFFF' }, { bg: '#1A1210', sf: '#251A17', ink: '#F5E9E4', ink2: '#C2A79D', ac: '#FF8A66', line: '#3D2C27', on: '#2A0E05' }],
+      contrast: ['Tương phản cao', { bg: '#FFFFFF', sf: '#FFFFFF', ink: '#000000', ink2: '#222222', ac: '#0033CC', line: '#000000', on: '#FFFFFF' }, { bg: '#000000', sf: '#0A0A0A', ink: '#FFFFFF', ink2: '#E6E6E6', ac: '#FFD400', line: '#FFFFFF', on: '#000000' }],
+      system: ['Hệ thống', { bg: '#F2F2F4', sf: '#FFFFFF', ink: '#1D1D1F', ink2: '#55555B', ac: '#0064D2', line: '#DADADF', on: '#FFFFFF' }, { bg: '#161618', sf: '#1F1F22', ink: '#F2F2F4', ink2: '#AAAAB0', ac: '#409CFF', line: '#38383C', on: '#03182E' }]
     };
+  }
+  themeVals() {
+    const s = this.state; const go = (p) => this.setState(p);
+    const ST = s.dark ? { ok: '#5CC48E', bad: '#F08174', flag: '#F2B54B', glass: 'rgba(30,32,40,0.5)', gb: 'rgba(255,255,255,0.16)', sh: '0 10px 34px rgba(0,0,0,0.5)' } : { ok: '#1C7146', bad: '#B23A2E', flag: '#9A5B00', glass: 'rgba(255,255,255,0.55)', gb: 'rgba(255,255,255,0.75)', sh: '0 10px 34px rgba(20,24,40,0.16)' };
+    const t = Object.assign({}, this.TH[s.theme][s.dark ? 2 : 1], ST);
+    const keys = Object.keys(this.TH);
+    return {
+      vars: `--bg:${t.bg};--sf:${t.sf};--ink:${t.ink};--ink2:${t.ink2};--ac:${t.ac};--line:${t.line};--on:${t.on};--ok:${t.ok};--bad:${t.bad};--flag:${t.flag};--glass:${t.glass};--gb:${t.gb};--sh:${t.sh}`,
+      themeName: this.TH[s.theme][0],
+      nextTheme: () => go({ theme: keys[(keys.indexOf(s.theme) + 1) % keys.length] }),
+      toggleDark: () => go({ dark: !s.dark })
+    };
+  }
+  // Lần học mẫu (StudySessionRecord) — dùng chung cho Hôm nay và Lịch sử.
+  initRecords() {
+      // Hôm nay = Thứ Sáu 13/11/2026; dữ liệu mẫu ~17 tuần (lưới kiểu GitHub ở Hôm nay).
+      this.today = new Date(2026, 10, 13);
+      const D = [
+        ['Plastic · tái chế', '읽기', '--ac', 26], ['Rừng & Bảo vệ môi trường', '읽기', '--ac', 26], ['듣기 4-8번 > 병원', '듣기', '--ok', 11],
+        ['Tự học ngữ pháp', '문법', '--flag', 9], ['Lỗi sai · Bài tập 07', '쓰기', '--bad', 5], ['-던 vs -었던', '문법', '--flag', 3]
+      ];
+      const rec = (ago, deck, device, hm, dur, attempted, correct, mastered, completed, early) => {
+        const [name, skill, tone, total] = D[deck];
+        return { ago, deck: name, skill, tone, total, device, hm, dur, attempted, correct, mastered: completed ? total : mastered, completed, early: !!early };
+      };
+      this.records = [
+        rec(0, 0, 'iPhone', '07:42', 9, 21, 18, 11, false),
+        rec(0, 3, 'Mac', '21:05', 6, 12, 11, 0, true),
+        rec(1, 2, 'Mac', '22:10', 12, 18, 12, 0, true),
+        rec(1, 0, 'iPhone', '12:30', 5, 9, 7, 6, false),
+        rec(2, 1, 'Mac', '20:48', 18, 31, 28, 0, true),
+        rec(3, 4, 'iPhone', '08:05', 4, 7, 6, 0, true, true),
+        rec(3, 5, 'Mac', '21:40', 3, 4, 4, 0, true),
+        rec(4, 1, 'iPhone', '07:15', 7, 14, 9, 13, false)
+      ];
+      // Ngày cũ hơn: sinh lần học mẫu ổn định theo chỉ số ngày.
+      for (let ago = 5; ago < 119; ago++) {
+        if (ago >= 12 && (ago % 5 === 0 || ago % 7 === 3)) continue;
+        if (ago >= 33 && ((ago * 7) % 10 < 3 || (ago >= 70 && ago % 3 === 0))) continue;
+        const k = (ago * 7) % 6, n = 6 + (ago * 13) % 22, c = Math.round(n * (0.62 + ((ago * 17) % 35) / 100));
+        this.records.push(rec(ago, k, ago % 3 ? 'Mac' : 'iPhone', (19 + ago % 4) + ':' + String((ago * 11) % 60).padStart(2, '0'), 3 + ago % 12, n, Math.min(n, c), 3, ago % 4 !== 1));
+        if (ago % 4 === 0) this.records.push(rec(ago, (k + 2) % 6, 'iPhone', '07:' + String(10 + ago).padStart(2, '0'), 4, 8, 7, 2, false));
+      }
+      this.records.forEach((r, i) => { r.id = 'r' + i; });
+  }
+  dateOf(ago) { const d = new Date(this.today); d.setDate(d.getDate() - ago); return d; }
+  renderVals() {
+    const tone = (v) => ({ tint: `color-mix(in srgb, var(${v}) 14%, var(--sf))`, ink: `var(${v})` });
+    const due = [
+      Object.assign({ skill: '읽기', name: 'Rừng & Bảo vệ môi trường', meta: '26 thẻ · bậc 3', due: 'Hôm nay', dueInk: 'var(--ac)' }, tone('--ac')),
+      Object.assign({ skill: '듣기', name: '듣기 4-8번 > 병원', meta: '11 thẻ · lần trước 74%', due: 'Trễ 1 ngày', dueInk: 'var(--bad)' }, tone('--ok')),
+      Object.assign({ skill: '문법', name: 'Tự học ngữ pháp', meta: '9 thẻ · bậc 1', due: 'Hôm nay', dueInk: 'var(--ac)' }, tone('--flag'))
+    ].map((d, i) => Object.assign(d, { sep: i ? '1px solid var(--line)' : '0' }));
+    const s = this.state;
+    const scoped = this.records.filter(r => r.ago < 30);
+    const perDay = {};
+    this.records.forEach(r => { perDay[r.ago] = (perDay[r.ago] || 0) + r.attempted; });
+    const level = (n) => !n ? 0 : n < 12 ? 1 : n < 22 ? 2 : n < 32 ? 3 : 4;
+    const shade = ['color-mix(in srgb, var(--ink) 7%, var(--sf))', 'color-mix(in srgb, var(--ac) 25%, var(--sf))', 'color-mix(in srgb, var(--ac) 48%, var(--sf))', 'color-mix(in srgb, var(--ac) 74%, var(--sf))', 'var(--ac)'];
+    const sum = (k) => scoped.reduce((a, r) => a + r[k], 0);
+    const att = sum('attempted');
+    // 12 cột tuần (T2 → CN); cột cuối là tuần này: T2 9/11 … CN 15/11.
+    const first = 4 + 11 * 7; // hôm nay T6 → T2 tuần này là 4 ngày trước
+    return Object.assign(this.themeVals(), {
+      due,
+      chips: [['text', '★', 'Khó nhớ', 18], ['text', '漢', 'Hán Hàn', 42], ['book', '', 'Đoạn văn', 7], ['shuffle', '', 'Ngẫu nhiên', 20]]
+        .map(([k, glyph, label, n]) => ({ glyph, label, n, isText: k === 'text', isBook: k === 'book', isShuffle: k === 'shuffle' })),
+      summary: scoped.length + ' lượt · ' + (att ? Math.round(sum('correct') / att * 100) : 0) + '% đúng · 30 ngày',
+      months: Array.from({ length: 12 }, (_, w) => {
+        const d = this.dateOf(first - w * 7), prev = this.dateOf(first - (w - 1) * 7);
+        return (w === 0 ? d.getDate() <= 21 : d.getMonth() !== prev.getMonth()) ? 'Th' + (d.getMonth() + 1) : '';
+      }),
+      actOpen: s.actOpen, actClosed: !s.actOpen, actStr: String(s.actOpen),
+      actPad: s.actOpen ? '12px 14px' : '10px 14px',
+      miniMonths: Array.from({ length: 5 }, (_, w) => {
+        const d = this.dateOf(32 - w * 7), prev = this.dateOf(32 - (w - 1) * 7);
+        return (w === 0 || d.getMonth() !== prev.getMonth()) ? 'Th' + (d.getMonth() + 1) : '';
+      }),
+      actHint: s.actOpen ? 'Thu gọn' : 'Xem 12 tuần', actRot: s.actOpen ? '180deg' : '0deg',
+      toggleAct: () => this.setState({ actOpen: !s.actOpen }),
+      // Thu gọn: 5 tuần gần nhất, ô nhỏ, cùng chiều với lưới 12 tuần.
+      mini: Array.from({ length: 35 }, (_, i) => {
+        const ago = 32 - i, n = perDay[ago] || 0;
+        return { bg: shade[level(n)], ring: ago === 0 ? '1.5px solid var(--ink)' : '0', vis: ago < 0 ? 'hidden' : 'visible' };
+      }),
+      cells: Array.from({ length: 84 }, (_, i) => {
+        const ago = first - i, d = this.dateOf(ago), n = perDay[ago] || 0, future = ago < 0;
+        return {
+          href: future ? '#' : 'Phone-History.dc.html?ago=' + ago,
+          aria: d.getDate() + '/' + (d.getMonth() + 1) + ': ' + (n ? n + ' câu trả lời' : 'không học'),
+          bg: shade[level(n)], ring: ago === 0 ? '1.5px solid var(--ink)' : 'none', vis: future ? 'hidden' : 'visible'
+        };
+      }),
+      legend: shade,
+    });
   }
 }
 </script>

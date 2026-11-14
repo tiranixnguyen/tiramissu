@@ -20,7 +20,11 @@ trong file nguồn). Lớp CSS `.glass` / `.tglass` chỉ mô phỏng `.glassEff
 | Mac · Thư viện | `Mac-Library-{light,dark}.png` | `Mac-Library.dc.html` | T2.38 |
 | Mac · Nhập từ AI | `Mac-Import-{light,dark}.png` | `Mac-Import.dc.html` | T2.39 |
 | Mac · Cắt clip âm thanh | `Mac-Audio-{light,dark}.png` | `Mac-Audio.dc.html` | T3.01–T3.04 |
-| iPhone · Hôm nay / Học / Nghe | `Phone-{Today,Study,Listen}-light.png` | `Phone-*.dc.html` | G4 |
+| iPhone · Hôm nay | `Phone-Today-{light,dark}.png` | `Phone-Today.dc.html` | T4.01–T4.02 |
+| iPhone · Học (không thanh điều hướng) | `Phone-Study-{light,dark}.png` | `Phone-Study.dc.html` | T4.03 |
+| iPhone · Nghe | `Phone-Listen-{light,dark}.png` | `Phone-Listen.dc.html` | T4.04 |
+| iPhone · Thư viện | `Phone-Library-{light,dark}.png` | `Phone-Library.dc.html` | T4.05 |
+| iPhone · Lịch sử | `Phone-History-{light,dark}.png` | `Phone-History.dc.html` | T4.06 |
 | 6 theme × sáng/tối (màn Học) | `screens/themes/Mac-Study-<theme>-<mode>.png` | — | T2.21 |
 
 Ảnh Mac 1280×800 pt (bản hẹp 1000×700 và 820×640; chụp @2x), iPhone 390×844 pt (@2x), ảnh theme @1x.

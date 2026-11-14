@@ -63,7 +63,7 @@
       "h": 844,
       "is_interactive": true,
       "radius": 44,
-      "title": "iPhone · Học",
+      "title": "iPhone · Học (mở từ nút giữa, không có thanh điều hướng)",
       "w": 390,
       "x": 470,
       "y": 3880
@@ -77,37 +77,23 @@
       "x": 0,
       "y": 3880
     },
-    "Mac-Study-1000.dc.html": {
-      "h": 700,
+    "Phone-Library.dc.html": {
+      "h": 844,
       "is_interactive": true,
-      "title": "Mac · Học — cửa sổ 1000 pt (ẩn cột phải)",
-      "w": 1000,
-      "x": 4080,
-      "y": 2700
+      "radius": 44,
+      "title": "iPhone · Thư viện",
+      "w": 390,
+      "x": 1410,
+      "y": 3880
     },
-    "Mac-Study-820.dc.html": {
-      "h": 640,
+    "Phone-History.dc.html": {
+      "h": 844,
       "is_interactive": true,
-      "title": "Mac · Học — cửa sổ 820 pt (sidebar tự ẩn)",
-      "w": 820,
-      "x": 5160,
-      "y": 2700
-    },
-    "Mac-Today-1000.dc.html": {
-      "h": 700,
-      "is_interactive": true,
-      "title": "Mac · Hôm nay — cửa sổ 1000 pt",
-      "w": 1000,
-      "x": 4080,
-      "y": 1780
-    },
-    "Mac-Today-820.dc.html": {
-      "h": 640,
-      "is_interactive": true,
-      "title": "Mac · Hôm nay — cửa sổ 820 pt (sidebar tự ẩn, cuộn dọc)",
-      "w": 820,
-      "x": 5160,
-      "y": 1780
+      "radius": 44,
+      "title": "iPhone · Lịch sử",
+      "w": 390,
+      "x": 1880,
+      "y": 3880
     }
   },
   "createdOnFiles": {
@@ -128,9 +114,9 @@
   "notes": {
     "s1": {
       "fill": "gray",
-      "text": "iPhone làm sau Mac. Màn Nghe chỉ còn âm thanh, không còn khung video.",
+      "text": "iPhone làm sau Mac, chỉ học & ôn. Thanh điều hướng kính: Hôm nay · Nghe · ● Học · Thư viện · Lịch sử. Nút tròn ở giữa mở thẳng lượt học; màn học ẩn thanh điều hướng, thanh trả lời kính nằm sát đáy, ‹ hoặc ⋯ › Kết thúc lượt để về Hôm nay. Hôm nay từ trên xuống: Hoạt động kiểu GitHub (chuỗi ngày + tóm tắt 30 ngày + lưới mini 5 tuần; bấm mở lưới 12 tuần, bấm một ô → Lịch sử lọc sẵn ngày đó) · Đến hạn ôn gộp danh sách bộ, nút Ôn ngay gọn ở góc phải (màu nhấn chỉ ở nút) · hàng chip Lượt nhanh ★ 漢 đoạn văn, ngẫu nhiên · Luyện nghe. Lịch sử = danh sách lần học, lọc theo ngày / máy / kết quả; dựng từ StudySessionRecord (GET /sessions).",
       "w": 360,
-      "x": 1410,
+      "x": 2350,
       "y": 3880
     },
     "s2": {
@@ -150,7 +136,7 @@
     },
     "t2": {
       "kind": "title1",
-      "maxW": 1330,
+      "maxW": 2720,
       "text": "iPhone — chỉ học & ôn (ưu tiên thấp)",
       "w": 240,
       "x": 0,
@@ -172,13 +158,11 @@
     "Mac-Library.dc.html",
     "Mac-Import.dc.html",
     "Mac-Audio.dc.html",
-    "Mac-Today-1000.dc.html",
-    "Mac-Today-820.dc.html",
-    "Mac-Study-1000.dc.html",
-    "Mac-Study-820.dc.html",
     "Phone-Today.dc.html",
     "Phone-Study.dc.html",
-    "Phone-Listen.dc.html"
+    "Phone-Listen.dc.html",
+    "Phone-Library.dc.html",
+    "Phone-History.dc.html"
   ],
   "pages": [],
   "title": "Hanstudy prototype"
