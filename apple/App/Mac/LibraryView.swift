@@ -6,7 +6,9 @@ import SwiftUI
 struct LibraryView: View {
     @Environment(AppModel.self) private var model
     @Environment(Navigation.self) private var nav
+    @Environment(ThemeStore.self) private var themes
     @Environment(\.theme) private var theme
+    @FocusState private var searchFocused: Bool
 
     @State private var deckId: String?
     @State private var search = ""
@@ -22,6 +24,44 @@ struct LibraryView: View {
         enum Field { case front, back }
         var card: String
         var field: Field
+    }
+
+    // MARK: Thanh trên (như prototype: ô tìm bên trái; "+ Bộ mới từ AI", theme, sáng/tối bên phải)
+
+    @ToolbarContentBuilder private var libraryToolbar: some ToolbarContent {
+        ToolbarItemGroup(placement: .primaryAction) {
+            Button { nav.screen = .importAI } label: { Label("Bộ mới từ AI", systemImage: "plus") }
+                .buttonStyle(.borderedProminent)
+            Button { themes.cycleTheme() } label: {
+                HStack(spacing: 6) {
+                    Circle().fill(theme?.accent ?? .accentColor).frame(width: 10, height: 10)
+                    Text(themes.current?.name ?? "")
+                }
+            }
+            .help("Đổi theme")
+            Button { themes.cycleAppearance() } label: { Image(systemName: themes.appearance.symbol) }
+                .help("Giao diện: \(themes.appearance.label) (⌥⌘D)")
+        }
+        ToolbarItem(placement: .principal) {
+            HStack(spacing: 8) {
+                Image(systemName: "magnifyingglass").foregroundStyle(ink2)
+                TextField("Tìm bộ, từ Hàn hoặc nghĩa…  ⌘F", text: $search)
+                    .textFieldStyle(.plain)
+                    .focused($searchFocused)
+                if !search.isEmpty {
+                    Button { search = "" } label: { Image(systemName: "xmark.circle.fill") }
+                        .buttonStyle(.plain).foregroundStyle(ink2)
+                }
+                Button("") { searchFocused = true }
+                    .keyboardShortcut("f", modifiers: .command).opacity(0).frame(width: 0)
+            }
+            .padding(.horizontal, 12)
+            .frame(minWidth: 240, maxWidth: 320, minHeight: 34, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(height: 44)
+            .glassEffect(.regular, in: .rect(cornerRadius: 16))
+        }
+        .sharedBackgroundVisibility(.hidden)
     }
 
     // MARK: Dữ liệu
@@ -50,7 +90,10 @@ struct LibraryView: View {
             cardsPanel
         }
         .padding(.horizontal, 8).padding(.top, 8).padding(.bottom, 12)
-        .searchable(text: $search, placement: .toolbar, prompt: "Tìm bộ, từ Hàn hoặc nghĩa…")
+        .navigationTitle("")
+        .toolbar(removing: .title)
+        .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
+        .toolbar { libraryToolbar }
         .onAppear { if deckId == nil { deckId = decks.first?.id } }
         .onChange(of: effectiveGroup) { deckId = decks.first?.id }
         .alert("Không thực hiện được", isPresented: Binding(get: { error != nil }, set: { if !$0 { error = nil } })) {

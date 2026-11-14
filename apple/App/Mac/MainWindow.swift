@@ -151,11 +151,7 @@ struct MainWindow: View {
 
     @ToolbarContentBuilder private var toolbar: some ToolbarContent {
         ToolbarItemGroup(placement: .primaryAction) {
-            if nav.screen == .library {
-                Button { nav.screen = .importAI } label: { Label("Bộ mới từ AI", systemImage: "plus") }
-                    .buttonStyle(.borderedProminent)
-            }
-            if nav.screen != .study {
+            if nav.screen != .study && nav.screen != .library {
                 Button {
                     themes.cycleTheme()
                 } label: {
